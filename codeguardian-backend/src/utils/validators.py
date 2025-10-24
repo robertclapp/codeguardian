@@ -391,16 +391,142 @@ def sanitize_input(value: str, max_length: int = None) -> str:
     """
     if not isinstance(value, str):
         return str(value) if value is not None else ''
-    
+
     # Remove null bytes and control characters
     sanitized = ''.join(char for char in value if ord(char) >= 32 or char in '\t\n\r')
-    
+
     # Trim whitespace
     sanitized = sanitized.strip()
-    
+
     # Limit length if specified
     if max_length and len(sanitized) > max_length:
         sanitized = sanitized[:max_length]
-    
+
     return sanitized
+
+
+def validate_code_input(data: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Validate code input for analysis requests
+    Returns dict with validation result and message
+    """
+    errors = []
+
+    # Check required fields
+    if not data:
+        return {'valid': False, 'message': 'No data provided'}
+
+    if 'code' not in data or not data['code']:
+        errors.append('Code is required')
+    else:
+        # Validate code length
+        code = data['code']
+        if len(code) < 10:
+            errors.append('Code must be at least 10 characters long')
+
+        if len(code) > 1000000:  # 1MB limit
+            errors.append('Code exceeds maximum size of 1MB')
+
+    # Validate language if provided
+    if 'language' in data and data['language']:
+        allowed_languages = [
+            'javascript', 'typescript', 'python', 'java', 'cpp', 'c',
+            'csharp', 'go', 'rust', 'php', 'ruby', 'swift', 'kotlin',
+            'scala', 'dart', 'r', 'shell', 'sql', 'html', 'css'
+        ]
+        if data['language'].lower() not in allowed_languages:
+            errors.append(f"Language '{data['language']}' is not supported. Supported languages: {', '.join(allowed_languages)}")
+
+    # Validate file_path if provided
+    if 'file_path' in data and data['file_path']:
+        if len(data['file_path']) > 500:
+            errors.append('File path is too long (max 500 characters)')
+
+    # Validate repository_id if provided
+    if 'repository_id' in data and data['repository_id']:
+        try:
+            repo_id = int(data['repository_id'])
+            if repo_id < 1:
+                errors.append('Repository ID must be a positive integer')
+        except (ValueError, TypeError):
+            errors.append('Repository ID must be a valid integer')
+
+    return {
+        'valid': len(errors) == 0,
+        'message': '; '.join(errors) if errors else 'Validation successful'
+    }
+
+
+def validate_analysis_options(options: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Validate analysis options for code review requests
+    Returns dict with validation result and message
+    """
+    if not isinstance(options, dict):
+        return {'valid': False, 'message': 'Options must be a dictionary'}
+
+    errors = []
+
+    # Validate model selection if provided
+    if 'model' in options:
+        allowed_models = ['gpt-4.1-mini', 'gpt-4.1-nano', 'gemini-2.5-flash']
+        if options['model'] not in allowed_models:
+            errors.append(f"Invalid model. Allowed models: {', '.join(allowed_models)}")
+
+    # Validate boolean flags
+    boolean_flags = [
+        'team_mode', 'mentorship_mode', 'real_time_mode',
+        'deep_security', 'security_focus', 'vulnerability_scanning',
+        'performance_focus', 'performance_profiling', 'optimization_suggestions',
+        'scalability_analysis', 'collaboration_focus'
+    ]
+
+    for flag in boolean_flags:
+        if flag in options and not isinstance(options[flag], bool):
+            errors.append(f"Option '{flag}' must be a boolean value")
+
+    # Validate focus_area if provided
+    if 'focus_area' in options:
+        allowed_focus_areas = ['full_review', 'current_line', 'function', 'class', 'file']
+        if options['focus_area'] not in allowed_focus_areas:
+            errors.append(f"Invalid focus_area. Allowed values: {', '.join(allowed_focus_areas)}")
+
+    # Validate cursor_position if provided
+    if 'cursor_position' in options:
+        try:
+            cursor_pos = int(options['cursor_position'])
+            if cursor_pos < 0:
+                errors.append('Cursor position must be non-negative')
+        except (ValueError, TypeError):
+            errors.append('Cursor position must be a valid integer')
+
+    # Validate compliance_check if provided
+    if 'compliance_check' in options:
+        if not isinstance(options['compliance_check'], list):
+            errors.append('Compliance check must be a list of standards')
+
+    # Validate team_context if provided
+    if 'team_context' in options:
+        if not isinstance(options['team_context'], dict):
+            errors.append('Team context must be a dictionary')
+
+    # Validate severity_threshold if provided
+    if 'severity_threshold' in options:
+        allowed_severities = ['low', 'medium', 'high', 'critical']
+        if options['severity_threshold'] not in allowed_severities:
+            errors.append(f"Invalid severity_threshold. Allowed values: {', '.join(allowed_severities)}")
+
+    # Validate max_suggestions if provided
+    if 'max_suggestions' in options:
+        try:
+            max_sugg = int(options['max_suggestions'])
+            if max_sugg < 1 or max_sugg > 100:
+                errors.append('Max suggestions must be between 1 and 100')
+        except (ValueError, TypeError):
+            errors.append('Max suggestions must be a valid integer')
+
+    return {
+        'valid': len(errors) == 0,
+        'message': '; '.join(errors) if errors else 'Validation successful'
+    }
 

@@ -1,8 +1,7 @@
-from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import json
+from src.database import db
 
-db = SQLAlchemy()
 
 class User(db.Model):
     """User model for CodeGuardian platform"""

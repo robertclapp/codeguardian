@@ -3,7 +3,7 @@ from flask_cors import cross_origin
 from datetime import datetime
 import json
 import time
-from src.models.user import db
+from src.database import db
 from src.models.repository import Repository, PullRequest
 from src.models.review import Review, ReviewComment, MentorshipSession
 from src.routes.auth import require_auth
