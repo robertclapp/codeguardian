@@ -1,0 +1,130 @@
+# CodeGuardian Backend Requirements - Manus Enhanced Version
+# Updated with latest AI models and MCP integration support
+
+# Core Flask Framework
+flask==3.0.0
+flask-cors==4.0.0
+flask-sqlalchemy==3.1.1
+flask-jwt-extended==4.6.0
+flask-socketio==5.3.6  # For real-time features
+
+# Database and Caching
+psycopg2-binary==2.9.9
+redis==5.0.1
+sqlalchemy==2.0.23
+
+# AI and ML Libraries
+openai==1.3.0  # Latest OpenAI client with GPT-4.1 support
+anthropic==0.8.1  # For Claude integration
+google-generativeai==0.3.2  # For Gemini 2.5 Flash
+tiktoken==0.5.2  # Token counting for AI models
+
+# Async Support for Enhanced Performance
+asyncio==3.4.3
+aiohttp==3.9.1
+asyncpg==0.29.0  # Async PostgreSQL driver
+
+# Security and Authentication
+cryptography==41.0.8
+pyjwt==2.8.0
+bcrypt==4.1.2
+python-jose==3.3.0
+
+# API and Web Features
+requests==2.31.0
+urllib3==2.1.0
+websockets==12.0  # For real-time communication
+fastapi==0.104.1  # Optional FastAPI integration
+
+# Development and Utilities
+python-dotenv==1.0.0
+pydantic==2.5.0  # Data validation
+marshmallow==3.20.1  # Serialization
+click==8.1.7  # CLI support
+
+# Testing Framework
+pytest==7.4.3
+pytest-flask==1.3.0
+pytest-asyncio==0.21.1
+pytest-cov==4.1.0
+httpx==0.25.2  # For async testing
+
+# Production Server
+gunicorn==21.2.0
+gevent==23.9.1  # Async worker support
+eventlet==0.33.3  # Alternative async support
+
+# Monitoring and Logging
+sentry-sdk==1.38.0  # Error tracking
+structlog==23.2.0  # Structured logging
+prometheus-client==0.19.0  # Metrics
+
+# File Processing and Analysis
+gitpython==3.1.40  # Git integration
+pygments==2.17.2  # Syntax highlighting
+tree-sitter==0.20.4  # Code parsing
+tree-sitter-python==0.20.4
+tree-sitter-javascript==0.20.3
+
+# MCP (Model Context Protocol) Support
+subprocess32==3.5.4  # For MCP CLI integration
+pexpect==4.9.0  # Process interaction
+jsonschema==4.20.0  # JSON validation for MCP
+
+# Performance and Optimization
+cachetools==5.3.2  # Caching utilities
+joblib==1.3.2  # Parallel processing
+multiprocessing-logging==0.3.4
+
+# Data Processing
+pandas==2.1.4  # Data analysis
+numpy==1.25.2  # Numerical computing
+scipy==1.11.4  # Scientific computing
+
+# Code Quality and Analysis
+ast-decompiler==0.7.0  # AST analysis
+astroid==3.0.1  # Code analysis
+pylint==3.0.3  # Code quality
+bandit==1.7.5  # Security linting
+
+# Documentation and Reporting
+jinja2==3.1.2  # Template engine
+markdown==3.5.1  # Markdown processing
+reportlab==4.0.7  # PDF generation
+
+# Environment and Configuration
+python-decouple==3.8  # Environment management
+configparser==6.0.0  # Configuration parsing
+toml==0.10.2  # TOML support
+
+# Networking and HTTP
+httplib2==0.22.0
+certifi==2023.11.17
+chardet==5.2.0
+idna==3.6
+
+# Date and Time
+python-dateutil==2.8.2
+pytz==2023.3.post1
+
+# Development Tools (for development environment)
+black==23.11.0  # Code formatting
+isort==5.12.0  # Import sorting
+mypy==1.7.1  # Type checking
+pre-commit==3.6.0  # Git hooks
+
+# Optional: Advanced Features
+celery==5.3.4  # Background tasks
+flower==2.0.1  # Celery monitoring
+dramatiq==1.15.0  # Alternative task queue
+
+# Optional: Machine Learning Extensions
+scikit-learn==1.3.2  # ML algorithms
+transformers==4.36.0  # Hugging Face models
+torch==2.1.1  # PyTorch (CPU only)
+
+# Version Constraints for Stability
+setuptools>=65.0.0
+wheel>=0.38.0
+pip>=23.0.0
+

@@ -1,0 +1,16 @@
+# Exclude large files and system directories
+.local/
+.cache/
+.npm/
+.nvm/
+.pki/
+.config/
+.browser_data_dir/
+node_modules/
+*.log
+*.tar.gz
+upload/
+.bash_history
+.lesshst
+page_texts/
+screenshots/

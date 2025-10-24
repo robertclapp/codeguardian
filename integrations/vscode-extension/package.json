@@ -1,0 +1,201 @@
+{
+  "name": "codeguardian",
+  "displayName": "CodeGuardian - AI Code Reviews",
+  "description": "AI-powered code reviews with mentorship and security analysis",
+  "version": "1.0.0",
+  "publisher": "codeguardian",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Linters",
+    "Other",
+    "Machine Learning",
+    "Education"
+  ],
+  "keywords": [
+    "code review",
+    "ai",
+    "security",
+    "mentorship",
+    "quality",
+    "analysis"
+  ],
+  "activationEvents": [
+    "onLanguage:javascript",
+    "onLanguage:typescript",
+    "onLanguage:python",
+    "onLanguage:java",
+    "onLanguage:cpp",
+    "onLanguage:csharp",
+    "onLanguage:go",
+    "onLanguage:rust",
+    "onLanguage:php",
+    "onLanguage:ruby"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "codeguardian.analyzeFile",
+        "title": "Analyze Current File",
+        "category": "CodeGuardian"
+      },
+      {
+        "command": "codeguardian.analyzeWorkspace",
+        "title": "Analyze Workspace",
+        "category": "CodeGuardian"
+      },
+      {
+        "command": "codeguardian.applyFix",
+        "title": "Apply Suggested Fix",
+        "category": "CodeGuardian"
+      },
+      {
+        "command": "codeguardian.explainIssue",
+        "title": "Explain Issue (Mentorship)",
+        "category": "CodeGuardian"
+      },
+      {
+        "command": "codeguardian.toggleRealTime",
+        "title": "Toggle Real-time Analysis",
+        "category": "CodeGuardian"
+      },
+      {
+        "command": "codeguardian.showDashboard",
+        "title": "Show Dashboard",
+        "category": "CodeGuardian"
+      },
+      {
+        "command": "codeguardian.configure",
+        "title": "Configure Settings",
+        "category": "CodeGuardian"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "codeguardian.analyzeFile",
+          "group": "codeguardian",
+          "when": "editorHasSelection"
+        },
+        {
+          "command": "codeguardian.explainIssue",
+          "group": "codeguardian",
+          "when": "editorHasSelection"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "codeguardian.analyzeFile",
+          "group": "codeguardian",
+          "when": "resourceExtname =~ /\\.(js|ts|py|java|cpp|cs|go|rs|php|rb)$/"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "CodeGuardian",
+      "properties": {
+        "codeguardian.apiUrl": {
+          "type": "string",
+          "default": "https://codeguardian-api.onrender.com",
+          "description": "CodeGuardian API URL"
+        },
+        "codeguardian.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Your CodeGuardian API key"
+        },
+        "codeguardian.realTimeAnalysis": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable real-time code analysis"
+        },
+        "codeguardian.mentorshipMode": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable AI mentorship explanations"
+        },
+        "codeguardian.securityFocus": {
+          "type": "boolean",
+          "default": true,
+          "description": "Focus on security vulnerabilities"
+        },
+        "codeguardian.autoApplyFixes": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically apply safe fixes"
+        },
+        "codeguardian.analysisDelay": {
+          "type": "number",
+          "default": 2000,
+          "description": "Delay before analysis (ms)"
+        }
+      }
+    },
+    "views": {
+      "explorer": [
+        {
+          "id": "codeguardianView",
+          "name": "CodeGuardian",
+          "when": "workspaceFolderCount > 0"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "codeguardian",
+          "title": "CodeGuardian",
+          "icon": "$(shield)"
+        }
+      ]
+    },
+    "statusBarItems": [
+      {
+        "id": "codeguardian.status",
+        "alignment": "right",
+        "priority": 100
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js",
+    "package": "vsce package",
+    "publish": "vsce publish"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.74.0",
+    "@types/node": "16.x",
+    "@typescript-eslint/eslint-plugin": "^5.45.0",
+    "@typescript-eslint/parser": "^5.45.0",
+    "eslint": "^8.28.0",
+    "typescript": "^4.9.4",
+    "@vscode/test-electron": "^2.2.0",
+    "vsce": "^2.15.0"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "ws": "^8.14.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/codeguardian-vscode.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/codeguardian-vscode/issues"
+  },
+  "homepage": "https://codeguardian.dev",
+  "license": "MIT",
+  "icon": "images/icon.png",
+  "galleryBanner": {
+    "color": "#2563eb",
+    "theme": "dark"
+  }
+}
+

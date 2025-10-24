@@ -1,0 +1,113 @@
+{
+  "manifest_version": 3,
+  "name": "CodeGuardian - AI Code Reviews",
+  "version": "1.0.0",
+  "description": "AI-powered code reviews for GitHub, GitLab, and web-based IDEs with mentorship and security analysis",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "scripting",
+    "background"
+  ],
+  "host_permissions": [
+    "https://github.com/*",
+    "https://gitlab.com/*",
+    "https://bitbucket.org/*",
+    "https://codepen.io/*",
+    "https://codesandbox.io/*",
+    "https://replit.com/*",
+    "https://stackblitz.com/*",
+    "https://gitpod.io/*",
+    "https://vscode.dev/*",
+    "https://github.dev/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://github.com/*",
+        "https://gitlab.com/*",
+        "https://bitbucket.org/*"
+      ],
+      "js": ["content-scripts/github.js"],
+      "css": ["styles/github.css"],
+      "run_at": "document_end"
+    },
+    {
+      "matches": [
+        "https://codepen.io/*",
+        "https://codesandbox.io/*",
+        "https://replit.com/*",
+        "https://stackblitz.com/*"
+      ],
+      "js": ["content-scripts/web-ide.js"],
+      "css": ["styles/web-ide.css"],
+      "run_at": "document_end"
+    }
+  ],
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "CodeGuardian",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "injected/github-injected.js",
+        "injected/web-ide-injected.js",
+        "styles/*",
+        "icons/*"
+      ],
+      "matches": [
+        "https://github.com/*",
+        "https://gitlab.com/*",
+        "https://bitbucket.org/*",
+        "https://codepen.io/*",
+        "https://codesandbox.io/*",
+        "https://replit.com/*",
+        "https://stackblitz.com/*",
+        "https://gitpod.io/*",
+        "https://vscode.dev/*",
+        "https://github.dev/*"
+      ]
+    }
+  ],
+  "options_page": "options/options.html",
+  "commands": {
+    "analyze-current-file": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+A",
+        "mac": "Command+Shift+A"
+      },
+      "description": "Analyze current file with CodeGuardian"
+    },
+    "explain-selection": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+E",
+        "mac": "Command+Shift+E"
+      },
+      "description": "Explain selected code with AI mentorship"
+    },
+    "toggle-real-time": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+T",
+        "mac": "Command+Shift+T"
+      },
+      "description": "Toggle real-time analysis"
+    }
+  }
+}
+
