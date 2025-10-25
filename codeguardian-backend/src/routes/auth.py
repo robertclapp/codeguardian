@@ -5,7 +5,8 @@ import os
 from datetime import datetime, timedelta
 import jwt
 from functools import wraps
-from src.models.user import db, User
+from src.database import db
+from src.models.user import User
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -13,6 +14,17 @@ auth_bp = Blueprint('auth', __name__)
 JWT_SECRET = os.environ.get('JWT_SECRET', 'your-secret-key-change-in-production')
 JWT_ALGORITHM = 'HS256'
 JWT_EXPIRATION_HOURS = 24
+
+# Security warning for development
+if JWT_SECRET == 'your-secret-key-change-in-production':
+    import warnings
+    import logging
+    logger = logging.getLogger(__name__)
+    logger.warning(
+        "SECURITY WARNING: Using default JWT secret key. "
+        "This is insecure! Set JWT_SECRET environment variable in production."
+    )
+
 
 def generate_jwt_token(user_id):
     """Generate JWT token for user authentication"""

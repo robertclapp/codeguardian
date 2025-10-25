@@ -321,35 +321,161 @@ def get_system_health() -> Dict[str, Any]:
         }
 
 
+def log_analysis_request(user_id: Any, language: str, code_length: int, options: Dict[str, Any] = None):
+    """
+    Log an analysis request with relevant metadata
+
+    Args:
+        user_id: ID of the user making the request
+        language: Programming language being analyzed
+        code_length: Length of code in characters
+        options: Analysis options dictionary
+    """
+    try:
+        log_data = {
+            'event': 'analysis_request',
+            'user_id': user_id,
+            'language': language,
+            'code_length': code_length,
+            'timestamp': datetime.now().isoformat()
+        }
+
+        # Add selected options if provided
+        if options:
+            log_data['options'] = {
+                'model': options.get('model', 'default'),
+                'team_mode': options.get('team_mode', False),
+                'mentorship_mode': options.get('mentorship_mode', False),
+                'security_focus': options.get('security_focus', False),
+                'performance_focus': options.get('performance_focus', False)
+            }
+
+        logger.info(f"Analysis request: {log_data}")
+
+    except Exception as e:
+        logger.error(f"Error logging analysis request: {str(e)}")
+
+
+def log_analysis_result(user_id: Any, overall_score: float, comment_count: int, analysis_type: str = 'standard'):
+    """
+    Log the result of an analysis
+
+    Args:
+        user_id: ID of the user who requested the analysis
+        overall_score: Overall quality score (0-100)
+        comment_count: Number of comments/suggestions generated
+        analysis_type: Type of analysis performed
+    """
+    try:
+        log_data = {
+            'event': 'analysis_completed',
+            'user_id': user_id,
+            'overall_score': overall_score,
+            'comment_count': comment_count,
+            'analysis_type': analysis_type,
+            'timestamp': datetime.now().isoformat()
+        }
+
+        logger.info(f"Analysis completed: {log_data}")
+
+        # Track analysis quality metrics
+        if overall_score < 50:
+            logger.warning(f"Low quality code detected for user {user_id}: score {overall_score}")
+
+    except Exception as e:
+        logger.error(f"Error logging analysis result: {str(e)}")
+
+
+def log_ai_api_call(model: str, prompt_tokens: int = 0, completion_tokens: int = 0, duration: float = 0):
+    """
+    Log AI API calls for monitoring and billing purposes
+
+    Args:
+        model: Name of the AI model used
+        prompt_tokens: Number of tokens in the prompt
+        completion_tokens: Number of tokens in the completion
+        duration: API call duration in seconds
+    """
+    try:
+        log_data = {
+            'event': 'ai_api_call',
+            'model': model,
+            'prompt_tokens': prompt_tokens,
+            'completion_tokens': completion_tokens,
+            'total_tokens': prompt_tokens + completion_tokens,
+            'duration': duration,
+            'timestamp': datetime.now().isoformat()
+        }
+
+        logger.info(f"AI API call: {log_data}")
+
+        # Warn on expensive calls
+        total_tokens = prompt_tokens + completion_tokens
+        if total_tokens > 50000:
+            logger.warning(f"High token usage: {total_tokens} tokens for model {model}")
+
+        if duration > 30:
+            logger.warning(f"Slow AI API call: {duration:.2f}s for model {model}")
+
+    except Exception as e:
+        logger.error(f"Error logging AI API call: {str(e)}")
+
+
+def log_user_activity(user_id: Any, activity_type: str, details: Dict[str, Any] = None):
+    """
+    Log user activity for analytics and auditing
+
+    Args:
+        user_id: ID of the user
+        activity_type: Type of activity (login, review_created, etc.)
+        details: Additional details about the activity
+    """
+    try:
+        log_data = {
+            'event': 'user_activity',
+            'user_id': user_id,
+            'activity_type': activity_type,
+            'timestamp': datetime.now().isoformat()
+        }
+
+        if details:
+            log_data['details'] = details
+
+        logger.info(f"User activity: {log_data}")
+
+    except Exception as e:
+        logger.error(f"Error logging user activity: {str(e)}")
+
+
 def create_debug_middleware(app):
     """Create debugging middleware for Flask app"""
-    
+
     @app.before_request
     def before_request():
         performance_monitor.log_request_start()
-    
+
     @app.after_request
     def after_request(response):
         performance_monitor.log_request_end(response.status_code)
         return response
-    
+
     @app.errorhandler(Exception)
     def handle_exception(e):
         error_tracker.log_error(e)
         logger.error(f"Unhandled exception: {str(e)}")
         logger.debug(f"Traceback: {traceback.format_exc()}")
-        
+
         # Return JSON error response
         return {
             'error': 'Internal server error',
             'message': str(e) if app.debug else 'An error occurred'
         }, 500
-    
+
     # Add health check endpoint
     @app.route('/health')
     def health_check():
         return get_system_health()
-    
+
     # Add debug info endpoint (only in debug mode)
     if app.debug:
         @app.route('/debug/stats')
@@ -360,6 +486,6 @@ def create_debug_middleware(app):
                 'database': db_query_logger.get_query_stats(),
                 'system': get_system_health()
             }
-    
+
     return app
 

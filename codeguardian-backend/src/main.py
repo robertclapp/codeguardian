@@ -5,28 +5,36 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from flask import Flask, send_from_directory
 from flask_cors import CORS
-from src.models.user import db
+from flask_jwt_extended import JWTManager
+from src.database import db
 from src.routes.user import user_bp
 from src.routes.auth import auth_bp
 from src.routes.repositories import repositories_bp
 from src.routes.reviews import reviews_bp
+from src.routes.enhanced_reviews import enhanced_reviews_bp
+from src.config import get_config
 
 app = Flask(__name__, static_folder=os.path.join(os.path.dirname(__file__), 'static'))
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'codeguardian-secret-key-change-in-production')
+
+# Load configuration
+config_class = get_config()
+app.config.from_object(config_class)
+
+# Initialize JWT
+jwt = JWTManager(app)
 
 # Enable CORS for all routes
 CORS(app, origins="*", allow_headers=["Content-Type", "Authorization"])
+
+# Initialize database
+db.init_app(app)
 
 # Register blueprints
 app.register_blueprint(user_bp, url_prefix='/api/users')
 app.register_blueprint(auth_bp, url_prefix='/api/auth')
 app.register_blueprint(repositories_bp, url_prefix='/api/repositories')
 app.register_blueprint(reviews_bp, url_prefix='/api/reviews')
-
-# Database configuration
-app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(os.path.dirname(__file__), 'database', 'app.db')}"
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db.init_app(app)
+app.register_blueprint(enhanced_reviews_bp, url_prefix='/api/enhanced-reviews')
 
 # Import all models to ensure they're created
 from src.models.repository import Repository, PullRequest

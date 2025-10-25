@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_cors import cross_origin
 import requests
 from datetime import datetime
-from src.models.user import db
+from src.database import db
 from src.models.repository import Repository, PullRequest
 from src.routes.auth import require_auth
 
