@@ -88,25 +88,7 @@ class Config:
     @staticmethod
     def init_app(app):
         """Initialize application with configuration"""
-        # Check for insecure default values in production
-        import logging
-        logger = logging.getLogger(__name__)
-
-        if not app.debug:
-            insecure_defaults = []
-
-            if app.config.get('SECRET_KEY', '').startswith('dev-'):
-                insecure_defaults.append('SECRET_KEY')
-
-            if app.config.get('JWT_SECRET_KEY', '').startswith('dev-'):
-                insecure_defaults.append('JWT_SECRET_KEY')
-
-            if insecure_defaults:
-                logger.warning(
-                    f"SECURITY WARNING: The following configuration values are using "
-                    f"insecure defaults: {', '.join(insecure_defaults)}. "
-                    f"Please set these as environment variables in production!"
-                )
+        pass
 
 
 class DevelopmentConfig(Config):
