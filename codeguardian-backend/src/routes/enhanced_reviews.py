@@ -5,17 +5,16 @@ Includes real-time analysis, multi-model support, and MCP integration
 
 from flask import Blueprint, request, jsonify, current_app
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from flask_cors import cross_origin
+import asyncio
 import json
 from datetime import datetime
 from typing import Dict, Any, List
 
-from src.services.manus_ai_service import ManusAIService
-from src.models.review import Review
-from src.models.repository import Repository
-from src.database import db
-from src.utils.validators import validate_code_input, validate_analysis_options
-from src.utils.debugging import log_analysis_request, log_analysis_result
+from ..services.manus_ai_service import ManusAIService
+from ..models.review import Review
+from ..models.repository import Repository
+from ..utils.validators import validate_code_input, validate_analysis_options
+from ..utils.debugging import log_analysis_request, log_analysis_result
 
 # Create blueprint for enhanced reviews
 enhanced_reviews_bp = Blueprint('enhanced_reviews', __name__)
@@ -24,36 +23,35 @@ enhanced_reviews_bp = Blueprint('enhanced_reviews', __name__)
 manus_ai = ManusAIService()
 
 @enhanced_reviews_bp.route('/analyze/advanced', methods=['POST'])
-@cross_origin()
 @jwt_required()
-def analyze_code_advanced():
+async def analyze_code_advanced():
     """
     Advanced code analysis with multi-model AI and MCP integration
     """
     try:
         user_id = get_jwt_identity()
         data = request.get_json()
-
+        
         # Validate input
         validation_result = validate_code_input(data)
         if not validation_result['valid']:
             return jsonify({'error': validation_result['message']}), 400
-
+        
         # Extract analysis parameters
         code = data['code']
         language = data.get('language', 'javascript')
         options = data.get('options', {})
-
+        
         # Validate analysis options
         options_validation = validate_analysis_options(options)
         if not options_validation['valid']:
             return jsonify({'error': options_validation['message']}), 400
-
+        
         # Log the analysis request
         log_analysis_request(user_id, language, len(code), options)
-
+        
         # Perform advanced analysis
-        analysis_result = manus_ai.analyze_code_advanced(code, language, options)
+        analysis_result = await manus_ai.analyze_code_advanced(code, language, options)
         
         # Save analysis to database
         review = Review(
@@ -107,9 +105,8 @@ def analyze_code_advanced():
         }), 500
 
 @enhanced_reviews_bp.route('/analyze/real-time', methods=['POST'])
-@cross_origin()
 @jwt_required()
-def analyze_real_time():
+async def analyze_real_time():
     """
     Real-time code analysis for live coding sessions
     """
@@ -130,7 +127,7 @@ def analyze_real_time():
             'quick_suggestions': True
         }
         
-        analysis_result = manus_ai.analyze_code_advanced(code, language, options)
+        analysis_result = await manus_ai.analyze_code_advanced(code, language, options)
         
         # Filter for real-time relevant suggestions
         real_time_suggestions = []
@@ -155,9 +152,8 @@ def analyze_real_time():
         return jsonify({'error': 'Real-time analysis failed', 'message': str(e)}), 500
 
 @enhanced_reviews_bp.route('/analyze/team', methods=['POST'])
-@cross_origin()
 @jwt_required()
-def analyze_for_team():
+async def analyze_for_team():
     """
     Team-focused analysis with collaboration insights
     """
@@ -176,7 +172,7 @@ def analyze_for_team():
             'team_context': team_context
         }
         
-        analysis_result = manus_ai.analyze_code_advanced(code, language, options)
+        analysis_result = await manus_ai.analyze_code_advanced(code, language, options)
         
         # Add team-specific enhancements
         team_insights = {
@@ -200,9 +196,8 @@ def analyze_for_team():
         return jsonify({'error': 'Team analysis failed', 'message': str(e)}), 500
 
 @enhanced_reviews_bp.route('/analyze/security-deep', methods=['POST'])
-@cross_origin()
 @jwt_required()
-def analyze_security_deep():
+async def analyze_security_deep():
     """
     Deep security analysis with advanced threat detection
     """
@@ -220,7 +215,7 @@ def analyze_security_deep():
             'compliance_check': data.get('compliance_standards', [])
         }
         
-        analysis_result = manus_ai.analyze_code_advanced(code, language, options)
+        analysis_result = await manus_ai.analyze_code_advanced(code, language, options)
         
         # Extract security-specific insights
         security_report = {
@@ -245,9 +240,8 @@ def analyze_security_deep():
         return jsonify({'error': 'Security analysis failed', 'message': str(e)}), 500
 
 @enhanced_reviews_bp.route('/analyze/performance', methods=['POST'])
-@cross_origin()
 @jwt_required()
-def analyze_performance():
+async def analyze_performance():
     """
     Performance-focused analysis with optimization suggestions
     """
@@ -265,7 +259,7 @@ def analyze_performance():
             'scalability_analysis': True
         }
         
-        analysis_result = manus_ai.analyze_code_advanced(code, language, options)
+        analysis_result = await manus_ai.analyze_code_advanced(code, language, options)
         
         # Extract performance insights
         performance_report = {
@@ -286,9 +280,8 @@ def analyze_performance():
         return jsonify({'error': 'Performance analysis failed', 'message': str(e)}), 500
 
 @enhanced_reviews_bp.route('/explain/advanced', methods=['POST'])
-@cross_origin()
 @jwt_required()
-def explain_code_advanced():
+async def explain_code_advanced():
     """
     Advanced code explanation with mentorship features
     """
@@ -352,7 +345,6 @@ def explain_code_advanced():
         return jsonify({'error': 'Code explanation failed', 'message': str(e)}), 500
 
 @enhanced_reviews_bp.route('/models/available', methods=['GET'])
-@cross_origin()
 @jwt_required()
 def get_available_models():
     """

@@ -1,6 +1,7 @@
+from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import json
-from src.database import db
+from src.models.user import db
 
 class Repository(db.Model):
     """Repository model for tracking connected repositories"""

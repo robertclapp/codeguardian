@@ -1,6 +1,7 @@
+from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import json
-from src.database import db
+from src.models.user import db
 
 class Review(db.Model):
     """Review model for AI-generated code reviews"""
