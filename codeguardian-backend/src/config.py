@@ -87,7 +87,11 @@ class Config:
     
     @staticmethod
     def init_app(app):
-        """Initialize application with configuration"""
+        """
+        Perform configuration-specific initialization for a Flask application.
+        
+        Base implementation does nothing; subclasses should override this hook to perform any app setup required by that configuration (for example, logging, environment validation, or middleware/proxy setup).
+        """
         pass
 
 
@@ -211,4 +215,3 @@ def get_config():
         env = 'render'
     
     return config.get(env, config['default'])
-

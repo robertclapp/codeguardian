@@ -387,7 +387,14 @@ def validate_pagination_params(page: Any, per_page: Any) -> Dict[str, Any]:
 
 def sanitize_input(value: str, max_length: int = None) -> str:
     """
-    Sanitize input string by removing dangerous characters
+    Sanitizes a string by removing null bytes and control characters, trimming surrounding whitespace, and optionally truncating to a maximum length.
+    
+    Parameters:
+        value (str): The input value to sanitize. If not a string, it will be converted to a string; if None, an empty string is returned.
+        max_length (int, optional): Maximum length of the returned string; when provided and the sanitized result is longer, it will be truncated to this length.
+    
+    Returns:
+        str: The sanitized string with control characters removed (except tab, newline, carriage return), trimmed, and truncated if `max_length` was specified.
     """
     if not isinstance(value, str):
         return str(value) if value is not None else ''
@@ -403,4 +410,3 @@ def sanitize_input(value: str, max_length: int = None) -> str:
         sanitized = sanitized[:max_length]
     
     return sanitized
-
