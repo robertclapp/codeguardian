@@ -15,7 +15,15 @@ JWT_ALGORITHM = 'HS256'
 JWT_EXPIRATION_HOURS = 24
 
 def generate_jwt_token(user_id):
-    """Generate JWT token for user authentication"""
+    """
+    Create a JWT for the given user identifier.
+    
+    Parameters:
+        user_id: The unique identifier of the user to include in the token payload.
+    
+    Returns:
+        token (str): Encoded JWT string containing `user_id`, issuance time, and expiration time.
+    """
     payload = {
         'user_id': user_id,
         'exp': datetime.utcnow() + timedelta(hours=JWT_EXPIRATION_HOURS),
@@ -246,4 +254,3 @@ def update_profile():
         
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-

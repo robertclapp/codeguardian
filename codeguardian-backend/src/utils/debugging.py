@@ -286,7 +286,24 @@ def debug_route(func: Callable) -> Callable:
 
 
 def get_system_health() -> Dict[str, Any]:
-    """Get overall system health information"""
+    """
+    Collects system and application health metrics and returns a consolidated health report.
+    
+    Returns:
+        dict: Health report with the following top-level keys:
+            - status (str): 'healthy' when metrics were collected successfully, 'error' on failure.
+            - timestamp (str): ISO-formatted timestamp of the report.
+            - system (dict): System metrics:
+                - cpu_percent (float): CPU utilization percentage.
+                - memory_percent (float): Memory utilization percentage.
+                - memory_available_mb (float): Available memory in megabytes.
+                - disk_percent (float): Disk usage percentage for '/'.
+                - disk_free_gb (float): Free disk space in gigabytes for '/'.
+            - application (dict): Performance monitor statistics (as returned by PerformanceMonitor.get_stats()).
+            - errors (dict): Error summary (as returned by ErrorTracker.get_error_summary()).
+            - database (dict): Database query statistics (as returned by DatabaseQueryLogger.get_query_stats()).
+        On failure, returns a dict with 'status' set to 'error', 'timestamp', and an 'error' string describing the failure.
+    """
     try:
         # Get system metrics
         cpu_percent = psutil.cpu_percent(interval=1)
@@ -322,19 +339,54 @@ def get_system_health() -> Dict[str, Any]:
 
 
 def create_debug_middleware(app):
-    """Create debugging middleware for Flask app"""
+    """
+    Attach debugging and monitoring middleware and routes to a Flask application.
+    
+    This registers request lifecycle hooks to track performance, a global exception handler that records and reports errors, a /health endpoint that returns system and application health, and (when app.debug is True) a /debug/stats endpoint that exposes consolidated diagnostics.
+    
+    Parameters:
+        app (Flask): The Flask application instance to configure.
+    
+    Returns:
+        Flask: The same Flask application instance with middleware and diagnostic routes attached.
+    """
     
     @app.before_request
     def before_request():
+        """
+        Record the start of an incoming HTTP request for performance monitoring.
+        
+        Calls the global PerformanceMonitor to store the request start time in Flask's request context and increment the total request count.
+        """
         performance_monitor.log_request_start()
     
     @app.after_request
     def after_request(response):
+        """
+        Finalize request logging for a Flask response by recording request end time and status.
+        
+        Parameters:
+            response (flask.Response): The response object to be returned to the client; its status code is used for logging.
+        
+        Returns:
+            flask.Response: The same response object passed in.
+        """
         performance_monitor.log_request_end(response.status_code)
         return response
     
     @app.errorhandler(Exception)
     def handle_exception(e):
+        """
+        Handle an uncaught exception by logging it and returning a standardized JSON error response.
+        
+        Parameters:
+            e (Exception): The exception instance that was raised.
+        
+        Returns:
+            tuple: A pair (response_body, status_code) where response_body is a dict with keys
+                'error' (a short error label) and 'message' (the exception message when the
+                application is in debug mode, otherwise a generic message), and status_code is 500.
+        """
         error_tracker.log_error(e)
         logger.error(f"Unhandled exception: {str(e)}")
         logger.debug(f"Traceback: {traceback.format_exc()}")
@@ -348,12 +400,30 @@ def create_debug_middleware(app):
     # Add health check endpoint
     @app.route('/health')
     def health_check():
+        """
+        Retrieve a consolidated system and application health snapshot.
+        
+        The snapshot includes overall status, timestamp, system metrics (CPU, memory, disk), application metrics (uptime, request/error counts, recent slow requests), recent error summary, and database query statistics.
+        
+        Returns:
+            health (dict): Health information containing keys like `status`, `timestamp`, `system`, `application`, `errors`, and `database`.
+        """
         return get_system_health()
     
     # Add debug info endpoint (only in debug mode)
     if app.debug:
         @app.route('/debug/stats')
         def debug_stats():
+            """
+            Return a consolidated snapshot of runtime statistics covering performance, errors, database queries, and system health.
+            
+            Returns:
+                stats (dict): Dictionary with the following keys:
+                    - 'performance': dictionary of application performance metrics (uptime, request/error counts, recent slow requests, memory/CPU/threads).
+                    - 'errors': dictionary summarizing recent errors and counts (total_errors, error_types, recent_errors, most_common_errors).
+                    - 'database': dictionary of database query statistics (total_queries, slow_queries_count, average_duration, max_duration, recent_queries, slow_queries).
+                    - 'system': dictionary of current system health metrics (CPU, memory, disk usage, and overall status).
+            """
             return {
                 'performance': performance_monitor.get_stats(),
                 'errors': error_tracker.get_error_summary(),
@@ -362,4 +432,3 @@ def create_debug_middleware(app):
             }
     
     return app
-

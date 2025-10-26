@@ -26,7 +26,17 @@ manus_ai = ManusAIService()
 @jwt_required()
 async def analyze_code_advanced():
     """
-    Advanced code analysis with multi-model AI and MCP integration
+    Perform an advanced, multi-model code analysis and return an enriched review result.
+    
+    Validates the incoming JSON payload, runs advanced analysis via the Manus AI service, logs the request and result, constructs a Review record (not persisted to the database in this implementation), and assembles an enhanced JSON response that includes the raw analysis, metadata, and real-time feature flags.
+    
+    Returns:
+        A Flask JSON response with HTTP 200 on success containing:
+            - analysis: full analysis result from the AI service
+            - metadata: map with analysis_id (or 'temp'), timestamp, processing_time, models_used, mcp_enhanced flag, and manus_version
+            - real_time_features: map with live_collaboration, auto_fix_available, and learning_mode
+        On client validation errors returns HTTP 400 with an error message.
+        On unexpected failures returns HTTP 500 with an error message, original exception message, and a fallback_available flag.
     """
     try:
         user_id = get_jwt_identity()
@@ -108,7 +118,16 @@ async def analyze_code_advanced():
 @jwt_required()
 async def analyze_real_time():
     """
-    Real-time code analysis for live coding sessions
+    Provide low-latency, near-cursor code suggestions for live coding sessions.
+    
+    Accepts a JSON payload containing "code" (required), and optional "language" and "cursor_position"; runs a fast analysis optimized for real-time feedback and filters suggestions close to the cursor.
+    
+    Returns:
+        A Flask JSON response with:
+        - suggestions (list): Up to 3 suggestion objects each with keys `type`, `message`, `auto_fix`, `severity`, and `line`.
+        - overall_health (number): Aggregate score for the code's health.
+        - timestamp (str): ISO 8601 UTC timestamp of the response.
+        - response_time (str): Indicator of response speed (set to "fast").
     """
     try:
         user_id = get_jwt_identity()
@@ -155,7 +174,21 @@ async def analyze_real_time():
 @jwt_required()
 async def analyze_for_team():
     """
-    Team-focused analysis with collaboration insights
+    Perform team-focused code analysis and produce collaboration insights.
+    
+    Returns:
+        A JSON response with:
+            - analysis: The full analysis result produced by the AI.
+            - team_insights: An object containing:
+                - review_complexity: Summary metrics about review complexity.
+                - knowledge_sharing_opportunities: List of learning opportunities extracted from the analysis.
+                - pair_programming_suggestions: Suggested pair-programming pairings or sessions.
+                - code_style_alignment: Metrics and notes about alignment with the team's style.
+            - collaboration_features: An object containing:
+                - shareable_link: URL path for sharing the review.
+                - discussion_points: High-severity comments suitable for team discussion.
+                - mentorship_moments: Extracted moments useful for mentorship or teaching.
+        On failure, returns a JSON error object with 'error' and 'message' and HTTP status 500.
     """
     try:
         user_id = get_jwt_identity()
@@ -199,7 +232,25 @@ async def analyze_for_team():
 @jwt_required()
 async def analyze_security_deep():
     """
-    Deep security analysis with advanced threat detection
+    Perform a deep security analysis of supplied code and return a structured security report.
+    
+    Expects a JSON request body with:
+    - "code" (str): source code to analyze.
+    - "language" (str, optional): programming language, default "javascript".
+    - "compliance_standards" (list, optional): compliance standards to check.
+    
+    Returns:
+    A JSON response (HTTP 200) containing:
+    - "security_analysis": full analysis result produced by the analysis service.
+    - "security_report": object with:
+        - "threat_level": severity string (e.g., "CRITICAL", "HIGH", "MEDIUM", "LOW").
+        - "vulnerability_summary": list of extracted vulnerabilities with type, severity, location, and suggested fixes.
+        - "compliance_status": mapping of requested standards to boolean compliance values.
+        - "remediation_priority": vulnerabilities ordered for remediation (highest priority first).
+        - "security_score_breakdown": subfields such as "authentication", "data_handling", and "dependencies" with their respective findings.
+    - "immediate_actions": list of high-severity security actions to address immediately.
+    
+    On failure returns HTTP 500 with a JSON object containing "error" and "message".
     """
     try:
         user_id = get_jwt_identity()
@@ -243,7 +294,22 @@ async def analyze_security_deep():
 @jwt_required()
 async def analyze_performance():
     """
-    Performance-focused analysis with optimization suggestions
+    Perform a performance-focused analysis of the provided code and return optimization, profiling, and scalability recommendations.
+    
+    Returns:
+        A Flask JSON response with HTTP status:
+        - 200: {
+            "performance_analysis": <dict> full analysis result from the AI service,
+            "performance_report": {
+                "performance_score": <number>,
+                "bottlenecks": <list> identified bottlenecks with location and impact,
+                "optimization_opportunities": <list> suggested optimizations,
+                "profiling_recommendations": <dict> profiling suggestions,
+                "scalability_concerns": <list> scalability-related issues
+            },
+            "benchmarking_suggestions": <list> benchmarking suggestions (may be empty)
+          }
+        - 500: {"error": "Performance analysis failed", "message": <string>} on failure.
     """
     try:
         user_id = get_jwt_identity()
@@ -283,7 +349,13 @@ async def analyze_performance():
 @jwt_required()
 async def explain_code_advanced():
     """
-    Advanced code explanation with mentorship features
+    Produce a structured, mentorship-style explanation of the source code supplied in the request.
+    
+    Returns:
+        A Flask JSON response with status 200 containing:
+            - explanation (dict): Parsed JSON with keys `purpose`, `breakdown`, `reasoning`, `improvements`, and `learning_path`, or `raw_explanation` if parsing failed.
+            - metadata (dict): Includes `explanation_level`, `model_used`, `language`, and `timestamp`.
+        On failure, returns a JSON error object with keys `error` and `message` and HTTP status 500.
     """
     try:
         user_id = get_jwt_identity()
@@ -348,7 +420,24 @@ async def explain_code_advanced():
 @jwt_required()
 def get_available_models():
     """
-    Get list of available AI models and their capabilities
+    Return information about available AI models and integration capabilities.
+    
+    Returns:
+        A Flask JSON response (status 200) with the following structure:
+            {
+                "available_models": {
+                    "<model_name>": {
+                        "description": str,
+                        "best_for": [str, ...],
+                        "speed": str,
+                        "accuracy": str
+                    },
+                    ...
+                },
+                "default_model": str,
+                "multi_model_analysis": bool,
+                "mcp_integration": bool
+            }
     """
     models_info = {
         'gpt-4.1-mini': {
@@ -501,4 +590,3 @@ def extract_scalability_issues(analysis_result: Dict[str, Any]) -> List[str]:
         if 'scalability' in comment.get('message', '').lower():
             issues.append(comment['message'])
     return issues
-
