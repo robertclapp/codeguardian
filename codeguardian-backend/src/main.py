@@ -13,6 +13,7 @@ from src.routes.repositories import repositories_bp
 from src.routes.reviews import reviews_bp
 from src.routes.enhanced_reviews import enhanced_reviews_bp
 from src.config import get_config
+from src.middleware import init_rate_limiting, init_csrf_protection
 
 app = Flask(__name__, static_folder=os.path.join(os.path.dirname(__file__), 'static'))
 
@@ -20,14 +21,29 @@ app = Flask(__name__, static_folder=os.path.join(os.path.dirname(__file__), 'sta
 config_class = get_config()
 app.config.from_object(config_class)
 
+# Initialize configuration
+config_class.init_app(app)
+
 # Initialize JWT
 jwt = JWTManager(app)
 
-# Enable CORS for all routes
-CORS(app, origins="*", allow_headers=["Content-Type", "Authorization"])
+# Configure CORS with environment-based origins
+cors_origins = app.config.get('CORS_ORIGINS', ['http://localhost:3000'])
+CORS(
+    app,
+    origins=cors_origins,
+    allow_headers=["Content-Type", "Authorization", "X-Requested-With", "X-CSRF-Token"],
+    methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+    supports_credentials=True,
+    max_age=3600  # Cache preflight requests for 1 hour
+)
 
 # Initialize database
 db.init_app(app)
+
+# Initialize security middleware
+init_rate_limiting(app)
+init_csrf_protection(app)
 
 # Register blueprints
 app.register_blueprint(user_bp, url_prefix='/api/users')
