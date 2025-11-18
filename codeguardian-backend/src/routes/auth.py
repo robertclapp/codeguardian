@@ -1,29 +1,41 @@
-from flask import Blueprint, request, jsonify, session
+from flask import Blueprint, request, jsonify, session, current_app
 from flask_cors import cross_origin
 import requests
 import os
+import logging
 from datetime import datetime, timedelta
 import jwt
 from functools import wraps
 from src.database import db
 from src.models.user import User
+from src.constants import AuthConfig, ServiceConfig
+
+logger = logging.getLogger(__name__)
 
 auth_bp = Blueprint('auth', __name__)
 
 # JWT Configuration
-JWT_SECRET = os.environ.get('JWT_SECRET', 'your-secret-key-change-in-production')
-JWT_ALGORITHM = 'HS256'
-JWT_EXPIRATION_HOURS = 24
+JWT_SECRET = os.environ.get('JWT_SECRET')
+JWT_ALGORITHM = AuthConfig.JWT_ALGORITHM
+JWT_EXPIRATION_HOURS = AuthConfig.JWT_EXPIRATION_HOURS
 
-# Security warning for development
-if JWT_SECRET == 'your-secret-key-change-in-production':
-    import warnings
-    import logging
-    logger = logging.getLogger(__name__)
-    logger.warning(
-        "SECURITY WARNING: Using default JWT secret key. "
-        "This is insecure! Set JWT_SECRET environment variable in production."
-    )
+# Security check for JWT secret
+if not JWT_SECRET:
+    # Check if we're in production
+    flask_env = os.environ.get('FLASK_ENV', 'development')
+    if flask_env == 'production':
+        raise ValueError(
+            "CRITICAL: JWT_SECRET environment variable is not set. "
+            "This is required for production security. "
+            "Generate a secure key with: python -c \"import secrets; print(secrets.token_hex(32))\""
+        )
+    else:
+        # Use default for development only
+        JWT_SECRET = 'dev-secret-key-not-for-production'
+        logger.warning(
+            "SECURITY WARNING: Using default JWT secret key. "
+            "This is insecure! Set JWT_SECRET environment variable."
+        )
 
 
 def generate_jwt_token(user_id):

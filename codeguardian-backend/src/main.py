@@ -12,6 +12,9 @@ from src.routes.auth import auth_bp
 from src.routes.repositories import repositories_bp
 from src.routes.reviews import reviews_bp
 from src.routes.enhanced_reviews import enhanced_reviews_bp
+from src.routes.analytics import analytics_bp
+from src.routes.fixes import fixes_bp
+from src.routes.snippets import snippets_bp
 from src.config import get_config
 from src.middleware import init_rate_limiting, init_csrf_protection
 
@@ -51,6 +54,9 @@ app.register_blueprint(auth_bp, url_prefix='/api/auth')
 app.register_blueprint(repositories_bp, url_prefix='/api/repositories')
 app.register_blueprint(reviews_bp, url_prefix='/api/reviews')
 app.register_blueprint(enhanced_reviews_bp, url_prefix='/api/enhanced-reviews')
+app.register_blueprint(analytics_bp, url_prefix='/api/analytics')
+app.register_blueprint(fixes_bp, url_prefix='/api')
+app.register_blueprint(snippets_bp, url_prefix='/api')
 
 # Import all models to ensure they're created
 from src.models.repository import Repository, PullRequest
