@@ -19,6 +19,12 @@ from src.routes.webhooks import webhooks_bp
 from src.routes.rules import rules_bp
 from src.routes.explanations import explanations_bp
 from src.routes.health import health_bp
+from src.routes.teams import teams_bp
+from src.routes.notifications import notifications_bp
+from src.routes.audit import audit_bp
+from src.routes.ai import ai_bp
+from src.routes.marketplace import marketplace_bp
+from src.routes.dashboards import dashboards_bp
 from src.config import get_config
 from src.middleware import init_rate_limiting, init_csrf_protection
 
@@ -65,10 +71,21 @@ app.register_blueprint(webhooks_bp, url_prefix='/api')
 app.register_blueprint(rules_bp, url_prefix='/api')
 app.register_blueprint(explanations_bp, url_prefix='/api')
 app.register_blueprint(health_bp, url_prefix='/api')
+app.register_blueprint(teams_bp, url_prefix='/api')
+app.register_blueprint(notifications_bp, url_prefix='/api')
+app.register_blueprint(audit_bp, url_prefix='/api')
+app.register_blueprint(ai_bp, url_prefix='/api')
+app.register_blueprint(marketplace_bp, url_prefix='/api')
+app.register_blueprint(dashboards_bp, url_prefix='/api')
 
 # Import all models to ensure they're created
 from src.models.repository import Repository, PullRequest
 from src.models.review import Review, ReviewComment, MentorshipSession
+from src.models.collaboration import (
+    Team, TeamMember, TeamInvitation, TeamActivity,
+    Notification, NotificationPreference, AuditLog,
+    Discussion, DiscussionReaction, ReviewApproval
+)
 
 with app.app_context():
     db.create_all()
