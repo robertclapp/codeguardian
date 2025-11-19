@@ -55,6 +55,14 @@ class APIResponse:
         return APIResponse.success(data, message, 201)
 
     @staticmethod
+    def accepted(
+        data: Any = None,
+        message: str = "Request accepted for processing"
+    ) -> Tuple[Any, int]:
+        """Create a 202 Accepted response for async operations"""
+        return APIResponse.success(data, message, 202)
+
+    @staticmethod
     def no_content() -> Tuple[str, int]:
         """Create a 204 No Content response"""
         return '', 204
