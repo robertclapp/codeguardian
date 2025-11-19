@@ -25,6 +25,9 @@ from src.routes.audit import audit_bp
 from src.routes.ai import ai_bp
 from src.routes.marketplace import marketplace_bp
 from src.routes.dashboards import dashboards_bp
+from src.routes.mentor import mentor_bp
+from src.routes.predictor import predictor_bp
+from src.routes.hooks import hooks_bp
 from src.config import get_config
 from src.middleware import init_rate_limiting, init_csrf_protection
 
@@ -77,6 +80,9 @@ app.register_blueprint(audit_bp, url_prefix='/api')
 app.register_blueprint(ai_bp, url_prefix='/api')
 app.register_blueprint(marketplace_bp, url_prefix='/api')
 app.register_blueprint(dashboards_bp, url_prefix='/api')
+app.register_blueprint(mentor_bp, url_prefix='/api')
+app.register_blueprint(predictor_bp, url_prefix='/api')
+app.register_blueprint(hooks_bp, url_prefix='/api')
 
 # Import all models to ensure they're created
 from src.models.repository import Repository, PullRequest
@@ -86,6 +92,9 @@ from src.models.collaboration import (
     Notification, NotificationPreference, AuditLog,
     Discussion, DiscussionReaction, ReviewApproval
 )
+from src.routes.mentor import DeveloperProfile, LearningRecommendation, SkillProgress
+from src.routes.predictor import PredictionRecord
+from src.routes.hooks import HookConfiguration, HookExecution
 
 with app.app_context():
     db.create_all()
