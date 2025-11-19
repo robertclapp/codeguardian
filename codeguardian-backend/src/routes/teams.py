@@ -24,57 +24,11 @@ from src.decorators import handle_errors, log_request, validate_json
 from src.validation import RequestValidator
 from src.exceptions import NotFoundError, ValidationError, AuthorizationError
 from src.constants import PaginationConfig
+from src.services import AuthorizationService, EventService
 
 logger = logging.getLogger(__name__)
 
 teams_bp = Blueprint('teams', __name__)
-
-
-def log_audit(user_id: int, team_id: int, action: str, resource_type: str,
-              resource_id: str = None, old_values: dict = None, new_values: dict = None):
-    """Log an audit event"""
-    audit = AuditLog(
-        user_id=user_id,
-        team_id=team_id,
-        action=action,
-        resource_type=resource_type,
-        resource_id=resource_id,
-        ip_address=request.remote_addr,
-        user_agent=request.user_agent.string[:500] if request.user_agent else None,
-        old_values=old_values,
-        new_values=new_values
-    )
-    db.session.add(audit)
-
-
-def log_activity(team_id: int, user_id: int, activity_type: str, title: str,
-                 description: str = None, related_type: str = None, related_id: int = None):
-    """Log a team activity"""
-    activity = TeamActivity(
-        team_id=team_id,
-        user_id=user_id,
-        activity_type=activity_type,
-        title=title,
-        description=description,
-        related_type=related_type,
-        related_id=related_id
-    )
-    db.session.add(activity)
-
-
-def create_notification(user_id: int, type: str, title: str, message: str = None,
-                       action_url: str = None, related_type: str = None, related_id: int = None):
-    """Create a notification for a user"""
-    notification = Notification(
-        user_id=user_id,
-        type=type,
-        title=title,
-        message=message,
-        action_url=action_url,
-        related_type=related_type,
-        related_id=related_id
-    )
-    db.session.add(notification)
 
 
 def slugify(text: str) -> str:
@@ -82,25 +36,6 @@ def slugify(text: str) -> str:
     slug = re.sub(r'[^\w\s-]', '', text.lower())
     slug = re.sub(r'[\s_-]+', '-', slug)
     return slug.strip('-')
-
-
-def check_team_permission(team: Team, user_id: int, permission: str) -> bool:
-    """Check if user has specific permission in team"""
-    member = TeamMember.query.filter_by(team_id=team.id, user_id=user_id, is_active=True).first()
-    if not member:
-        return False
-
-    if member.role in ['owner', 'admin']:
-        return True
-
-    permission_map = {
-        'invite': member.can_invite,
-        'manage_repos': member.can_manage_repos,
-        'manage_rules': member.can_manage_rules,
-        'view_analytics': member.can_view_analytics
-    }
-
-    return permission_map.get(permission, False)
 
 
 @teams_bp.route('/teams', methods=['POST'])

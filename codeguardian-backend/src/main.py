@@ -28,6 +28,7 @@ from src.routes.dashboards import dashboards_bp
 from src.routes.mentor import mentor_bp
 from src.routes.predictor import predictor_bp
 from src.routes.hooks import hooks_bp
+from src.routes.productivity import productivity_bp
 from src.config import get_config
 from src.middleware import init_rate_limiting, init_csrf_protection
 
@@ -83,6 +84,7 @@ app.register_blueprint(dashboards_bp, url_prefix='/api')
 app.register_blueprint(mentor_bp, url_prefix='/api')
 app.register_blueprint(predictor_bp, url_prefix='/api')
 app.register_blueprint(hooks_bp, url_prefix='/api')
+app.register_blueprint(productivity_bp, url_prefix='/api')
 
 # Import all models to ensure they're created
 from src.models.repository import Repository, PullRequest
@@ -95,9 +97,52 @@ from src.models.collaboration import (
 from src.routes.mentor import DeveloperProfile, LearningRecommendation, SkillProgress
 from src.routes.predictor import PredictionRecord
 from src.routes.hooks import HookConfiguration, HookExecution
+from src.routes.productivity import AutoFixHistory, IgnoreRule, QuickAction
 
 with app.app_context():
     db.create_all()
+
+
+# Health check endpoints for monitoring
+@app.route('/health')
+def health_check():
+    """
+    Basic health check endpoint.
+    Returns 200 if the service is running.
+    """
+    return {'status': 'healthy', 'service': 'codeguardian-api'}, 200
+
+
+@app.route('/health/ready')
+def readiness_check():
+    """
+    Readiness check - verifies database connectivity.
+    Returns 200 if service is ready to accept traffic.
+    """
+    try:
+        # Test database connection
+        db.session.execute(db.text('SELECT 1'))
+        return {
+            'status': 'ready',
+            'database': 'connected',
+            'service': 'codeguardian-api'
+        }, 200
+    except Exception as e:
+        return {
+            'status': 'not_ready',
+            'database': 'disconnected',
+            'error': str(e)
+        }, 503
+
+
+@app.route('/health/live')
+def liveness_check():
+    """
+    Liveness check for container orchestration.
+    Returns 200 if the process is alive.
+    """
+    return {'status': 'alive'}, 200
+
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')

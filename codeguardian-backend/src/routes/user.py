@@ -231,26 +231,37 @@ def get_subscription():
 def get_user_stats():
     """Get user statistics"""
     try:
+        from sqlalchemy import func
+        from src.models.repository import Repository
+        from src.models.review import Review
+
         user = request.current_user
 
-        # Count user's repositories and reviews
-        repo_count = len(user.repositories)
-        review_count = len(user.reviews)
+        # Use efficient count queries instead of loading all records
+        repo_count = db.session.query(func.count(Repository.id)).filter_by(
+            owner_id=user.id
+        ).scalar() or 0
 
-        # Calculate average review scores if reviews exist
-        avg_score = 0
-        if review_count > 0:
-            total_score = sum(review.overall_score for review in user.reviews if review.overall_score)
-            avg_score = total_score / review_count if review_count > 0 else 0
+        review_count = db.session.query(func.count(Review.id)).filter_by(
+            user_id=user.id
+        ).scalar() or 0
+
+        # Calculate average review score using SQL aggregation
+        avg_score = db.session.query(func.avg(Review.overall_score)).filter(
+            Review.user_id == user.id,
+            Review.overall_score.isnot(None)
+        ).scalar() or 0
 
         return jsonify({
             'success': True,
-            'stats': {
-                'total_repositories': repo_count,
-                'total_reviews': review_count,
-                'average_review_score': round(avg_score, 2),
-                'account_created': user.created_at.isoformat(),
-                'last_login': user.last_login.isoformat() if user.last_login else None
+            'data': {
+                'stats': {
+                    'total_repositories': repo_count,
+                    'total_reviews': review_count,
+                    'average_review_score': round(float(avg_score), 2),
+                    'account_created': user.created_at.isoformat(),
+                    'last_login': user.last_login.isoformat() if user.last_login else None
+                }
             }
         }), 200
     except Exception as e:
