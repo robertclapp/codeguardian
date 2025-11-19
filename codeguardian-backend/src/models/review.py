@@ -4,6 +4,8 @@ from src.database import db
 
 class Review(db.Model):
     """Review model for AI-generated code reviews"""
+    __tablename__ = 'reviews'
+
     id = db.Column(db.Integer, primary_key=True)
     
     # Review metadata

@@ -4,6 +4,8 @@ from src.database import db
 
 class Repository(db.Model):
     """Repository model for tracking connected repositories"""
+    __tablename__ = 'repositories'
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     full_name = db.Column(db.String(200), nullable=False)  # owner/repo-name

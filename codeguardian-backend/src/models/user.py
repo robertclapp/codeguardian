@@ -5,9 +5,12 @@ from src.database import db
 
 class User(db.Model):
     """User model for CodeGuardian platform"""
+    __tablename__ = 'users'
+
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
+    password_hash = db.Column(db.String(255), nullable=True)
     github_id = db.Column(db.String(50), unique=True, nullable=True)
     gitlab_id = db.Column(db.String(50), unique=True, nullable=True)
     avatar_url = db.Column(db.String(255), nullable=True)
