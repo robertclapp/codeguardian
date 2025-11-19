@@ -29,6 +29,12 @@ from src.routes.mentor import mentor_bp
 from src.routes.predictor import predictor_bp
 from src.routes.hooks import hooks_bp
 from src.routes.productivity import productivity_bp
+from src.routes.scheduler import scheduler_bp
+from src.routes.templates import templates_bp
+from src.routes.social import social_bp
+from src.routes.comparisons import comparisons_bp
+from src.routes.summaries import summaries_bp
+from src.routes.suggestions import suggestions_bp
 from src.config import get_config
 from src.middleware import init_rate_limiting, init_csrf_protection
 
@@ -85,6 +91,12 @@ app.register_blueprint(mentor_bp, url_prefix='/api')
 app.register_blueprint(predictor_bp, url_prefix='/api')
 app.register_blueprint(hooks_bp, url_prefix='/api')
 app.register_blueprint(productivity_bp, url_prefix='/api')
+app.register_blueprint(scheduler_bp, url_prefix='/api')
+app.register_blueprint(templates_bp, url_prefix='/api')
+app.register_blueprint(social_bp, url_prefix='/api')
+app.register_blueprint(comparisons_bp, url_prefix='/api')
+app.register_blueprint(summaries_bp, url_prefix='/api')
+app.register_blueprint(suggestions_bp, url_prefix='/api')
 
 # Import all models to ensure they're created
 from src.models.repository import Repository, PullRequest
@@ -98,6 +110,12 @@ from src.routes.mentor import DeveloperProfile, LearningRecommendation, SkillPro
 from src.routes.predictor import PredictionRecord
 from src.routes.hooks import HookConfiguration, HookExecution
 from src.routes.productivity import AutoFixHistory, IgnoreRule, QuickAction
+from src.routes.scheduler import ScheduledReview, ScheduleExecution
+from src.routes.templates import ReviewTemplate, TemplateUsage
+from src.routes.social import ReviewReaction, Kudos, CodeComment, PairReviewSession
+from src.routes.comparisons import QualityAlert
+from src.routes.summaries import GeneratedSummary
+from src.routes.suggestions import ReviewCard, CodeSuggestion
 
 with app.app_context():
     db.create_all()
