@@ -35,6 +35,10 @@ from src.routes.social import social_bp
 from src.routes.comparisons import comparisons_bp
 from src.routes.summaries import summaries_bp
 from src.routes.suggestions import suggestions_bp
+from src.routes.preferences import preferences_bp
+from src.routes.focus import focus_bp
+from src.routes.standards import standards_bp
+from src.routes.dependencies import dependencies_bp
 from src.config import get_config
 from src.middleware import init_rate_limiting, init_csrf_protection
 
@@ -97,6 +101,10 @@ app.register_blueprint(social_bp, url_prefix='/api')
 app.register_blueprint(comparisons_bp, url_prefix='/api')
 app.register_blueprint(summaries_bp, url_prefix='/api')
 app.register_blueprint(suggestions_bp, url_prefix='/api')
+app.register_blueprint(preferences_bp, url_prefix='/api')
+app.register_blueprint(focus_bp, url_prefix='/api')
+app.register_blueprint(standards_bp, url_prefix='/api')
+app.register_blueprint(dependencies_bp, url_prefix='/api')
 
 # Import all models to ensure they're created
 from src.models.repository import Repository, PullRequest
@@ -116,6 +124,10 @@ from src.routes.social import ReviewReaction, Kudos, CodeComment, PairReviewSess
 from src.routes.comparisons import QualityAlert
 from src.routes.summaries import GeneratedSummary
 from src.routes.suggestions import ReviewCard, CodeSuggestion
+from src.routes.preferences import UserPreferences, PreferenceHistory
+from src.routes.focus import FocusSession, FocusStreak
+from src.routes.standards import CodeStandard, StandardViolation, ComplianceReport
+from src.routes.dependencies import Dependency, Vulnerability, DependencyScan
 
 with app.app_context():
     db.create_all()

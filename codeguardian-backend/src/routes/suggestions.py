@@ -392,11 +392,15 @@ def get_embed_code(card_id: int):
     if not card:
         return APIResponse.not_found('Card', card_id)
 
-    embed_code = f'<iframe src="https://codeguardian.io/embed/{card.share_code}" width="400" height="300" frameborder="0"></iframe>'
+    # HTML escape share_code to prevent XSS
+    from markupsafe import escape
+    safe_share_code = escape(card.share_code)
+
+    embed_code = f'<iframe src="https://codeguardian.io/embed/{safe_share_code}" width="400" height="300" frameborder="0"></iframe>'
 
     return APIResponse.success({
         'embed_code': embed_code,
-        'share_url': f'/card/{card.share_code}'
+        'share_url': f'/card/{safe_share_code}'
     })
 
 

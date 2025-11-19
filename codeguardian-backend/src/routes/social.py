@@ -426,8 +426,11 @@ def search_comments():
     if len(query_text) < 3:
         return APIResponse.validation_error("Search query must be at least 3 characters")
 
+    # Sanitize query to prevent SQL injection via LIKE wildcards
+    sanitized_query = query_text.replace('%', r'\%').replace('_', r'\_')
+
     comments = CodeComment.query.filter(
-        CodeComment.content.ilike(f'%{query_text}%')
+        CodeComment.content.ilike(f'%{sanitized_query}%', escape='\\')
     ).limit(50).all()
 
     return APIResponse.success([c.to_dict() for c in comments])
