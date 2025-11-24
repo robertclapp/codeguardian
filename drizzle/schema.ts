@@ -26,7 +26,118 @@ export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
 /**
- * Companies table - represents organizations using the platform
+ * Programs table - Represents different organizational programs
+ * (e.g., Peer Support, Independent Living Skills Training, etc.)
+ */
+export const programs = mysqlTable("programs", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  isActive: int("isActive").default(1).notNull(),
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Program = typeof programs.$inferSelect;
+export type InsertProgram = typeof programs.$inferInsert;
+
+/**
+ * Pipeline stages - Custom stages for each program's onboarding process
+ */
+export const pipelineStages = mysqlTable("pipelineStages", {
+  id: int("id").autoincrement().primaryKey(),
+  programId: int("programId").notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  order: int("order").notNull(), // Display order
+  autoAdvance: int("autoAdvance").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type PipelineStage = typeof pipelineStages.$inferSelect;
+export type InsertPipelineStage = typeof pipelineStages.$inferInsert;
+
+/**
+ * Stage requirements - Documents, training, or tasks required for each stage
+ */
+export const stageRequirements = mysqlTable("stageRequirements", {
+  id: int("id").autoincrement().primaryKey(),
+  stageId: int("stageId").notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  type: mysqlEnum("type", ["document", "training", "approval", "task"]).notNull(),
+  isRequired: int("isRequired").default(1).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type StageRequirement = typeof stageRequirements.$inferSelect;
+export type InsertStageRequirement = typeof stageRequirements.$inferInsert;
+
+/**
+ * Documents - Uploaded files for candidates/participants
+ */
+export const documents = mysqlTable("documents", {
+  id: int("id").autoincrement().primaryKey(),
+  candidateId: int("candidateId").notNull(),
+  requirementId: int("requirementId"), // Optional link to specific requirement
+  name: varchar("name", { length: 255 }).notNull(),
+  fileUrl: text("fileUrl").notNull(),
+  fileKey: varchar("fileKey", { length: 512 }).notNull(),
+  mimeType: varchar("mimeType", { length: 100 }),
+  fileSize: int("fileSize"), // in bytes
+  status: mysqlEnum("status", ["pending", "approved", "rejected"]).default("pending").notNull(),
+  uploadedBy: int("uploadedBy").notNull(),
+  reviewedBy: int("reviewedBy"),
+  reviewedAt: timestamp("reviewedAt"),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Document = typeof documents.$inferSelect;
+export type InsertDocument = typeof documents.$inferInsert;
+
+/**
+ * Participant progress - Tracks individuals through pipeline stages
+ */
+export const participantProgress = mysqlTable("participantProgress", {
+  id: int("id").autoincrement().primaryKey(),
+  candidateId: int("candidateId").notNull(),
+  programId: int("programId").notNull(),
+  currentStageId: int("currentStageId").notNull(),
+  startedAt: timestamp("startedAt").defaultNow().notNull(),
+  completedAt: timestamp("completedAt"),
+  status: mysqlEnum("status", ["active", "completed", "withdrawn", "on_hold"]).default("active").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ParticipantProgress = typeof participantProgress.$inferSelect;
+export type InsertParticipantProgress = typeof participantProgress.$inferInsert;
+
+/**
+ * Requirement completion - Tracks completion of individual requirements
+ */
+export const requirementCompletions = mysqlTable("requirementCompletions", {
+  id: int("id").autoincrement().primaryKey(),
+  participantProgressId: int("participantProgressId").notNull(),
+  requirementId: int("requirementId").notNull(),
+  documentId: int("documentId"), // If requirement is document-based
+  completedAt: timestamp("completedAt"),
+  completedBy: int("completedBy"),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type RequirementCompletion = typeof requirementCompletions.$inferSelect;
+export type InsertRequirementCompletion = typeof requirementCompletions.$inferInsert;
+
+/**
+ * Companies - Represents organizations using the platform
  */
 export const companies = mysqlTable("companies", {
   id: int("id").autoincrement().primaryKey(),

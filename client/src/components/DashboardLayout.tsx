@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/sidebar";
 import { APP_LOGO, APP_TITLE, getLoginUrl } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { LayoutDashboard, LogOut, PanelLeft, Users, Briefcase, MessageSquare } from "lucide-react";
+import { LayoutDashboard, LogOut, PanelLeft, Users, Briefcase, MessageSquare, Settings } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
@@ -31,6 +31,7 @@ const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
   { icon: Briefcase, label: "Jobs", path: "/jobs" },
   { icon: Users, label: "Candidates", path: "/candidates" },
+  { icon: Settings, label: "Programs", path: "/programs" },
   { icon: MessageSquare, label: "AI Assistant", path: "/assistant" },
 ];
 

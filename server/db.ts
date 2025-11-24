@@ -12,7 +12,19 @@ import {
   notes,
   InsertNote,
   activities,
-  InsertActivity
+  InsertActivity,
+  programs,
+  InsertProgram,
+  pipelineStages,
+  InsertPipelineStage,
+  stageRequirements,
+  InsertStageRequirement,
+  documents,
+  InsertDocument,
+  participantProgress,
+  InsertParticipantProgress,
+  requirementCompletions,
+  InsertRequirementCompletion
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -247,4 +259,203 @@ export async function getActivitiesByCandidate(candidateId: number) {
   return db.select().from(activities)
     .where(eq(activities.candidateId, candidateId))
     .orderBy(activities.createdAt);
+}
+
+
+// ========================================
+// Programs Management
+// ========================================
+
+export async function createProgram(program: InsertProgram) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(programs).values(program);
+  const insertedId = Number(result[0].insertId);
+  return await getProgramById(insertedId);
+}
+
+export async function getProgramById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  
+  const result = await db.select().from(programs).where(eq(programs.id, id)).limit(1);
+  return result[0];
+}
+
+export async function listPrograms() {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return await db.select().from(programs).orderBy(programs.createdAt);
+}
+
+export async function updateProgram(id: number, updates: Partial<InsertProgram>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.update(programs).set(updates).where(eq(programs.id, id));
+  return await getProgramById(id);
+}
+
+export async function deleteProgram(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.delete(programs).where(eq(programs.id, id));
+}
+
+// ========================================
+// Pipeline Stages Management
+// ========================================
+
+export async function createPipelineStage(stage: InsertPipelineStage) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(pipelineStages).values(stage);
+  const insertedId = Number(result[0].insertId);
+  const inserted = await db.select().from(pipelineStages).where(eq(pipelineStages.id, insertedId)).limit(1);
+  return inserted[0];
+}
+
+export async function getProgramStages(programId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return await db.select().from(pipelineStages)
+    .where(eq(pipelineStages.programId, programId))
+    .orderBy(pipelineStages.order);
+}
+
+export async function updatePipelineStage(id: number, updates: Partial<InsertPipelineStage>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.update(pipelineStages).set(updates).where(eq(pipelineStages.id, id));
+  const updated = await db.select().from(pipelineStages).where(eq(pipelineStages.id, id)).limit(1);
+  return updated[0];
+}
+
+export async function deletePipelineStage(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.delete(pipelineStages).where(eq(pipelineStages.id, id));
+}
+
+// ========================================
+// Stage Requirements Management
+// ========================================
+
+export async function createStageRequirement(requirement: InsertStageRequirement) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(stageRequirements).values(requirement);
+  const insertedId = Number(result[0].insertId);
+  const inserted = await db.select().from(stageRequirements).where(eq(stageRequirements.id, insertedId)).limit(1);
+  return inserted[0];
+}
+
+export async function getStageRequirements(stageId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return await db.select().from(stageRequirements)
+    .where(eq(stageRequirements.stageId, stageId));
+}
+
+export async function updateStageRequirement(id: number, updates: Partial<InsertStageRequirement>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.update(stageRequirements).set(updates).where(eq(stageRequirements.id, id));
+  const updated = await db.select().from(stageRequirements).where(eq(stageRequirements.id, id)).limit(1);
+  return updated[0];
+}
+
+export async function deleteStageRequirement(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.delete(stageRequirements).where(eq(stageRequirements.id, id));
+}
+
+// ========================================
+// Document Management
+// ========================================
+
+export async function createDocument(document: InsertDocument) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(documents).values(document);
+  const insertedId = Number(result[0].insertId);
+  const inserted = await db.select().from(documents).where(eq(documents.id, insertedId)).limit(1);
+  return inserted[0];
+}
+
+export async function getCandidateDocuments(candidateId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return await db.select().from(documents)
+    .where(eq(documents.candidateId, candidateId))
+    .orderBy(documents.createdAt);
+}
+
+export async function updateDocumentStatus(id: number, status: "pending" | "approved" | "rejected", reviewedBy: number, notes?: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.update(documents).set({
+    status,
+    reviewedBy,
+    reviewedAt: new Date(),
+    notes,
+  }).where(eq(documents.id, id));
+  
+  const updated = await db.select().from(documents).where(eq(documents.id, id)).limit(1);
+  return updated[0];
+}
+
+// ========================================
+// Participant Progress Management
+// ========================================
+
+export async function createParticipantProgress(progress: InsertParticipantProgress) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(participantProgress).values(progress);
+  const insertedId = Number(result[0].insertId);
+  const inserted = await db.select().from(participantProgress).where(eq(participantProgress.id, insertedId)).limit(1);
+  return inserted[0];
+}
+
+export async function getParticipantProgress(candidateId: number, programId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  
+  const { and } = await import("drizzle-orm");
+  const result = await db.select().from(participantProgress)
+    .where(and(
+      eq(participantProgress.candidateId, candidateId),
+      eq(participantProgress.programId, programId)
+    ))
+    .limit(1);
+  return result[0];
+}
+
+export async function updateParticipantStage(id: number, stageId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.update(participantProgress).set({
+    currentStageId: stageId,
+  }).where(eq(participantProgress.id, id));
+  
+  const updated = await db.select().from(participantProgress).where(eq(participantProgress.id, id)).limit(1);
+  return updated[0];
 }

@@ -99,15 +99,42 @@
 - [x] CI/CD pipeline configuration
 
 ## Configurable Pipeline System
-- [ ] Add programs table (base org + additional programs)
-- [ ] Add pipeline_templates table (custom stages per program)
-- [ ] Add stage_requirements table (documents, training, compliance per stage)
-- [ ] Add participant_progress table (track individuals through stages)
-- [ ] Create program configuration UI
-- [ ] Build stage template editor
-- [ ] Implement requirement checklist system
+- [x] Add programs table (base org + additional programs)
+- [x] Add pipeline_stages table (custom stages per program)
+- [x] Add stage_requirements table (documents, training, compliance per stage)
+- [x] Add participant_progress table (track individuals through stages)
+- [x] Add documents table for uploaded files
+- [x] Add requirement_completions table for tracking
+- [x] Create programs API (CRUD operations)
+- [x] Create pipeline stages API
+- [x] Create requirements tracking API
+- [x] Create document management API
+- [x] Create participant progress tracking API
+- [x] Build program management UI
+- [x] Build stage template editor (pipeline stages UI)
+- [x] Implement requirement checklist system (stage requirements UI)
+- [x] Add Programs menu item to dashboard navigation
 - [ ] Add progress tracking dashboard
 - [ ] Create compliance reporting
-- [ ] Add document upload per stage requirement
 - [ ] Implement automated stage progression rules
 - [ ] Add notification system for stage transitions
+
+## Job Creation Wizard
+- [ ] Create multi-step wizard component
+- [ ] Step 1: Basic job information
+- [ ] Step 2: AI job description generator
+- [ ] Step 3: Requirements and qualifications
+- [ ] Step 4: Accessibility checklist
+- [ ] Step 5: Preview and publish
+- [ ] Save draft functionality
+- [ ] AI assistance throughout wizard
+- [ ] Accessibility validation
+
+## Document Management
+- [ ] Document upload API with S3 integration
+- [ ] Document requirements per pipeline stage
+- [ ] Upload tracking and status
+- [ ] Automated reminders for missing documents
+- [ ] Document viewer component
+- [ ] Document approval workflow
+- [ ] Compliance document templates

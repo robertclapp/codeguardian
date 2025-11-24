@@ -7,14 +7,20 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import Jobs from "./pages/Jobs";
+import Programs from "./pages/Programs";
+import PipelineStages from "./pages/PipelineStages";
+import StageRequirements from "./pages/StageRequirements";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
       <Route path={"/"} component={Home} />
-      <Route path="/dashboard" component={Dashboard} />
-      <Route path="/jobs" component={Jobs} />
+      <Route path={"/dashboard"} component={Dashboard} />
+      <Route path={"/jobs"} component={Jobs} />
+      <Route path={"/programs"} component={Programs} />
+      <Route path={"/programs/:id/stages"} component={PipelineStages} />
+      <Route path={"/programs/:programId/stages/:stageId/requirements"} component={StageRequirements} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
