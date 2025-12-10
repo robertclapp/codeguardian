@@ -6,10 +6,11 @@
  * - Stage transition notifications
  * - Pending approval reminders
  * 
- * Uses the built-in Manus notification system for MVP
- * Can be extended to use SendGrid, AWS SES, or other email providers
+ * Uses production email service (SendGrid, AWS SES, Mailgun)
+ * Falls back to Manus notifications if not configured
  */
 
+import { sendEmail, type EmailOptions } from "./productionEmail";
 import { notifyOwner } from "../_core/notification";
 
 /**
@@ -135,36 +136,79 @@ ${data.organizationName}
 }
 
 /**
- * Send email notification
- * 
- * For MVP, this uses the built-in notifyOwner function
- * In production, this should be extended to use a proper email service
+ * Send email notification using production email service
  */
 export async function sendEmailNotification(
   notification: EmailNotificationData
 ): Promise<boolean> {
   try {
-    const content = generateEmailContent(notification.template, notification.data);
+    const textContent = generateEmailContent(notification.template, notification.data);
     
-    // For MVP, notify the owner (admin) about the notification
-    // In production, this would send actual emails to recipients
-    const success = await notifyOwner({
+    // Generate HTML version of email
+    const htmlContent = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+    .header { background: #2563eb; color: white; padding: 20px; text-align: center; }
+    .content { background: #f9fafb; padding: 30px; }
+    .footer { text-align: center; padding: 20px; color: #666; font-size: 12px; }
+    ul { padding-left: 20px; }
+    a { color: #2563eb; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>${notification.subject}</h1>
+    </div>
+    <div class="content">
+      ${textContent.replace(/\n/g, '<br>')}
+    </div>
+    <div class="footer">
+      <p>This is an automated message from your HR platform.</p>
+    </div>
+  </div>
+</body>
+</html>
+    `.trim();
+    
+    // Try production email service first
+    const emailSuccess = await sendEmail({
+      to: notification.recipientEmail,
+      subject: notification.subject,
+      html: htmlContent,
+      text: textContent,
+    });
+
+    if (emailSuccess) {
+      console.log(`[Email] Notification sent: ${notification.subject} to ${notification.recipientEmail}`);
+      return true;
+    }
+    
+    // Fallback to Manus notifications if email fails
+    console.warn(`[Email] Production email failed, falling back to Manus notifications`);
+    const fallbackSuccess = await notifyOwner({
       title: `[Email Notification] ${notification.subject}`,
       content: `
 To: ${notification.recipientName} (${notification.recipientEmail})
 Template: ${notification.template}
 
-${content}
+${textContent}
       `.trim(),
     });
 
-    if (success) {
-      console.log(`[Email] Notification sent: ${notification.subject} to ${notification.recipientEmail}`);
+    if (fallbackSuccess) {
+      console.log(`[Email] Fallback notification sent via Manus`);
     } else {
-      console.warn(`[Email] Failed to send notification: ${notification.subject}`);
+      console.error(`[Email] Both email and fallback failed`);
     }
 
-    return success;
+    return fallbackSuccess;
   } catch (error) {
     console.error("[Email] Error sending notification:", error);
     return false;

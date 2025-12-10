@@ -14,6 +14,7 @@ import CreateJob from "./pages/CreateJob";
 import Documents from "./pages/Documents";
 import DocumentApproval from "./pages/DocumentApproval";
 import Progress from "./pages/Progress";
+import Compliance from "./pages/Compliance";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -29,6 +30,7 @@ function Router() {
       <Route path={"/documents"} component={Documents} />
       <Route path={"/documents/approval"} component={DocumentApproval} />
       <Route path={"/progress"} component={Progress} />
+      <Route path={"/compliance"} component={Compliance} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

@@ -604,3 +604,93 @@ export async function markRequirementComplete(candidateId: number, requirementId
   console.log(`[Database] Marking requirement ${requirementId} complete for candidate ${candidateId}`);
   // TODO: Implement full logic when participant/candidate linking is established
 }
+
+// ========================================
+// Additional Helper Functions for Compliance Reporting
+// ========================================
+
+export async function getAllParticipants() {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return await db.select().from(participantProgress);
+}
+
+export async function getStagesByProgramId(programId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return await db.select().from(pipelineStages)
+    .where(eq(pipelineStages.programId, programId))
+    .orderBy(pipelineStages.order);
+}
+
+export async function getParticipantById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  
+  const result = await db.select().from(participantProgress)
+    .where(eq(participantProgress.id, id))
+    .limit(1);
+  return result[0];
+}
+
+export async function getDocumentStats() {
+  const db = await getDb();
+  if (!db) return {
+    totalDocuments: 0,
+    pendingDocuments: 0,
+    approvedDocuments: 0,
+    rejectedDocuments: 0,
+  };
+  
+  const allDocs = await db.select().from(documents);
+  
+  return {
+    totalDocuments: allDocs.length,
+    pendingDocuments: allDocs.filter(d => d.status === "pending").length,
+    approvedDocuments: allDocs.filter(d => d.status === "approved").length,
+    rejectedDocuments: allDocs.filter(d => d.status === "rejected").length,
+  };
+}
+
+export async function getProgressRecordsByStageId(stageId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  // This is a simplified implementation
+  // In a full implementation, you would track stage entry/exit times
+  return await db.select().from(participantProgress)
+    .where(eq(participantProgress.currentStageId, stageId));
+}
+
+export async function getDocumentsByCandidateId(candidateId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return await db.select().from(documents)
+    .where(eq(documents.candidateId, candidateId));
+}
+
+export async function getPendingDocuments() {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return await db.select().from(documents)
+    .where(eq(documents.status, "pending"));
+}
+
+export async function getParticipantsByProgramId(programId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return await db.select().from(participantProgress)
+    .where(eq(participantProgress.programId, programId));
+}
+
+export async function getPrograms() {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return await db.select().from(programs);
+}
