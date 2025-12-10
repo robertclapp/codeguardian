@@ -145,6 +145,7 @@ export const companies = mysqlTable("companies", {
   industry: varchar("industry", { length: 100 }),
   size: varchar("size", { length: 50 }), // e.g., "10-50", "51-200"
   website: varchar("website", { length: 255 }),
+  createdBy: int("createdBy").notNull(), // User who created this company
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });

@@ -1,0 +1,1 @@
+ALTER TABLE `companies` ADD `createdBy` int NOT NULL;

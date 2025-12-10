@@ -119,6 +119,92 @@
 - [ ] Implement automated stage progression rules
 - [ ] Add notification system for stage transitions
 
+## Code Review & Refactoring
+- [x] Review all backend routers for error handling
+- [x] Review database queries for optimization
+- [x] Check for SQL injection vulnerabilities
+- [x] Review frontend components for accessibility
+- [x] Check for memory leaks and performance issues
+- [x] Validate input sanitization
+- [x] Review authentication and authorization logic
+- [x] Check for race conditions in mutations
+- [x] Refactor duplicate code into reusable functions
+- [x] Add comprehensive error messages
+- [x] Review TypeScript types for correctness
+- [x] Check for unused imports and dead code
+- [x] Document all findings in CODE_REVIEW_FINDINGS.md
+
+## Production-Grade Refactoring Tasks
+
+### Security Hardening
+- [ ] Add input validation to all database functions
+- [x] Implement authorization checks in jobsRouter
+- [x] Implement authorization checks in candidatesRouter
+- [ ] Implement authorization checks in programsRouter
+- [ ] Implement authorization checks in aiRouter
+- [ ] Implement authorization checks in assistantRouter
+- [x] Fix race condition in company creation
+- [x] Remove hardcoded company ID
+- [x] Add HTML sanitization for user inputs
+- [x] Add file upload validation (size, type)
+- [x] Add duplicate application prevention
+- [ ] Implement rate limiting on public endpoints
+- [ ] Add environment variable validation
+- [ ] Configure CORS properly
+- [ ] Add Content Security Policy headers
+- [ ] Implement proper session management
+
+### Performance Optimization
+- [ ] Add database indexes (jobId, email, pipelineStage)
+- [ ] Optimize job stats query with aggregation
+- [ ] Configure database connection pooling
+- [ ] Implement route-based code splitting
+- [ ] Add React.memo for expensive components
+- [ ] Optimize bundle size
+- [ ] Add caching for frequently accessed data
+- [ ] Implement pagination for large lists
+
+### Accessibility Compliance (WCAG 2.1 AA)
+- [ ] Add ARIA labels to all icon buttons
+- [ ] Implement keyboard navigation
+- [ ] Fix color contrast issues
+- [ ] Add focus indicators
+- [ ] Add skip navigation links
+- [ ] Ensure form labels are properly associated
+- [ ] Add screen reader announcements for dynamic content
+- [ ] Test with screen readers (NVDA/JAWS)
+
+### Code Quality Improvements
+- [ ] Add comprehensive error handling to all mutations
+- [ ] Standardize error messages
+- [ ] Extract dialog components to reduce duplication
+- [ ] Replace magic numbers with named constants
+- [ ] Add JSDoc comments to all public functions
+- [ ] Fix memory leak in DashboardLayout
+- [ ] Implement optimistic updates for all mutations
+- [ ] Add loading skeletons instead of text
+- [ ] Enable TypeScript strict mode
+- [ ] Remove unused imports and dead code
+
+### Testing Infrastructure
+- [ ] Set up Vitest test environment
+- [ ] Write tests for all tRPC procedures
+- [ ] Write tests for database query functions
+- [ ] Write tests for authentication/authorization
+- [ ] Write tests for file upload functionality
+- [ ] Write frontend component tests
+- [ ] Write integration tests
+- [ ] Achieve 70%+ code coverage
+- [ ] Add test coverage reporting
+- [ ] Add pre-commit hooks for tests
+
+## Feature Roadmap Development
+- [ ] Document current feature set
+- [ ] Identify UX friction points
+- [ ] Plan performance optimizations
+- [ ] Design accessibility enhancements
+- [ ] Create phased implementation plan
+
 ## Job Creation Wizard
 - [ ] Create multi-step wizard component
 - [ ] Step 1: Basic job information
@@ -129,6 +215,7 @@
 - [ ] Save draft functionality
 - [ ] AI assistance throughout wizard
 - [ ] Accessibility validation
+- [ ] Link jobs to programs for program-specific hiring
 
 ## Document Management
 - [ ] Document upload API with S3 integration

@@ -2,6 +2,9 @@ import { z } from "zod";
 import { protectedProcedure, router } from "../_core/trpc";
 import * as db from "../db";
 import { TRPCError } from "@trpc/server";
+import { ErrorMessages } from "../errors";
+import { requireAuthorization, requireModifyPermission, requireDeletePermission } from "../authorization";
+import { sanitizeJobData, validateId } from "../validation";
 
 /**
  * Job management router
@@ -14,74 +17,132 @@ export const jobsRouter = router({
   create: protectedProcedure
     .input(
       z.object({
-        title: z.string().min(1, "Title is required"),
+        title: z.string().min(1, "Title is required").max(200),
         description: z.string().min(1, "Description is required"),
         requirements: z.string().optional(),
         location: z.string().optional(),
         employmentType: z.enum(["full-time", "part-time", "contract", "internship"]).default("full-time"),
-        salaryMin: z.number().optional(),
-        salaryMax: z.number().optional(),
+        salaryMin: z.number().nonnegative().optional(),
+        salaryMax: z.number().nonnegative().optional(),
         status: z.enum(["draft", "open", "closed", "archived"]).default("draft"),
       })
     )
     .mutation(async ({ ctx, input }) => {
-      // Get or create company for user
-      // For MVP, we'll auto-create a company based on user's email domain
-      const userEmail = ctx.user.email || "";
-      const domain = userEmail.split("@")[1] || "company.com";
-      const companyName = domain.split(".")[0];
+      try {
+        // Sanitize input data
+        const sanitized = sanitizeJobData({
+          title: input.title,
+          description: input.description,
+          requirements: input.requirements,
+          location: input.location,
+        });
 
-      // Check if user already has a company (simple approach: first job creates company)
-      const existingJobs = await db.getJobsByCompany(1); // Simplified: all users share company ID 1 for MVP
-      let companyId = 1;
-
-      if (existingJobs.length === 0) {
-        // Create company if this is the first job
-        try {
-          companyId = await db.createCompany({
-            name: companyName.charAt(0).toUpperCase() + companyName.slice(1),
-          });
-        } catch (error) {
-          // Company might already exist, use default
-          companyId = 1;
+        // Validate salary range if both provided
+        if (input.salaryMin !== undefined && input.salaryMax !== undefined) {
+          if (input.salaryMin > input.salaryMax) {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "Minimum salary cannot be greater than maximum salary",
+            });
+          }
         }
+
+        // Get or create company for user
+        let companyId: number;
+        try {
+          const userCompany = await db.getCompanyByUserId(ctx.user.id);
+          if (userCompany) {
+            companyId = userCompany.id;
+          } else {
+            // Create company from user's organization
+            const userEmail = ctx.user.email || "";
+            const domain = userEmail.split("@")[1] || "organization.org";
+            const companyName = domain.split(".")[0];
+            
+            companyId = await db.createCompany({
+              name: companyName.charAt(0).toUpperCase() + companyName.slice(1),
+              createdBy: ctx.user.id,
+            });
+          }
+        } catch (error) {
+          console.error("Company creation error:", error);
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: ErrorMessages.SERVER.DATABASE_ERROR,
+          });
+        }
+
+        const jobId = await db.createJob({
+          ...input,
+          ...sanitized,
+          companyId,
+          createdBy: ctx.user.id,
+          postedAt: input.status === "open" ? new Date() : null,
+        });
+
+        return { id: jobId };
+      } catch (error) {
+        if (error instanceof TRPCError) throw error;
+        console.error("Job creation error:", error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: ErrorMessages.SERVER.DATABASE_ERROR,
+        });
       }
-
-      const jobId = await db.createJob({
-        ...input,
-        companyId,
-        createdBy: ctx.user.id,
-        postedAt: input.status === "open" ? new Date() : null,
-      });
-
-      return { id: jobId };
     }),
 
   /**
    * Get all jobs for the current user's company
    */
   list: protectedProcedure.query(async ({ ctx }) => {
-    // Simplified: get all jobs for company ID 1 (MVP approach)
-    const jobs = await db.getJobsByCompany(1);
-    return jobs;
+    try {
+      // Get user's company
+      const userCompany = await db.getCompanyByUserId(ctx.user.id);
+      if (!userCompany) {
+        return [];
+      }
+      
+      const jobs = await db.getJobsByCompany(userCompany.id);
+      return jobs;
+    } catch (error) {
+      console.error("Job list error:", error);
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: ErrorMessages.SERVER.DATABASE_ERROR,
+      });
+    }
   }),
 
   /**
    * Get a single job by ID
    */
   getById: protectedProcedure
-    .input(z.object({ id: z.number() }))
-    .query(async ({ input }) => {
-      const job = await db.getJobById(input.id);
-      
-      if (!job) {
+    .input(z.object({ id: z.number().positive() }))
+    .query(async ({ ctx, input }) => {
+      try {
+        validateId(input.id, "Job ID");
+        
+        const job = await db.getJobById(input.id);
+        
+        if (!job) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: ErrorMessages.NOT_FOUND.JOB,
+          });
+        }
+
+        // Verify user has access to this job
+        requireAuthorization(ctx.user, job.createdBy, "job");
+
+        return job;
+      } catch (error) {
+        if (error instanceof TRPCError) throw error;
+        console.error("Job retrieval error:", error);
         throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Job not found",
+          code: "INTERNAL_SERVER_ERROR",
+          message: ErrorMessages.SERVER.DATABASE_ERROR,
         });
       }
-
-      return job;
     }),
 
   /**
@@ -90,67 +151,134 @@ export const jobsRouter = router({
   update: protectedProcedure
     .input(
       z.object({
-        id: z.number(),
-        title: z.string().min(1).optional(),
+        id: z.number().positive(),
+        title: z.string().min(1).max(200).optional(),
         description: z.string().min(1).optional(),
         requirements: z.string().optional(),
         location: z.string().optional(),
         employmentType: z.enum(["full-time", "part-time", "contract", "internship"]).optional(),
-        salaryMin: z.number().optional(),
-        salaryMax: z.number().optional(),
+        salaryMin: z.number().nonnegative().optional(),
+        salaryMax: z.number().nonnegative().optional(),
         status: z.enum(["draft", "open", "closed", "archived"]).optional(),
       })
     )
-    .mutation(async ({ input }) => {
-      const { id, ...updates } = input;
+    .mutation(async ({ ctx, input }) => {
+      try {
+        const { id, ...updates } = input;
+        validateId(id, "Job ID");
 
-      // If status is changing to "open", set postedAt
-      if (updates.status === "open") {
-        await db.updateJob(id, { ...updates, postedAt: new Date() });
-      } else if (updates.status === "closed") {
-        await db.updateJob(id, { ...updates, closedAt: new Date() });
-      } else {
-        await db.updateJob(id, updates);
+        // Check if job exists and user has permission
+        const job = await db.getJobById(id);
+        if (!job) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: ErrorMessages.NOT_FOUND.JOB,
+          });
+        }
+
+        requireModifyPermission(ctx.user, job.createdBy, "job");
+
+        // Sanitize text fields if provided
+        const sanitized: Record<string, unknown> = {};
+        if (updates.title) sanitized.title = sanitizeJobData({ title: updates.title, description: "" }).title;
+        if (updates.description) sanitized.description = sanitizeJobData({ title: "", description: updates.description }).description;
+        if (updates.requirements) sanitized.requirements = sanitizeJobData({ title: "", description: "", requirements: updates.requirements }).requirements;
+        if (updates.location) sanitized.location = sanitizeJobData({ title: "", description: "", location: updates.location }).location;
+
+        // Validate salary range if both provided
+        if (updates.salaryMin !== undefined && updates.salaryMax !== undefined) {
+          if (updates.salaryMin > updates.salaryMax) {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "Minimum salary cannot be greater than maximum salary",
+            });
+          }
+        }
+
+        const finalUpdates = { ...updates, ...sanitized };
+
+        // If status is changing to "open", set postedAt
+        if (updates.status === "open" && job.status !== "open") {
+          await db.updateJob(id, { ...finalUpdates, postedAt: new Date() });
+        } else if (updates.status === "closed" && job.status !== "closed") {
+          await db.updateJob(id, { ...finalUpdates, closedAt: new Date() });
+        } else {
+          await db.updateJob(id, finalUpdates);
+        }
+
+        return { success: true };
+      } catch (error) {
+        if (error instanceof TRPCError) throw error;
+        console.error("Job update error:", error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: ErrorMessages.SERVER.DATABASE_ERROR,
+        });
       }
-
-      return { success: true };
     }),
 
   /**
    * Delete a job posting
    */
   delete: protectedProcedure
-    .input(z.object({ id: z.number() }))
-    .mutation(async ({ input }) => {
-      await db.deleteJob(input.id);
-      return { success: true };
+    .input(z.object({ id: z.number().positive() }))
+    .mutation(async ({ ctx, input }) => {
+      try {
+        validateId(input.id, "Job ID");
+
+        // Check if job exists and user has permission
+        const job = await db.getJobById(input.id);
+        if (!job) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: ErrorMessages.NOT_FOUND.JOB,
+          });
+        }
+
+        requireDeletePermission(ctx.user, job.createdBy, "job");
+
+        await db.deleteJob(input.id);
+        return { success: true };
+      } catch (error) {
+        if (error instanceof TRPCError) throw error;
+        console.error("Job deletion error:", error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: ErrorMessages.SERVER.DATABASE_ERROR,
+        });
+      }
     }),
 
   /**
    * Get job statistics
    */
   getStats: protectedProcedure
-    .input(z.object({ jobId: z.number() }))
-    .query(async ({ input }) => {
-      const candidates = await db.getCandidatesByJob(input.jobId);
-      
-      const stats = {
-        totalApplicants: candidates.length,
-        byStage: {
-          applied: candidates.filter(c => c.pipelineStage === "applied").length,
-          screening: candidates.filter(c => c.pipelineStage === "screening").length,
-          "phone-screen": candidates.filter(c => c.pipelineStage === "phone-screen").length,
-          interview: candidates.filter(c => c.pipelineStage === "interview").length,
-          technical: candidates.filter(c => c.pipelineStage === "technical").length,
-          offer: candidates.filter(c => c.pipelineStage === "offer").length,
-          hired: candidates.filter(c => c.pipelineStage === "hired").length,
-          rejected: candidates.filter(c => c.pipelineStage === "rejected").length,
-        },
-        averageMatchScore: candidates.length > 0
-          ? candidates.reduce((sum, c) => sum + (c.matchScore || 0), 0) / candidates.length
-          : 0,
-      };
+    .input(z.object({ jobId: z.number().positive() }))
+    .query(async ({ ctx, input }) => {
+      try {
+        validateId(input.jobId, "Job ID");
 
-      return stats;
+        // Check if job exists and user has permission
+        const job = await db.getJobById(input.jobId);
+        if (!job) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: ErrorMessages.NOT_FOUND.JOB,
+          });
+        }
+
+        requireAuthorization(ctx.user, job.createdBy, "job");
+
+        // Use optimized database query for stats
+        const stats = await db.getJobStats(input.jobId);
+        return stats;
+      } catch (error) {
+        if (error instanceof TRPCError) throw error;
+        console.error("Job stats error:", error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: ErrorMessages.SERVER.DATABASE_ERROR,
+        });
+      }
     }),
 });

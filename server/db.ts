@@ -134,6 +134,15 @@ export async function getCompanyById(id: number) {
   return result[0];
 }
 
+export async function getCompanyByUserId(userId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  
+  // Find first company created by this user
+  const result = await db.select().from(companies).where(eq(companies.createdBy, userId)).limit(1);
+  return result[0];
+}
+
 // ========================================
 // Job Queries
 // ========================================
@@ -175,6 +184,55 @@ export async function deleteJob(id: number) {
   await db.delete(jobs).where(eq(jobs.id, id));
 }
 
+export async function getJobStats(jobId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const { sql, count } = await import("drizzle-orm");
+  
+  // Get candidates grouped by stage
+  const stageStats = await db
+    .select({
+      pipelineStage: candidates.pipelineStage,
+      count: count(),
+    })
+    .from(candidates)
+    .where(eq(candidates.jobId, jobId))
+    .groupBy(candidates.pipelineStage);
+  
+  // Get average match score
+  const avgResult = await db
+    .select({
+      avgMatchScore: sql<number>`AVG(${candidates.matchScore})`,
+      totalCount: count(),
+    })
+    .from(candidates)
+    .where(eq(candidates.jobId, jobId));
+  
+  const byStage: Record<string, number> = {
+    applied: 0,
+    screening: 0,
+    "phone-screen": 0,
+    interview: 0,
+    technical: 0,
+    offer: 0,
+    hired: 0,
+    rejected: 0,
+  };
+  
+  stageStats.forEach((stat) => {
+    if (stat.pipelineStage) {
+      byStage[stat.pipelineStage] = stat.count;
+    }
+  });
+  
+  return {
+    totalApplicants: avgResult[0]?.totalCount || 0,
+    byStage,
+    averageMatchScore: avgResult[0]?.avgMatchScore || 0,
+  };
+}
+
 // ========================================
 // Candidate Queries
 // ========================================
@@ -200,6 +258,19 @@ export async function getCandidatesByJob(jobId: number) {
   if (!db) return [];
   
   return db.select().from(candidates).where(eq(candidates.jobId, jobId)).orderBy(candidates.appliedAt);
+}
+
+export async function getCandidateByEmailAndJob(email: string, jobId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  
+  const { and } = await import("drizzle-orm");
+  const result = await db
+    .select()
+    .from(candidates)
+    .where(and(eq(candidates.email, email), eq(candidates.jobId, jobId)))
+    .limit(1);
+  return result[0];
 }
 
 export async function updateCandidate(id: number, updates: Partial<InsertCandidate>) {
