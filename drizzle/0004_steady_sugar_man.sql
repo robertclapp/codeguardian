@@ -1,0 +1,25 @@
+CREATE INDEX `candidates_jobId_idx` ON `candidates` (`jobId`);--> statement-breakpoint
+CREATE INDEX `candidates_email_idx` ON `candidates` (`email`);--> statement-breakpoint
+CREATE INDEX `candidates_pipelineStage_idx` ON `candidates` (`pipelineStage`);--> statement-breakpoint
+CREATE INDEX `candidates_matchScore_idx` ON `candidates` (`matchScore`);--> statement-breakpoint
+CREATE INDEX `candidates_appliedAt_idx` ON `candidates` (`appliedAt`);--> statement-breakpoint
+CREATE INDEX `companies_createdBy_idx` ON `companies` (`createdBy`);--> statement-breakpoint
+CREATE INDEX `documents_candidateId_idx` ON `documents` (`candidateId`);--> statement-breakpoint
+CREATE INDEX `documents_requirementId_idx` ON `documents` (`requirementId`);--> statement-breakpoint
+CREATE INDEX `documents_status_idx` ON `documents` (`status`);--> statement-breakpoint
+CREATE INDEX `jobs_companyId_idx` ON `jobs` (`companyId`);--> statement-breakpoint
+CREATE INDEX `jobs_status_idx` ON `jobs` (`status`);--> statement-breakpoint
+CREATE INDEX `jobs_createdBy_idx` ON `jobs` (`createdBy`);--> statement-breakpoint
+CREATE INDEX `jobs_postedAt_idx` ON `jobs` (`postedAt`);--> statement-breakpoint
+CREATE INDEX `notes_candidateId_idx` ON `notes` (`candidateId`);--> statement-breakpoint
+CREATE INDEX `notes_userId_idx` ON `notes` (`userId`);--> statement-breakpoint
+CREATE INDEX `participantProgress_candidateId_idx` ON `participantProgress` (`candidateId`);--> statement-breakpoint
+CREATE INDEX `participantProgress_programId_idx` ON `participantProgress` (`programId`);--> statement-breakpoint
+CREATE INDEX `participantProgress_status_idx` ON `participantProgress` (`status`);--> statement-breakpoint
+CREATE INDEX `pipelineStages_programId_idx` ON `pipelineStages` (`programId`);--> statement-breakpoint
+CREATE INDEX `pipelineStages_order_idx` ON `pipelineStages` (`order`);--> statement-breakpoint
+CREATE INDEX `programs_createdBy_idx` ON `programs` (`createdBy`);--> statement-breakpoint
+CREATE INDEX `programs_isActive_idx` ON `programs` (`isActive`);--> statement-breakpoint
+CREATE INDEX `requirementCompletions_participantProgressId_idx` ON `requirementCompletions` (`participantProgressId`);--> statement-breakpoint
+CREATE INDEX `requirementCompletions_requirementId_idx` ON `requirementCompletions` (`requirementId`);--> statement-breakpoint
+CREATE INDEX `stageRequirements_stageId_idx` ON `stageRequirements` (`stageId`);

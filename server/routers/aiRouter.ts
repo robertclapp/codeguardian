@@ -3,6 +3,9 @@ import { protectedProcedure, router } from "../_core/trpc";
 import { invokeLLM } from "../_core/llm";
 import * as db from "../db";
 import { TRPCError } from "@trpc/server";
+import { ErrorMessages } from "../errors";
+import { requireAuthorization } from "../authorization";
+import { sanitizeRichText, validateId } from "../validation";
 
 /**
  * AI-powered features router
@@ -16,15 +19,21 @@ export const aiRouter = router({
   generateJobDescription: protectedProcedure
     .input(
       z.object({
-        title: z.string().min(1, "Job title is required"),
-        requirements: z.string().optional(),
-        location: z.string().optional(),
+        title: z.string().min(1).max(200, "Job title is required"),
+        requirements: z.string().max(2000).optional(),
+        location: z.string().max(200).optional(),
         employmentType: z.enum(["full-time", "part-time", "contract", "internship"]).optional(),
-        companyInfo: z.string().optional(),
+        companyInfo: z.string().max(1000).optional(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
       try {
+        // Sanitize all inputs
+        const sanitizedTitle = sanitizeRichText(input.title);
+        const sanitizedRequirements = input.requirements ? sanitizeRichText(input.requirements) : undefined;
+        const sanitizedLocation = input.location ? sanitizeRichText(input.location) : undefined;
+        const sanitizedCompanyInfo = input.companyInfo ? sanitizeRichText(input.companyInfo) : undefined;
+
         const systemPrompt = `You are an expert HR professional and copywriter specializing in creating compelling job descriptions. Your job descriptions:
 - Are clear, concise, and engaging
 - Use inclusive language that appeals to diverse candidates
@@ -37,11 +46,11 @@ export const aiRouter = router({
 
         const userPrompt = `Create a professional job description for the following position:
 
-Job Title: ${input.title}
-${input.requirements ? `Requirements/Skills: ${input.requirements}` : ""}
-${input.location ? `Location: ${input.location}` : ""}
+Job Title: ${sanitizedTitle}
+${sanitizedRequirements ? `Requirements/Skills: ${sanitizedRequirements}` : ""}
+${sanitizedLocation ? `Location: ${sanitizedLocation}` : ""}
 ${input.employmentType ? `Employment Type: ${input.employmentType}` : ""}
-${input.companyInfo ? `Company Information: ${input.companyInfo}` : ""}
+${sanitizedCompanyInfo ? `Company Information: ${sanitizedCompanyInfo}` : ""}
 
 Generate a complete job description with the following sections:
 1. Job Overview (2-3 sentences)
@@ -81,22 +90,35 @@ Format the output in markdown for easy reading.`;
   calculateMatchScore: protectedProcedure
     .input(
       z.object({
-        candidateId: z.number(),
-        jobId: z.number(),
+        candidateId: z.number().positive(),
+        jobId: z.number().positive(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
       try {
+        validateId(input.candidateId, "Candidate ID");
+        validateId(input.jobId, "Job ID");
+
         // Get candidate and job details
         const candidate = await db.getCandidateById(input.candidateId);
         const job = await db.getJobById(input.jobId);
 
-        if (!candidate || !job) {
+        if (!candidate) {
           throw new TRPCError({
             code: "NOT_FOUND",
-            message: "Candidate or job not found",
+            message: ErrorMessages.NOT_FOUND.CANDIDATE,
           });
         }
+
+        if (!job) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: ErrorMessages.NOT_FOUND.JOB,
+          });
+        }
+
+        // Verify user has access to this job
+        requireAuthorization(ctx.user, job.createdBy, "job");
 
         // If no resume text, return low score
         if (!candidate.resumeText && !candidate.coverLetter) {
@@ -198,18 +220,24 @@ Provide your assessment in JSON format:
    * Batch calculate match scores for all candidates in a job
    */
   batchCalculateMatchScores: protectedProcedure
-    .input(z.object({ jobId: z.number() }))
-    .mutation(async ({ input }) => {
+    .input(z.object({ jobId: z.number().positive() }))
+    .mutation(async ({ ctx, input }) => {
       try {
-        const candidates = await db.getCandidatesByJob(input.jobId);
+        validateId(input.jobId, "Job ID");
+
         const job = await db.getJobById(input.jobId);
 
         if (!job) {
           throw new TRPCError({
             code: "NOT_FOUND",
-            message: "Job not found",
+            message: ErrorMessages.NOT_FOUND.JOB,
           });
         }
+
+        // Verify user has access to this job
+        requireAuthorization(ctx.user, job.createdBy, "job");
+
+        const candidates = await db.getCandidatesByJob(input.jobId);
 
         // Process candidates in batches to avoid rate limits
         const results = [];
@@ -292,15 +320,17 @@ Return only the match score number (0-100):`;
    * Get AI-powered insights for a candidate
    */
   getCandidateInsights: protectedProcedure
-    .input(z.object({ candidateId: z.number() }))
-    .mutation(async ({ input }) => {
+    .input(z.object({ candidateId: z.number().positive() }))
+    .mutation(async ({ ctx, input }) => {
       try {
+        validateId(input.candidateId, "Candidate ID");
+
         const candidate = await db.getCandidateById(input.candidateId);
 
         if (!candidate) {
           throw new TRPCError({
             code: "NOT_FOUND",
-            message: "Candidate not found",
+            message: ErrorMessages.NOT_FOUND.CANDIDATE,
           });
         }
 
@@ -309,9 +339,12 @@ Return only the match score number (0-100):`;
         if (!job) {
           throw new TRPCError({
             code: "NOT_FOUND",
-            message: "Associated job not found",
+            message: ErrorMessages.NOT_FOUND.JOB,
           });
         }
+
+        // Verify user has access to this job
+        requireAuthorization(ctx.user, job.createdBy, "job");
 
         const systemPrompt = `You are an expert recruiter providing insights on candidates. Be concise, actionable, and objective.`;
 

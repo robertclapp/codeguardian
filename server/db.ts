@@ -390,6 +390,14 @@ export async function createPipelineStage(stage: InsertPipelineStage) {
   return inserted[0];
 }
 
+export async function getPipelineStageById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  
+  const result = await db.select().from(pipelineStages).where(eq(pipelineStages.id, id)).limit(1);
+  return result[0];
+}
+
 export async function getProgramStages(programId: number) {
   const db = await getDb();
   if (!db) return [];
@@ -427,6 +435,14 @@ export async function createStageRequirement(requirement: InsertStageRequirement
   const insertedId = Number(result[0].insertId);
   const inserted = await db.select().from(stageRequirements).where(eq(stageRequirements.id, insertedId)).limit(1);
   return inserted[0];
+}
+
+export async function getStageRequirementById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  
+  const result = await db.select().from(stageRequirements).where(eq(stageRequirements.id, id)).limit(1);
+  return result[0];
 }
 
 export async function getStageRequirements(stageId: number) {

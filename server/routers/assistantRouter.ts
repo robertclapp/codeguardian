@@ -3,6 +3,9 @@ import { protectedProcedure, router } from "../_core/trpc";
 import { invokeLLM } from "../_core/llm";
 import * as db from "../db";
 import { TRPCError } from "@trpc/server";
+import { ErrorMessages } from "../errors";
+import { requireAuthorization } from "../authorization";
+import { sanitizeRichText, validateId } from "../validation";
 
 /**
  * AI Assistant router
@@ -16,32 +19,46 @@ export const assistantRouter = router({
   chat: protectedProcedure
     .input(
       z.object({
-        message: z.string().min(1, "Message is required"),
+        message: z.string().min(1).max(2000, "Message is required"),
         context: z
           .object({
-            currentPage: z.string().optional(),
-            jobId: z.number().optional(),
-            candidateId: z.number().optional(),
+            currentPage: z.string().max(100).optional(),
+            jobId: z.number().positive().optional(),
+            candidateId: z.number().positive().optional(),
           })
           .optional(),
         conversationHistory: z
           .array(
             z.object({
               role: z.enum(["user", "assistant"]),
-              content: z.string(),
+              content: z.string().max(2000),
             })
           )
+          .max(20)
           .optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
       try {
+        // Sanitize user message
+        const sanitizedMessage = sanitizeRichText(input.message);
+
+        // Validate IDs if provided
+        if (input.context?.jobId) {
+          validateId(input.context.jobId, "Job ID");
+        }
+        if (input.context?.candidateId) {
+          validateId(input.context.candidateId, "Candidate ID");
+        }
+
         // Build context from the current state
         let contextInfo = "";
 
         if (input.context?.jobId) {
           const job = await db.getJobById(input.context.jobId);
           if (job) {
+            // Verify user has access to this job
+            requireAuthorization(ctx.user, job.createdBy, "job");
             const candidates = await db.getCandidatesByJob(job.id);
             contextInfo += `\n\nCurrent Job Context:\n- Title: ${job.title}\n- Status: ${job.status}\n- Total Applicants: ${candidates.length}`;
           }
@@ -50,6 +67,11 @@ export const assistantRouter = router({
         if (input.context?.candidateId) {
           const candidate = await db.getCandidateById(input.context.candidateId);
           if (candidate) {
+            const job = await db.getJobById(candidate.jobId);
+            if (job) {
+              // Verify user has access to this candidate's job
+              requireAuthorization(ctx.user, job.createdBy, "job");
+            }
             contextInfo += `\n\nCurrent Candidate Context:\n- Name: ${candidate.name}\n- Stage: ${candidate.pipelineStage}\n- Match Score: ${candidate.matchScore || "Not calculated"}`;
           }
         }
@@ -92,8 +114,8 @@ ${contextInfo}`;
           messages.push(...recentHistory);
         }
 
-        // Add current user message
-        messages.push({ role: "user", content: input.message });
+        // Add current user message (sanitized)
+        messages.push({ role: "user", content: sanitizedMessage });
 
         const response = await invokeLLM({
           messages,
@@ -121,12 +143,31 @@ ${contextInfo}`;
   getSuggestedQuestions: protectedProcedure
     .input(
       z.object({
-        currentPage: z.string().optional(),
-        jobId: z.number().optional(),
-        candidateId: z.number().optional(),
+        currentPage: z.string().max(100).optional(),
+        jobId: z.number().positive().optional(),
+        candidateId: z.number().positive().optional(),
       })
     )
-    .query(async ({ input }) => {
+    .query(async ({ ctx, input }) => {
+      // Validate IDs if provided
+      if (input.jobId) {
+        validateId(input.jobId, "Job ID");
+        const job = await db.getJobById(input.jobId);
+        if (job) {
+          requireAuthorization(ctx.user, job.createdBy, "job");
+        }
+      }
+      if (input.candidateId) {
+        validateId(input.candidateId, "Candidate ID");
+        const candidate = await db.getCandidateById(input.candidateId);
+        if (candidate) {
+          const job = await db.getJobById(candidate.jobId);
+          if (job) {
+            requireAuthorization(ctx.user, job.createdBy, "job");
+          }
+        }
+      }
+
       // Return context-appropriate suggested questions
       const suggestions: string[] = [];
 

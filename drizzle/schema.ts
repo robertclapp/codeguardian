@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, index } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -37,7 +37,10 @@ export const programs = mysqlTable("programs", {
   createdBy: int("createdBy").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
+}, (table) => ({
+  createdByIdx: index("programs_createdBy_idx").on(table.createdBy),
+  isActiveIdx: index("programs_isActive_idx").on(table.isActive),
+}));
 
 export type Program = typeof programs.$inferSelect;
 export type InsertProgram = typeof programs.$inferInsert;
@@ -54,7 +57,10 @@ export const pipelineStages = mysqlTable("pipelineStages", {
   autoAdvance: int("autoAdvance").default(0).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
+}, (table) => ({
+  programIdIdx: index("pipelineStages_programId_idx").on(table.programId),
+  orderIdx: index("pipelineStages_order_idx").on(table.order),
+}));
 
 export type PipelineStage = typeof pipelineStages.$inferSelect;
 export type InsertPipelineStage = typeof pipelineStages.$inferInsert;
@@ -71,7 +77,9 @@ export const stageRequirements = mysqlTable("stageRequirements", {
   isRequired: int("isRequired").default(1).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
+}, (table) => ({
+  stageIdIdx: index("stageRequirements_stageId_idx").on(table.stageId),
+}));
 
 export type StageRequirement = typeof stageRequirements.$inferSelect;
 export type InsertStageRequirement = typeof stageRequirements.$inferInsert;
@@ -95,7 +103,11 @@ export const documents = mysqlTable("documents", {
   notes: text("notes"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
+}, (table) => ({
+  candidateIdIdx: index("documents_candidateId_idx").on(table.candidateId),
+  requirementIdIdx: index("documents_requirementId_idx").on(table.requirementId),
+  statusIdx: index("documents_status_idx").on(table.status),
+}));
 
 export type Document = typeof documents.$inferSelect;
 export type InsertDocument = typeof documents.$inferInsert;
@@ -113,7 +125,11 @@ export const participantProgress = mysqlTable("participantProgress", {
   status: mysqlEnum("status", ["active", "completed", "withdrawn", "on_hold"]).default("active").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
+}, (table) => ({
+  candidateIdIdx: index("participantProgress_candidateId_idx").on(table.candidateId),
+  programIdIdx: index("participantProgress_programId_idx").on(table.programId),
+  statusIdx: index("participantProgress_status_idx").on(table.status),
+}));
 
 export type ParticipantProgress = typeof participantProgress.$inferSelect;
 export type InsertParticipantProgress = typeof participantProgress.$inferInsert;
@@ -131,7 +147,10 @@ export const requirementCompletions = mysqlTable("requirementCompletions", {
   notes: text("notes"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
+}, (table) => ({
+  participantProgressIdIdx: index("requirementCompletions_participantProgressId_idx").on(table.participantProgressId),
+  requirementIdIdx: index("requirementCompletions_requirementId_idx").on(table.requirementId),
+}));
 
 export type RequirementCompletion = typeof requirementCompletions.$inferSelect;
 export type InsertRequirementCompletion = typeof requirementCompletions.$inferInsert;
@@ -148,7 +167,9 @@ export const companies = mysqlTable("companies", {
   createdBy: int("createdBy").notNull(), // User who created this company
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
+}, (table) => ({
+  createdByIdx: index("companies_createdBy_idx").on(table.createdBy),
+}));
 
 export type Company = typeof companies.$inferSelect;
 export type InsertCompany = typeof companies.$inferInsert;
@@ -172,7 +193,12 @@ export const jobs = mysqlTable("jobs", {
   createdBy: int("createdBy").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
+}, (table) => ({
+  companyIdIdx: index("jobs_companyId_idx").on(table.companyId),
+  statusIdx: index("jobs_status_idx").on(table.status),
+  createdByIdx: index("jobs_createdBy_idx").on(table.createdBy),
+  postedAtIdx: index("jobs_postedAt_idx").on(table.postedAt),
+}));
 
 export type Job = typeof jobs.$inferSelect;
 export type InsertJob = typeof jobs.$inferInsert;
@@ -207,7 +233,13 @@ export const candidates = mysqlTable("candidates", {
   lastActivityAt: timestamp("lastActivityAt").defaultNow().notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
+}, (table) => ({
+  jobIdIdx: index("candidates_jobId_idx").on(table.jobId),
+  emailIdx: index("candidates_email_idx").on(table.email),
+  pipelineStageIdx: index("candidates_pipelineStage_idx").on(table.pipelineStage),
+  matchScoreIdx: index("candidates_matchScore_idx").on(table.matchScore),
+  appliedAtIdx: index("candidates_appliedAt_idx").on(table.appliedAt),
+}));
 
 export type Candidate = typeof candidates.$inferSelect;
 export type InsertCandidate = typeof candidates.$inferInsert;
@@ -223,7 +255,10 @@ export const notes = mysqlTable("notes", {
   isPrivate: int("isPrivate").default(0).notNull(), // Private notes only visible to author (0 = false, 1 = true)
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-});
+}, (table) => ({
+  candidateIdIdx: index("notes_candidateId_idx").on(table.candidateId),
+  userIdIdx: index("notes_userId_idx").on(table.userId),
+}));
 
 export type Note = typeof notes.$inferSelect;
 export type InsertNote = typeof notes.$inferInsert;

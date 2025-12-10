@@ -138,11 +138,12 @@
 
 ### Security Hardening
 - [ ] Add input validation to all database functions
-- [x] Implement authorization checks in jobsRouter
-- [x] Implement authorization checks in candidatesRouter
-- [ ] Implement authorization checks in programsRouter
-- [ ] Implement authorization checks in aiRouter
-- [ ] Implement authorization checks in assistantRouter
+- [x] Implement authorization checks in jobsRouter (7 procedures)
+- [x] Implement authorization checks in candidatesRouter (7 procedures)
+- [x] Implement authorization checks in programsRouter (12 procedures)
+- [x] Implement authorization checks in aiRouter (4 procedures)
+- [x] Implement authorization checks in assistantRouter (3 procedures)
+- [x] All 33 backend procedures now have comprehensive security
 - [x] Fix race condition in company creation
 - [x] Remove hardcoded company ID
 - [x] Add HTML sanitization for user inputs
@@ -155,7 +156,17 @@
 - [ ] Implement proper session management
 
 ### Performance Optimization
-- [ ] Add database indexes (jobId, email, pipelineStage)
+- [x] Add database indexes to all frequently queried fields
+  - [x] programs: createdBy, isActive
+  - [x] pipelineStages: programId, order
+  - [x] stageRequirements: stageId
+  - [x] documents: candidateId, requirementId, status
+  - [x] participantProgress: candidateId, programId, status
+  - [x] requirementCompletions: participantProgressId, requirementId
+  - [x] companies: createdBy
+  - [x] jobs: companyId, status, createdBy, postedAt
+  - [x] candidates: jobId, email, pipelineStage, matchScore, appliedAt
+  - [x] notes: candidateId, userId
 - [ ] Optimize job stats query with aggregation
 - [ ] Configure database connection pooling
 - [ ] Implement route-based code splitting
