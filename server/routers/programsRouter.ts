@@ -615,4 +615,38 @@ export const programsRouter = router({
         }
       }),
   }),
+
+  /**
+   * Get progress statistics for participants across programs
+   */
+  getProgressStats: protectedProcedure
+    .input(
+      z.object({
+        programId: z.number().positive().optional(),
+        status: z.string().optional(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      try {
+        // For MVP, return empty data structure
+        // TODO: Implement actual database queries when participant tracking is fully built
+        // This will query participantProgress table and calculate statistics
+        return {
+          totalParticipants: 0,
+          totalPrograms: 0,
+          activeCount: 0,
+          completedCount: 0,
+          stalledCount: 0,
+          bottlenecks: [],
+          participants: [],
+        };
+      } catch (error) {
+        if (error instanceof TRPCError) throw error;
+        console.error("Progress stats error:", error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: ErrorMessages.SERVER.DATABASE_ERROR,
+        });
+      }
+    }),
 });
