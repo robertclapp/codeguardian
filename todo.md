@@ -114,10 +114,22 @@
 - [x] Build stage template editor (pipeline stages UI)
 - [x] Implement requirement checklist system (stage requirements UI)
 - [x] Add Programs menu item to dashboard navigation
-- [ ] Add progress tracking dashboard
-- [ ] Create compliance reporting
-- [ ] Implement automated stage progression rules
-- [ ] Add notification system for stage transitions
+## Participant Progress Dashboard
+- [ ] Create progress dashboard page
+- [ ] Visual progress tracker for each participant
+- [ ] Program-wise progress breakdown
+- [ ] Stage completion percentages
+- [ ] Bottleneck identification (stages with most participants)
+- [ ] Time-in-stage analytics
+- [ ] Completion rate charts
+- [ ] Export progress reports (CSV, PDF)
+- [ ] Filter by program, status, date range
+- [ ] Individual participant detail view
+- [ ] Bulk stage advancement
+- [ ] Compliance reporting for state requirements
+- [ ] Automated stage progression rules
+- [ ] Notification system for stage transitions
+- [ ] Add Progress menu to dashboard
 
 ## Code Review & Refactoring
 - [x] Review all backend routers for error handling
@@ -217,22 +229,32 @@
 - [ ] Create phased implementation plan
 
 ## Job Creation Wizard
-- [ ] Create multi-step wizard component
-- [ ] Step 1: Basic job information
-- [ ] Step 2: AI job description generator
-- [ ] Step 3: Requirements and qualifications
-- [ ] Step 4: Accessibility checklist
-- [ ] Step 5: Preview and publish
-- [ ] Save draft functionality
-- [ ] AI assistance throughout wizard
-- [ ] Accessibility validation
-- [ ] Link jobs to programs for program-specific hiring
+- [x] Create multi-step wizard component with progress indicator
+- [x] Step 1: Basic job information (title, location, employment type)
+- [x] Step 2: AI job description generator with live preview
+- [x] Step 3: Requirements and qualifications editor
+- [x] Step 4: Accessibility checklist (accommodations, accessible workplace)
+- [x] Step 5: Salary and benefits
+- [x] Step 6: Preview and publish
+- [x] Save draft functionality (local save)
+- [x] AI assistance button on description step
+- [x] Form validation for required fields
+- [ ] Link jobs to programs for program-specific hiring (future enhancement)
+- [x] Add wizard route to App.tsx
+- [ ] Add "Create Job" button navigation from dashboard
 
 ## Document Management
-- [ ] Document upload API with S3 integration
-- [ ] Document requirements per pipeline stage
-- [ ] Upload tracking and status
-- [ ] Automated reminders for missing documents
-- [ ] Document viewer component
-- [ ] Document approval workflow
+- [x] Extend documents router with upload/approval endpoints
+- [x] Document upload API with S3 integration and validation
+- [x] Link documents to stage requirements
+- [x] Document status tracking (pending, approved, rejected)
+- [x] Pending documents queue for reviewers
+- [x] Bulk document approval endpoint
+- [ ] Document list UI for candidates
+- [ ] Document upload component with drag-and-drop
+- [ ] Document approval interface for staff
+- [ ] Automated reminders for missing documents (email/notification)
+- [ ] Document viewer component (PDF, images)
+- [ ] Document history and audit trail
 - [ ] Compliance document templates
+- [ ] Add Documents menu to dashboard

@@ -10,6 +10,7 @@ import Jobs from "./pages/Jobs";
 import Programs from "./pages/Programs";
 import PipelineStages from "./pages/PipelineStages";
 import StageRequirements from "./pages/StageRequirements";
+import CreateJob from "./pages/CreateJob";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -18,6 +19,7 @@ function Router() {
       <Route path={"/"} component={Home} />
       <Route path={"/dashboard"} component={Dashboard} />
       <Route path={"/jobs"} component={Jobs} />
+      <Route path={"/jobs/create"} component={CreateJob} />
       <Route path={"/programs"} component={Programs} />
       <Route path={"/programs/:id/stages"} component={PipelineStages} />
       <Route path={"/programs/:programId/stages/:stageId/requirements"} component={StageRequirements} />

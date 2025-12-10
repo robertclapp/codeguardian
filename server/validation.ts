@@ -108,6 +108,32 @@ export function validateFileSize(
 }
 
 /**
+ * Comprehensive file upload validation
+ */
+export function validateFileUpload(
+  sizeInBytes: number,
+  mimeType: string
+): { valid: boolean; error?: string } {
+  // Check file size (max 10MB)
+  if (!validateFileSize(sizeInBytes, MAX_FILE_SIZES.DOCUMENT)) {
+    return {
+      valid: false,
+      error: `File size exceeds maximum allowed size of ${MAX_FILE_SIZES.DOCUMENT}MB`,
+    };
+  }
+
+  // Check file type
+  if (!validateFileType(mimeType, ALLOWED_DOCUMENT_TYPES)) {
+    return {
+      valid: false,
+      error: `File type "${mimeType}" is not supported`,
+    };
+  }
+
+  return { valid: true };
+}
+
+/**
  * Validate file type
  */
 export function validateFileType(

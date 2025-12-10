@@ -2,6 +2,7 @@ import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router } from "./_core/trpc";
+import { documentsRouter } from "./routers/documentsRouter";
 import { jobsRouter } from "./routers/jobsRouter";
 import { candidatesRouter } from "./routers/candidatesRouter";
 import { aiRouter } from "./routers/aiRouter";
@@ -25,9 +26,10 @@ export const appRouter = router({
   // Feature routers
   jobs: jobsRouter,
   candidates: candidatesRouter,
+  programs: programsRouter,
   ai: aiRouter,
   assistant: assistantRouter,
-  programs: programsRouter,
+  documents: documentsRouter,
 });
 
 export type AppRouter = typeof appRouter;

@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { 
   InsertUser, 
@@ -545,4 +545,62 @@ export async function updateParticipantStage(id: number, stageId: number) {
   
   const updated = await db.select().from(participantProgress).where(eq(participantProgress.id, id)).limit(1);
   return updated[0];
+}
+
+
+export async function getDocumentById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  
+  const result = await db.select().from(documents).where(eq(documents.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getDocumentsByCandidate(candidateId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return await db.select().from(documents).where(eq(documents.candidateId, candidateId));
+}
+
+export async function getPendingDocumentsByUser(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  // Get all pending documents for candidates in jobs owned by this user
+  const result = await db
+    .select({
+      id: documents.id,
+      candidateId: documents.candidateId,
+      requirementId: documents.requirementId,
+      name: documents.name,
+      fileUrl: documents.fileUrl,
+      fileSize: documents.fileSize,
+      status: documents.status,
+      createdAt: documents.createdAt,
+      candidateName: candidates.name,
+      candidateEmail: candidates.email,
+      jobTitle: jobs.title,
+    })
+    .from(documents)
+    .innerJoin(candidates, eq(documents.candidateId, candidates.id))
+    .innerJoin(jobs, eq(candidates.jobId, jobs.id))
+    .where(and(eq(documents.status, "pending"), eq(jobs.createdBy, userId)));
+  
+  return result;
+}
+
+export async function markRequirementComplete(candidateId: number, requirementId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("[Database] Cannot mark requirement complete: database not available");
+  
+  // This is a simplified implementation
+  // In a full implementation, you would:
+  // 1. Find the participantProgress record for this candidate
+  // 2. Create a requirementCompletion record
+  // 3. Check if all requirements for the current stage are complete
+  // 4. If so, advance to the next stage
+  
+  console.log(`[Database] Marking requirement ${requirementId} complete for candidate ${candidateId}`);
+  // TODO: Implement full logic when participant/candidate linking is established
 }
