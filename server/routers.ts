@@ -9,6 +9,9 @@ import { aiRouter } from "./routers/aiRouter";
 import { assistantRouter } from "./routers/assistantRouter";
 import { programsRouter } from "./routers/programsRouter";
 import { complianceRouter } from "./routers/complianceRouter";
+import { remindersRouter } from "./routers/remindersRouter";
+import { bulkImportRouter } from "./routers/bulkImportRouter";
+import { participantPortalRouter } from "./routers/participantPortalRouter";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -32,6 +35,9 @@ export const appRouter = router({
   assistant: assistantRouter,
   documents: documentsRouter,
   compliance: complianceRouter,
+  reminders: remindersRouter,
+  bulkImport: bulkImportRouter,
+  participantPortal: participantPortalRouter,
 });
 
 export type AppRouter = typeof appRouter;

@@ -694,3 +694,18 @@ export async function getPrograms() {
   
   return await db.select().from(programs);
 }
+
+export async function getAllUsers() {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return await db.select().from(users);
+}
+
+export async function getRequirementsByStageId(stageId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return await db.select().from(stageRequirements)
+    .where(eq(stageRequirements.stageId, stageId));
+}

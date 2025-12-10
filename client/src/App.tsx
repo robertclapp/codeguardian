@@ -15,6 +15,9 @@ import Documents from "./pages/Documents";
 import DocumentApproval from "./pages/DocumentApproval";
 import Progress from "./pages/Progress";
 import Compliance from "./pages/Compliance";
+import ReminderSettings from "./pages/ReminderSettings";
+import BulkImport from "./pages/BulkImport";
+import ParticipantPortal from "./pages/ParticipantPortal";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -31,6 +34,9 @@ function Router() {
       <Route path={"/documents/approval"} component={DocumentApproval} />
       <Route path={"/progress"} component={Progress} />
       <Route path={"/compliance"} component={Compliance} />
+      <Route path={"/settings/reminders"} component={ReminderSettings} />
+      <Route path={"/bulk-import"} component={BulkImport} />
+      <Route path={"/participant-portal"} component={ParticipantPortal} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

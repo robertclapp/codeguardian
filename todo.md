@@ -323,3 +323,34 @@
   - [x] Added program outcomes reporting for funders
   - [x] Implemented CSV export functionality
   - [x] Added Compliance menu to dashboard navigation
+
+## New Features - Automation & Mobile
+
+### Automated Email Reminders
+- [x] Create scheduled reminder service
+- [x] Implement daily missing document reminders
+- [x] Implement daily pending approval reminders
+- [x] Add cron job configuration
+- [x] Create reminder settings UI for admins
+- [x] Add reminder frequency controls
+- [x] Created CRON_SETUP.md documentation
+
+### Bulk Participant Import
+- [x] Create CSV import parser
+- [x] Add participant validation logic
+- [x] Implement bulk enrollment API
+- [x] Create import UI with file upload
+- [x] Add import preview and validation feedback
+- [x] Handle import errors gracefully
+- [x] Create CSV template download
+- [x] Added detailed import results table
+
+### Mobile Participant Portal
+- [x] Design mobile-responsive participant login
+- [x] Create participant dashboard (mobile-first)
+- [x] Implement mobile document upload with file size validation
+- [x] Add progress tracking visualization with stage timeline
+- [x] Create mobile-friendly document viewer
+- [x] Built responsive UI that works on all screen sizes
+- [x] Added required documents checklist
+- [x] Implemented document status tracking
