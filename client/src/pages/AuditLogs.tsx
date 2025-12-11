@@ -50,7 +50,7 @@ export default function AuditLogs() {
     return matchesSearch && matchesAction && matchesTable;
   });
 
-  const uniqueTables = [...new Set(auditLogs?.map(log => log.tableName) || [])];
+  const uniqueTables = Array.from(new Set(auditLogs?.map(log => log.tableName) || []));
 
   const handleViewSnapshot = (log: any) => {
     setSelectedLog(log);

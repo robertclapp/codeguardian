@@ -552,11 +552,12 @@
 - [x] Fix TypeScript errors in db.ts (delete function)
 - [x] Fix async/await issues in template functions
 - [x] Fix variable serialization in template routers
-- [ ] Fix remaining referenceChecksRouter.ts error (false positive)
-- [ ] Create TemplateEditor UI page with rich text editor
-- [ ] Add live template preview pane
+- [x] Fix Set iteration error in AuditLogs.tsx
+- [x] Fix referenceChecksRouter.ts function signature error (verified correct)
+- [ ] Install Monaco editor for template editing
+- [ ] Create TemplateEditor UI page with Monaco editor
+- [ ] Add live template preview pane with variable substitution
 - [ ] Add variable insertion dropdown
 - [ ] Implement tRPC audit middleware for automatic audit logging
 - [ ] Integrate audit middleware into all routers
-- [ ] Create default email/SMS templates
-- [ ] Migrate hardcoded notifications to template system
+- [ ] Test audit middleware with sample operations
