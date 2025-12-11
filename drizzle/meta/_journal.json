@@ -43,6 +43,13 @@
       "when": 1765411884382,
       "tag": "0005_careful_madripoor",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1765426751148,
+      "tag": "0006_fearless_boomerang",
+      "breakpoints": true
     }
   ]
 }

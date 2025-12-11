@@ -26,7 +26,11 @@ import {
   requirementCompletions,
   InsertRequirementCompletion,
   documentTemplates,
-  InsertDocumentTemplate
+  InsertDocumentTemplate,
+  calendarProviders,
+  InsertCalendarProvider,
+  calendarEvents,
+  InsertCalendarEvent
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -777,4 +781,108 @@ export async function deleteTemplate(id: number) {
   await db.update(documentTemplates)
     .set({ isActive: 0 })
     .where(eq(documentTemplates.id, id));
+}
+
+// ==================== Calendar Integration ====================
+
+export async function createCalendarProvider(provider: InsertCalendarProvider) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [result] = await db.insert(calendarProviders).values(provider);
+  return result.insertId;
+}
+
+export async function getCalendarProvidersByUserId(userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return await db
+    .select()
+    .from(calendarProviders)
+    .where(eq(calendarProviders.userId, userId));
+}
+
+export async function getActiveCalendarProvider(userId: number, providerType: "google" | "outlook") {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [provider] = await db
+    .select()
+    .from(calendarProviders)
+    .where(
+      and(
+        eq(calendarProviders.userId, userId),
+        eq(calendarProviders.providerType, providerType),
+        eq(calendarProviders.isActive, 1)
+      )
+    )
+    .limit(1);
+  return provider;
+}
+
+export async function updateCalendarProvider(id: number, updates: Partial<InsertCalendarProvider>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(calendarProviders).set(updates).where(eq(calendarProviders.id, id));
+}
+
+export async function deleteCalendarProvider(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(calendarProviders).where(eq(calendarProviders.id, id));
+}
+
+export async function createCalendarEvent(event: InsertCalendarEvent) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [result] = await db.insert(calendarEvents).values(event);
+  return result.insertId;
+}
+
+export async function getCalendarEventsByUserId(userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return await db
+    .select()
+    .from(calendarEvents)
+    .where(eq(calendarEvents.userId, userId))
+    .orderBy(desc(calendarEvents.startTime));
+}
+
+export async function getUpcomingCalendarEvents(userId: number, limit: number = 10) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const now = new Date();
+  return await db
+    .select()
+    .from(calendarEvents)
+    .where(
+      and(
+        eq(calendarEvents.userId, userId),
+        sql`${calendarEvents.startTime} >= ${now}`
+      )
+    )
+    .orderBy(calendarEvents.startTime)
+    .limit(limit);
+}
+
+export async function getCalendarEventById(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [event] = await db
+    .select()
+    .from(calendarEvents)
+    .where(eq(calendarEvents.id, id))
+    .limit(1);
+  return event;
+}
+
+export async function updateCalendarEvent(id: number, updates: Partial<InsertCalendarEvent>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(calendarEvents).set(updates).where(eq(calendarEvents.id, id));
+}
+
+export async function deleteCalendarEvent(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.delete(calendarEvents).where(eq(calendarEvents.id, id));
 }

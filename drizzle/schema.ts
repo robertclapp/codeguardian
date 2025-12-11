@@ -319,3 +319,61 @@ export const documentTemplates = mysqlTable("documentTemplates", {
 
 export type DocumentTemplate = typeof documentTemplates.$inferSelect;
 export type InsertDocumentTemplate = typeof documentTemplates.$inferInsert;
+
+/**
+ * Calendar Providers table - Store user calendar integration credentials
+ */
+export const calendarProviders = mysqlTable("calendarProviders", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  providerType: mysqlEnum("providerType", ["google", "outlook"]).notNull(),
+  accessToken: text("accessToken").notNull(),
+  refreshToken: text("refreshToken"),
+  expiresAt: timestamp("expiresAt"),
+  isActive: int("isActive").default(1).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  userIdIdx: index("calendarProviders_userId_idx").on(table.userId),
+  providerTypeIdx: index("calendarProviders_providerType_idx").on(table.providerType),
+}));
+
+export type CalendarProvider = typeof calendarProviders.$inferSelect;
+export type InsertCalendarProvider = typeof calendarProviders.$inferInsert;
+
+/**
+ * Calendar Events table - Track scheduled events
+ */
+export const calendarEvents = mysqlTable("calendarEvents", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  providerId: int("providerId").notNull(),
+  externalEventId: varchar("externalEventId", { length: 255 }).notNull(), // ID from Google/Outlook
+  eventType: mysqlEnum("eventType", [
+    "appointment",
+    "training",
+    "deadline",
+    "meeting",
+    "other"
+  ]).notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  startTime: timestamp("startTime").notNull(),
+  endTime: timestamp("endTime").notNull(),
+  location: text("location"),
+  attendees: text("attendees"), // JSON array of email addresses
+  participantId: int("participantId"), // Link to participant if applicable
+  programId: int("programId"), // Link to program if applicable
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  userIdIdx: index("calendarEvents_userId_idx").on(table.userId),
+  providerIdIdx: index("calendarEvents_providerId_idx").on(table.providerId),
+  eventTypeIdx: index("calendarEvents_eventType_idx").on(table.eventType),
+  startTimeIdx: index("calendarEvents_startTime_idx").on(table.startTime),
+  participantIdIdx: index("calendarEvents_participantId_idx").on(table.participantId),
+  programIdIdx: index("calendarEvents_programId_idx").on(table.programId),
+}));
+
+export type CalendarEvent = typeof calendarEvents.$inferSelect;
+export type InsertCalendarEvent = typeof calendarEvents.$inferInsert;
