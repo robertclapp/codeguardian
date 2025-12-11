@@ -521,18 +521,21 @@
 - [x] Create user management database schema (userActivityLog table)
 - [x] Build user role management API (userManagementRouter)
 - [x] Add database functions for user updates and activity logs
-- [ ] Create admin interface for user list
-- [ ] Add role promotion/demotion UI
-- [ ] Create user activity log viewer UI
+- [x] Create UserManagement page with user list table
+- [x] Add role promotion/demotion UI with confirmation dialog
+- [x] Create user activity log viewer UI with tabs
+- [x] Add user search and filtering
 
 ### Email Template Editor
 - [x] Create email templates database schema (emailTemplates, smsTemplates)
 - [x] Build template management API with full CRUD
 - [x] Add template versioning system
 - [x] Add template variable support (JSON arrays)
-- [ ] Create visual template editor UI
-- [ ] Implement template preview functionality
-- [ ] Add template variable insertion UI
+- [ ] Create TemplateEditor page for email/SMS templates
+- [ ] Add rich text editor for HTML email templates
+- [ ] Implement live template preview functionality
+- [ ] Add template variable insertion dropdown
+- [ ] Create template list with search and filtering
 
 ### Audit Log System
 - [x] Create audit log database schema (auditLog table)
@@ -540,7 +543,14 @@
 - [x] Implement before/after snapshot support
 - [x] Add user attribution and IP tracking
 - [x] Add change tracking (field-level changes)
-- [ ] Implement audit logging middleware
-- [ ] Create audit log viewer UI
-- [ ] Add audit log filtering and search UI
-- [ ] Implement audit log export functionality
+- [x] Create AuditLogs page with filterable table
+- [x] Add before/after snapshot comparison dialog
+- [x] Implement audit log search by user, table, action
+- [x] Add audit log export to CSV
+- [x] Created audit router for backend API
+- [x] Created template management router with full CRUD
+- [ ] Create TemplateEditor UI page
+- [ ] Implement tRPC middleware for automatic audit logging
+- [ ] Integrate audit middleware into all routers
+- [ ] Create default email/SMS templates
+- [ ] Migrate hardcoded notifications to template system

@@ -22,6 +22,8 @@ import SMSSettings from "./pages/SMSSettings";
 import Templates from "./pages/Templates";
 import Analytics from "./pages/Analytics";
 import AdminDashboard from "./pages/AdminDashboard";
+import UserManagement from "./pages/UserManagement";
+import AuditLogs from "./pages/AuditLogs";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -44,7 +46,9 @@ function Router() {
       <Route path={"/settings/sms"} component={SMSSettings} />
       <Route path={"/templates"} component={Templates} />
           <Route path="/analytics" component={Analytics} />
-          <Route path="/admin" component={AdminDashboard} />     <Route path={"/404"} component={NotFound} />
+          <Route path="/admin" component={AdminDashboard} />
+        <Route path="/users" component={UserManagement} />
+        <Route path="/audit" component={AuditLogs} />     <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
     </Switch>

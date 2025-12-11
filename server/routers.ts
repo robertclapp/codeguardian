@@ -23,6 +23,9 @@ import { jobSchedulerRouter } from "./routers/jobSchedulerRouter";
 import { searchRouter } from "./routers/searchRouter";
 import { performanceRouter } from "./routers/performanceRouter";
 import { backupRouter } from "./routers/backupRouter";
+import { userManagementRouter } from "./routers/userManagementRouter";
+import { auditRouter } from "./routers/auditRouter";
+import { templateManagementRouter } from "./routers/templateManagementRouter";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -60,6 +63,9 @@ export const appRouter = router({
   search: searchRouter,
   performance: performanceRouter,
   backup: backupRouter,
+  userManagement: userManagementRouter,
+  audit: auditRouter,
+  templateManagement: templateManagementRouter,
 });
 
 export type AppRouter = typeof appRouter;
