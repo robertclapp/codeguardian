@@ -445,3 +445,37 @@
 - [x] Add reference check status tracking
 - [x] Implement reminder system for pending references
 - [x] Added expiration handling (14-day default)
+
+## Automation & Real-time Features
+
+### Background Job Scheduler
+- [x] Install and configure node-cron
+- [x] Create job scheduler service with 4 automated jobs
+- [x] Implement daily reminder email job (9:00 AM daily)
+- [x] Implement expired reference check processing job (2:00 AM daily)
+- [x] Implement weekly compliance report generation job (Monday 8:00 AM)
+- [x] Add reference check reminder job (every 3 days at 10:00 AM)
+- [x] Add job logging and error handling
+- [x] Create job scheduler router for viewing status and logs
+- [x] Integrated job scheduler into server startup
+
+### Real-time Notifications
+- [x] Set up Socket.IO for WebSocket connections
+- [x] Create notification event system
+- [x] Implement document upload notifications
+- [x] Implement reference check completion notifications
+- [x] Implement participant milestone notifications
+- [x] Implement approval needed notifications
+- [x] Created notification service with user-specific and admin rooms
+- [x] Integrated Socket.IO into server startup
+
+### Advanced Search & Filtering
+- [x] Implement full-text search for participants with fuzzy matching
+- [x] Implement full-text search for documents with fuzzy matching
+- [x] Implement full-text search for jobs with fuzzy matching
+- [x] Implement full-text search for programs with fuzzy matching
+- [x] Add fuzzy matching using Levenshtein distance algorithm
+- [x] Implement autocomplete suggestions
+- [x] Create unified search API combining all entities
+- [x] Add relevance scoring (0-100) for search results
+- [x] Created search router with separate endpoints for each entity

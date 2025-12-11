@@ -1096,3 +1096,22 @@ export async function updateReferenceQuestionnaire(id: number, updates: Partial<
   if (!db) throw new Error("Database not available");
   await db.update(referenceQuestionnaires).set(updates).where(eq(referenceQuestionnaires.id, id));
 }
+
+// Search helper functions
+export async function getAllCandidates() {
+  const database = await getDb();
+  if (!database) return [];
+  return database.select().from(candidates);
+}
+
+export async function getAllJobs() {
+  const database = await getDb();
+  if (!database) return [];
+  return database.select().from(jobs);
+}
+
+export async function getDocuments() {
+  const database = await getDb();
+  if (!database) return [];
+  return database.select().from(documents);
+}

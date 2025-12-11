@@ -19,6 +19,8 @@ import { calendarRouter } from "./routers/calendarRouter";
 import { ocrRouter } from "./routers/ocrRouter";
 import { videoTutorialsRouter } from "./routers/videoTutorialsRouter";
 import { referenceChecksRouter } from "./routers/referenceChecksRouter";
+import { jobSchedulerRouter } from "./routers/jobSchedulerRouter";
+import { searchRouter } from "./routers/searchRouter";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -52,6 +54,8 @@ export const appRouter = router({
   ocr: ocrRouter,
   videoTutorials: videoTutorialsRouter,
   referenceChecks: referenceChecksRouter,
+  jobScheduler: jobSchedulerRouter,
+  search: searchRouter,
 });
 
 export type AppRouter = typeof appRouter;
