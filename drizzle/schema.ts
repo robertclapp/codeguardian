@@ -482,3 +482,104 @@ export const referenceQuestionnaires = mysqlTable("referenceQuestionnaires", {
 
 export type ReferenceQuestionnaire = typeof referenceQuestionnaires.$inferSelect;
 export type InsertReferenceQuestionnaire = typeof referenceQuestionnaires.$inferInsert;
+
+/**
+ * User Activity Log table - Track user actions and login history
+ */
+export const userActivityLog = mysqlTable("userActivityLog", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  action: varchar("action", { length: 100 }).notNull(), // e.g., "login", "logout", "view_document", "update_candidate"
+  resource: varchar("resource", { length: 100 }), // e.g., "document", "candidate", "job"
+  resourceId: int("resourceId"),
+  ipAddress: varchar("ipAddress", { length: 45 }),
+  userAgent: text("userAgent"),
+  metadata: text("metadata"), // JSON object with additional context
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  userIdIdx: index("userActivityLog_userId_idx").on(table.userId),
+  actionIdx: index("userActivityLog_action_idx").on(table.action),
+  resourceIdx: index("userActivityLog_resource_idx").on(table.resource),
+  createdAtIdx: index("userActivityLog_createdAt_idx").on(table.createdAt),
+}));
+
+export type UserActivityLog = typeof userActivityLog.$inferSelect;
+export type InsertUserActivityLog = typeof userActivityLog.$inferInsert;
+
+/**
+ * Audit Log table - Comprehensive audit trail for all CRUD operations
+ */
+export const auditLog = mysqlTable("auditLog", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  userName: varchar("userName", { length: 255 }).notNull(),
+  action: mysqlEnum("action", ["create", "update", "delete"]).notNull(),
+  tableName: varchar("tableName", { length: 100 }).notNull(),
+  recordId: int("recordId").notNull(),
+  beforeSnapshot: text("beforeSnapshot"), // JSON snapshot before change
+  afterSnapshot: text("afterSnapshot"), // JSON snapshot after change
+  changes: text("changes"), // JSON object showing field-level changes
+  ipAddress: varchar("ipAddress", { length: 45 }),
+  userAgent: text("userAgent"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  userIdIdx: index("auditLog_userId_idx").on(table.userId),
+  actionIdx: index("auditLog_action_idx").on(table.action),
+  tableNameIdx: index("auditLog_tableName_idx").on(table.tableName),
+  recordIdIdx: index("auditLog_recordId_idx").on(table.recordId),
+  createdAtIdx: index("auditLog_createdAt_idx").on(table.createdAt),
+}));
+
+export type AuditLog = typeof auditLog.$inferSelect;
+export type InsertAuditLog = typeof auditLog.$inferInsert;
+
+/**
+ * Email Templates table - Customizable email templates
+ */
+export const emailTemplates = mysqlTable("emailTemplates", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  type: mysqlEnum("type", ["notification", "reminder", "reference_check", "compliance", "custom"]).notNull(),
+  subject: varchar("subject", { length: 500 }).notNull(),
+  htmlBody: text("htmlBody").notNull(),
+  textBody: text("textBody"),
+  variables: text("variables"), // JSON array of available template variables
+  isActive: int("isActive").default(1).notNull(),
+  isDefault: int("isDefault").default(0).notNull(),
+  version: int("version").default(1).notNull(),
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  typeIdx: index("emailTemplates_type_idx").on(table.type),
+  isActiveIdx: index("emailTemplates_isActive_idx").on(table.isActive),
+  isDefaultIdx: index("emailTemplates_isDefault_idx").on(table.isDefault),
+}));
+
+export type EmailTemplate = typeof emailTemplates.$inferSelect;
+export type InsertEmailTemplate = typeof emailTemplates.$inferInsert;
+
+/**
+ * SMS Templates table - Customizable SMS templates
+ */
+export const smsTemplates = mysqlTable("smsTemplates", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  type: mysqlEnum("type", ["notification", "reminder", "reference_check", "custom"]).notNull(),
+  body: varchar("body", { length: 1600 }).notNull(), // SMS max length
+  variables: text("variables"), // JSON array of available template variables
+  isActive: int("isActive").default(1).notNull(),
+  isDefault: int("isDefault").default(0).notNull(),
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  typeIdx: index("smsTemplates_type_idx").on(table.type),
+  isActiveIdx: index("smsTemplates_isActive_idx").on(table.isActive),
+  isDefaultIdx: index("smsTemplates_isDefault_idx").on(table.isDefault),
+}));
+
+export type SmsTemplate = typeof smsTemplates.$inferSelect;
+export type InsertSmsTemplate = typeof smsTemplates.$inferInsert;

@@ -518,30 +518,29 @@
 ## Admin Controls & Compliance
 
 ### User Role Management UI
-- [ ] Create user management database schema
-- [ ] Build user role management API
+- [x] Create user management database schema (userActivityLog table)
+- [x] Build user role management API (userManagementRouter)
+- [x] Add database functions for user updates and activity logs
 - [ ] Create admin interface for user list
-- [ ] Add role promotion/demotion functionality
-- [ ] Implement permission management
-- [ ] Add user activity log tracking
-- [ ] Create user activity log viewer
+- [ ] Add role promotion/demotion UI
+- [ ] Create user activity log viewer UI
 
 ### Email Template Editor
-- [ ] Create email templates database schema
-- [ ] Build template management API
+- [x] Create email templates database schema (emailTemplates, smsTemplates)
+- [x] Build template management API with full CRUD
+- [x] Add template versioning system
+- [x] Add template variable support (JSON arrays)
 - [ ] Create visual template editor UI
-- [ ] Add template variable system
 - [ ] Implement template preview functionality
-- [ ] Add SMS template editor
-- [ ] Create reference check questionnaire editor
-- [ ] Add template versioning
+- [ ] Add template variable insertion UI
 
 ### Audit Log System
-- [ ] Create audit log database schema
+- [x] Create audit log database schema (auditLog table)
+- [x] Add database functions for audit logging
+- [x] Implement before/after snapshot support
+- [x] Add user attribution and IP tracking
+- [x] Add change tracking (field-level changes)
 - [ ] Implement audit logging middleware
-- [ ] Track all CRUD operations
-- [ ] Add user attribution to audit logs
-- [ ] Implement before/after snapshots
 - [ ] Create audit log viewer UI
-- [ ] Add audit log filtering and search
+- [ ] Add audit log filtering and search UI
 - [ ] Implement audit log export functionality

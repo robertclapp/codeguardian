@@ -1115,3 +1115,299 @@ export async function getDocuments() {
   if (!database) return [];
   return database.select().from(documents);
 }
+
+// ============================================
+// User Activity Log Functions
+// ============================================
+
+export async function logUserActivity(data: {
+  userId: number;
+  action: string;
+  resource?: string;
+  resourceId?: number;
+  ipAddress?: string;
+  userAgent?: string;
+  metadata?: any;
+}) {
+  const db = getDb();
+  if (!db) throw new Error("Database not initialized");
+
+  const [result] = await db.insert(schema.userActivityLog).values({
+    userId: data.userId,
+    action: data.action,
+    resource: data.resource,
+    resourceId: data.resourceId,
+    ipAddress: data.ipAddress,
+    userAgent: data.userAgent,
+    metadata: data.metadata ? JSON.stringify(data.metadata) : null,
+  });
+
+  return result;
+}
+
+export async function getUserActivityLogs(userId: number, limit: number = 100) {
+  const db = getDb();
+  if (!db) throw new Error("Database not initialized");
+
+  return db
+    .select()
+    .from(schema.userActivityLog)
+    .where(eq(schema.userActivityLog.userId, userId))
+    .orderBy(desc(schema.userActivityLog.createdAt))
+    .limit(limit);
+}
+
+export async function getAllUserActivityLogs(limit: number = 500) {
+  const db = getDb();
+  if (!db) throw new Error("Database not initialized");
+
+  return db
+    .select()
+    .from(schema.userActivityLog)
+    .orderBy(desc(schema.userActivityLog.createdAt))
+    .limit(limit);
+}
+
+// ============================================
+// Audit Log Functions
+// ============================================
+
+export async function createAuditLog(data: {
+  userId: number;
+  userName: string;
+  action: "create" | "update" | "delete";
+  tableName: string;
+  recordId: number;
+  beforeSnapshot?: any;
+  afterSnapshot?: any;
+  changes?: any;
+  ipAddress?: string;
+  userAgent?: string;
+}) {
+  const db = getDb();
+  if (!db) throw new Error("Database not initialized");
+
+  const [result] = await db.insert(schema.auditLog).values({
+    userId: data.userId,
+    userName: data.userName,
+    action: data.action,
+    tableName: data.tableName,
+    recordId: data.recordId,
+    beforeSnapshot: data.beforeSnapshot ? JSON.stringify(data.beforeSnapshot) : null,
+    afterSnapshot: data.afterSnapshot ? JSON.stringify(data.afterSnapshot) : null,
+    changes: data.changes ? JSON.stringify(data.changes) : null,
+    ipAddress: data.ipAddress,
+    userAgent: data.userAgent,
+  });
+
+  return result;
+}
+
+export async function getAuditLogs(filters: {
+  userId?: number;
+  tableName?: string;
+  recordId?: number;
+  action?: "create" | "update" | "delete";
+  limit?: number;
+}) {
+  const db = getDb();
+  if (!db) throw new Error("Database not initialized");
+
+  let query = db.select().from(schema.auditLog);
+
+  if (filters.userId) {
+    query = query.where(eq(schema.auditLog.userId, filters.userId)) as any;
+  }
+  if (filters.tableName) {
+    query = query.where(eq(schema.auditLog.tableName, filters.tableName)) as any;
+  }
+  if (filters.recordId) {
+    query = query.where(eq(schema.auditLog.recordId, filters.recordId)) as any;
+  }
+  if (filters.action) {
+    query = query.where(eq(schema.auditLog.action, filters.action)) as any;
+  }
+
+  return query
+    .orderBy(desc(schema.auditLog.createdAt))
+    .limit(filters.limit || 500);
+}
+
+// ============================================
+// Email Template Functions
+// ============================================
+
+export async function createEmailTemplate(data: {
+  name: string;
+  description?: string;
+  type: "notification" | "reminder" | "reference_check" | "compliance" | "custom";
+  subject: string;
+  htmlBody: string;
+  textBody?: string;
+  variables?: string[];
+  isActive?: number;
+  isDefault?: number;
+  createdBy: number;
+}) {
+  const db = getDb();
+  if (!db) throw new Error("Database not initialized");
+
+  const [result] = await db.insert(schema.emailTemplates).values({
+    name: data.name,
+    description: data.description,
+    type: data.type,
+    subject: data.subject,
+    htmlBody: data.htmlBody,
+    textBody: data.textBody,
+    variables: data.variables ? JSON.stringify(data.variables) : null,
+    isActive: data.isActive ?? 1,
+    isDefault: data.isDefault ?? 0,
+    version: 1,
+    createdBy: data.createdBy,
+  });
+
+  return result;
+}
+
+export async function getEmailTemplates() {
+  const db = getDb();
+  if (!db) throw new Error("Database not initialized");
+
+  return db
+    .select()
+    .from(schema.emailTemplates)
+    .orderBy(desc(schema.emailTemplates.createdAt));
+}
+
+export async function getEmailTemplateById(id: number) {
+  const db = getDb();
+  if (!db) throw new Error("Database not initialized");
+
+  const [template] = await db
+    .select()
+    .from(schema.emailTemplates)
+    .where(eq(schema.emailTemplates.id, id))
+    .limit(1);
+
+  return template;
+}
+
+export async function updateEmailTemplate(id: number, data: Partial<schema.InsertEmailTemplate>) {
+  const db = getDb();
+  if (!db) throw new Error("Database not initialized");
+
+  // Increment version on update
+  const currentTemplate = await getEmailTemplateById(id);
+  const newVersion = (currentTemplate?.version || 0) + 1;
+
+  const [result] = await db
+    .update(schema.emailTemplates)
+    .set({ ...data, version: newVersion })
+    .where(eq(schema.emailTemplates.id, id));
+
+  return result;
+}
+
+export async function deleteEmailTemplate(id: number) {
+  const db = getDb();
+  if (!db) throw new Error("Database not initialized");
+
+  const [result] = await db
+    .delete(schema.emailTemplates)
+    .where(eq(schema.emailTemplates.id, id));
+
+  return result;
+}
+
+// ============================================
+// SMS Template Functions
+// ============================================
+
+export async function createSmsTemplate(data: {
+  name: string;
+  description?: string;
+  type: "notification" | "reminder" | "reference_check" | "custom";
+  body: string;
+  variables?: string[];
+  isActive?: number;
+  isDefault?: number;
+  createdBy: number;
+}) {
+  const db = getDb();
+  if (!db) throw new Error("Database not initialized");
+
+  const [result] = await db.insert(schema.smsTemplates).values({
+    name: data.name,
+    description: data.description,
+    type: data.type,
+    body: data.body,
+    variables: data.variables ? JSON.stringify(data.variables) : null,
+    isActive: data.isActive ?? 1,
+    isDefault: data.isDefault ?? 0,
+    createdBy: data.createdBy,
+  });
+
+  return result;
+}
+
+export async function getSmsTemplates() {
+  const db = getDb();
+  if (!db) throw new Error("Database not initialized");
+
+  return db
+    .select()
+    .from(schema.smsTemplates)
+    .orderBy(desc(schema.smsTemplates.createdAt));
+}
+
+export async function getSmsTemplateById(id: number) {
+  const db = getDb();
+  if (!db) throw new Error("Database not initialized");
+
+  const [template] = await db
+    .select()
+    .from(schema.smsTemplates)
+    .where(eq(schema.smsTemplates.id, id))
+    .limit(1);
+
+  return template;
+}
+
+export async function updateSmsTemplate(id: number, data: Partial<schema.InsertSmsTemplate>) {
+  const db = getDb();
+  if (!db) throw new Error("Database not initialized");
+
+  const [result] = await db
+    .update(schema.smsTemplates)
+    .set(data)
+    .where(eq(schema.smsTemplates.id, id));
+
+  return result;
+}
+
+export async function deleteSmsTemplate(id: number) {
+  const db = getDb();
+  if (!db) throw new Error("Database not initialized");
+
+  const [result] = await db
+    .delete(schema.smsTemplates)
+    .where(eq(schema.smsTemplates.id, id));
+
+  return result;
+}
+
+// ============================================
+// User Management Functions
+// ============================================
+
+export async function updateUser(userId: number, data: Partial<InsertUser>) {
+  const dbInstance = await getDb();
+  if (!dbInstance) throw new Error("Database not initialized");
+
+  const [result] = await dbInstance
+    .update(users)
+    .set(data)
+    .where(eq(users.id, userId));
+
+  return result;
+}
