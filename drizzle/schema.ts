@@ -377,3 +377,108 @@ export const calendarEvents = mysqlTable("calendarEvents", {
 
 export type CalendarEvent = typeof calendarEvents.$inferSelect;
 export type InsertCalendarEvent = typeof calendarEvents.$inferInsert;
+
+/**
+ * Video Tutorials table - Onboarding and help videos
+ */
+export const videoTutorials = mysqlTable("videoTutorials", {
+  id: int("id").autoincrement().primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  category: mysqlEnum("category", [
+    "getting-started",
+    "document-upload",
+    "progress-tracking",
+    "program-completion",
+    "troubleshooting",
+    "other"
+  ]).notNull(),
+  videoUrl: text("videoUrl").notNull(), // YouTube/Vimeo URL or S3 URL
+  thumbnailUrl: text("thumbnailUrl"),
+  duration: int("duration"), // Duration in seconds
+  order: int("order").default(0).notNull(), // Display order
+  isActive: int("isActive").default(1).notNull(),
+  viewCount: int("viewCount").default(0).notNull(),
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  categoryIdx: index("videoTutorials_category_idx").on(table.category),
+  isActiveIdx: index("videoTutorials_isActive_idx").on(table.isActive),
+  orderIdx: index("videoTutorials_order_idx").on(table.order),
+}));
+
+export type VideoTutorial = typeof videoTutorials.$inferSelect;
+export type InsertVideoTutorial = typeof videoTutorials.$inferInsert;
+
+/**
+ * Video Progress table - Track user video watching progress
+ */
+export const videoProgress = mysqlTable("videoProgress", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  videoId: int("videoId").notNull(),
+  watchedSeconds: int("watchedSeconds").default(0).notNull(),
+  completed: int("completed").default(0).notNull(),
+  lastWatchedAt: timestamp("lastWatchedAt").defaultNow().notNull(),
+}, (table) => ({
+  userIdIdx: index("videoProgress_userId_idx").on(table.userId),
+  videoIdIdx: index("videoProgress_videoId_idx").on(table.videoId),
+  userVideoIdx: index("videoProgress_userId_videoId_idx").on(table.userId, table.videoId),
+}));
+
+export type VideoProgress = typeof videoProgress.$inferSelect;
+export type InsertVideoProgress = typeof videoProgress.$inferInsert;
+
+/**
+ * Reference Checks table - Track reference check requests
+ */
+export const referenceChecks = mysqlTable("referenceChecks", {
+  id: int("id").autoincrement().primaryKey(),
+  candidateId: int("candidateId").notNull(),
+  referenceName: varchar("referenceName", { length: 255 }).notNull(),
+  referenceEmail: varchar("referenceEmail", { length: 255 }).notNull(),
+  referencePhone: varchar("referencePhone", { length: 50 }),
+  relationship: varchar("relationship", { length: 100 }), // e.g., "Former Manager", "Colleague"
+  company: varchar("company", { length: 255 }),
+  status: mysqlEnum("status", ["pending", "sent", "completed", "expired"]).notNull().default("pending"),
+  questionnaireId: int("questionnaireId"),
+  responses: text("responses"), // JSON object of question-answer pairs
+  overallRating: int("overallRating"), // 1-5 rating
+  comments: text("comments"),
+  sentAt: timestamp("sentAt"),
+  completedAt: timestamp("completedAt"),
+  expiresAt: timestamp("expiresAt"),
+  reminderCount: int("reminderCount").default(0).notNull(),
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  candidateIdIdx: index("referenceChecks_candidateId_idx").on(table.candidateId),
+  statusIdx: index("referenceChecks_status_idx").on(table.status),
+  referenceEmailIdx: index("referenceChecks_referenceEmail_idx").on(table.referenceEmail),
+}));
+
+export type ReferenceCheck = typeof referenceChecks.$inferSelect;
+export type InsertReferenceCheck = typeof referenceChecks.$inferInsert;
+
+/**
+ * Reference Questionnaires table - Customizable questionnaire templates
+ */
+export const referenceQuestionnaires = mysqlTable("referenceQuestionnaires", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  questions: text("questions").notNull(), // JSON array of question objects
+  isActive: int("isActive").default(1).notNull(),
+  isDefault: int("isDefault").default(0).notNull(),
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  isActiveIdx: index("referenceQuestionnaires_isActive_idx").on(table.isActive),
+  isDefaultIdx: index("referenceQuestionnaires_isDefault_idx").on(table.isDefault),
+}));
+
+export type ReferenceQuestionnaire = typeof referenceQuestionnaires.$inferSelect;
+export type InsertReferenceQuestionnaire = typeof referenceQuestionnaires.$inferInsert;

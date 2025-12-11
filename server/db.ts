@@ -30,7 +30,15 @@ import {
   calendarProviders,
   InsertCalendarProvider,
   calendarEvents,
-  InsertCalendarEvent
+  InsertCalendarEvent,
+  videoTutorials,
+  InsertVideoTutorial,
+  videoProgress,
+  InsertVideoProgress,
+  referenceChecks,
+  InsertReferenceCheck,
+  referenceQuestionnaires,
+  InsertReferenceQuestionnaire
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -885,4 +893,206 @@ export async function deleteCalendarEvent(id: number) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   await db.delete(calendarEvents).where(eq(calendarEvents.id, id));
+}
+
+// ==================== Video Tutorials ====================
+
+export async function createVideoTutorial(tutorial: InsertVideoTutorial) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [result] = await db.insert(videoTutorials).values(tutorial);
+  return result.insertId;
+}
+
+export async function getAllVideoTutorials() {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return await db
+    .select()
+    .from(videoTutorials)
+    .where(eq(videoTutorials.isActive, 1))
+    .orderBy(videoTutorials.order);
+}
+
+export async function getVideoTutorialsByCategory(category: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return await db
+    .select()
+    .from(videoTutorials)
+    .where(
+      and(
+        eq(videoTutorials.category, category as any),
+        eq(videoTutorials.isActive, 1)
+      )
+    );
+}
+
+export async function getVideoTutorialById(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [tutorial] = await db
+    .select()
+    .from(videoTutorials)
+    .where(eq(videoTutorials.id, id))
+    .limit(1);
+  return tutorial;
+}
+
+export async function updateVideoTutorial(id: number, updates: Partial<InsertVideoTutorial>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(videoTutorials).set(updates).where(eq(videoTutorials.id, id));
+}
+
+export async function deleteVideoTutorial(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(videoTutorials).set({ isActive: 0 }).where(eq(videoTutorials.id, id));
+}
+
+export async function incrementVideoViewCount(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db
+    .update(videoTutorials)
+    .set({ viewCount: sql`${videoTutorials.viewCount} + 1` })
+    .where(eq(videoTutorials.id, id));
+}
+
+export async function createOrUpdateVideoProgress(progress: InsertVideoProgress) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  // Check if progress exists
+  const [existing] = await db
+    .select()
+    .from(videoProgress)
+    .where(
+      and(
+        eq(videoProgress.userId, progress.userId),
+        eq(videoProgress.videoId, progress.videoId)
+      )
+    )
+    .limit(1);
+
+  if (existing) {
+    await db
+      .update(videoProgress)
+      .set({
+        watchedSeconds: progress.watchedSeconds,
+        completed: progress.completed,
+        lastWatchedAt: new Date(),
+      })
+      .where(eq(videoProgress.id, existing.id));
+    return existing.id;
+  } else {
+    const [result] = await db.insert(videoProgress).values(progress);
+    return result.insertId;
+  }
+}
+
+export async function getVideoProgressByUser(userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return await db
+    .select()
+    .from(videoProgress)
+    .where(eq(videoProgress.userId, userId));
+}
+
+// ==================== Reference Checks ====================
+
+export async function createReferenceCheck(check: InsertReferenceCheck) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [result] = await db.insert(referenceChecks).values(check);
+  return result.insertId;
+}
+
+export async function getReferenceChecksByCandidateId(candidateId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return await db
+    .select()
+    .from(referenceChecks)
+    .where(eq(referenceChecks.candidateId, candidateId))
+    .orderBy(desc(referenceChecks.createdAt));
+}
+
+export async function getReferenceCheckById(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [check] = await db
+    .select()
+    .from(referenceChecks)
+    .where(eq(referenceChecks.id, id))
+    .limit(1);
+  return check;
+}
+
+export async function updateReferenceCheck(id: number, updates: Partial<InsertReferenceCheck>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(referenceChecks).set(updates).where(eq(referenceChecks.id, id));
+}
+
+export async function getPendingReferenceChecks() {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return await db
+    .select()
+    .from(referenceChecks)
+    .where(eq(referenceChecks.status, "sent"))
+    .orderBy(referenceChecks.sentAt);
+}
+
+export async function createReferenceQuestionnaire(questionnaire: InsertReferenceQuestionnaire) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [result] = await db.insert(referenceQuestionnaires).values(questionnaire);
+  return result.insertId;
+}
+
+export async function getAllReferenceQuestionnaires() {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return await db
+    .select()
+    .from(referenceQuestionnaires)
+    .where(eq(referenceQuestionnaires.isActive, 1))
+    .orderBy(desc(referenceQuestionnaires.isDefault), desc(referenceQuestionnaires.createdAt));
+}
+
+export async function getDefaultReferenceQuestionnaire() {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [questionnaire] = await db
+    .select()
+    .from(referenceQuestionnaires)
+    .where(
+      and(
+        eq(referenceQuestionnaires.isActive, 1),
+        eq(referenceQuestionnaires.isDefault, 1)
+      )
+    )
+    .limit(1);
+  return questionnaire;
+}
+
+export async function getReferenceQuestionnaireById(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const [questionnaire] = await db
+    .select()
+    .from(referenceQuestionnaires)
+    .where(eq(referenceQuestionnaires.id, id))
+    .limit(1);
+  return questionnaire;
+}
+
+export async function updateReferenceQuestionnaire(id: number, updates: Partial<InsertReferenceQuestionnaire>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.update(referenceQuestionnaires).set(updates).where(eq(referenceQuestionnaires.id, id));
 }
