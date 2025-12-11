@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { Link } from "wouter";
 import DashboardLayout from "@/components/DashboardLayout";
+import OnboardingTutorial from "@/components/OnboardingTutorial";
 
 /**
  * Main dashboard page
@@ -28,6 +29,7 @@ export default function Dashboard() {
 
   return (
     <DashboardLayout>
+      <OnboardingTutorial />
       <div className="space-y-8">
         {/* Welcome Header */}
         <div>
