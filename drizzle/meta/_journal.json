@@ -36,6 +36,13 @@
       "when": 1765349705503,
       "tag": "0004_steady_sugar_man",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1765411884382,
+      "tag": "0005_careful_madripoor",
+      "breakpoints": true
     }
   ]
 }

@@ -287,3 +287,35 @@ export const activities = mysqlTable("activities", {
 
 export type Activity = typeof activities.$inferSelect;
 export type InsertActivity = typeof activities.$inferInsert;
+/**
+ * Document Templates table - Reusable document templates for participants
+ */
+export const documentTemplates = mysqlTable("documentTemplates", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  category: mysqlEnum("category", [
+    "tax-forms",
+    "employment",
+    "financial",
+    "legal",
+    "program-specific",
+    "other"
+  ]).notNull(),
+  fileUrl: text("fileUrl").notNull(), // S3 URL to template file
+  fileKey: text("fileKey").notNull(), // S3 key for file management
+  fileSize: int("fileSize"), // File size in bytes
+  mimeType: varchar("mimeType", { length: 100 }), // e.g., application/pdf
+  isActive: int("isActive").default(1).notNull(),
+  downloadCount: int("downloadCount").default(0).notNull(),
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  categoryIdx: index("documentTemplates_category_idx").on(table.category),
+  isActiveIdx: index("documentTemplates_isActive_idx").on(table.isActive),
+  createdByIdx: index("documentTemplates_createdBy_idx").on(table.createdBy),
+}));
+
+export type DocumentTemplate = typeof documentTemplates.$inferSelect;
+export type InsertDocumentTemplate = typeof documentTemplates.$inferInsert;

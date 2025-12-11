@@ -1,4 +1,4 @@
-import { eq, and } from "drizzle-orm";
+import { eq, and, desc, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { 
   InsertUser, 
@@ -24,7 +24,9 @@ import {
   participantProgress,
   InsertParticipantProgress,
   requirementCompletions,
-  InsertRequirementCompletion
+  InsertRequirementCompletion,
+  documentTemplates,
+  InsertDocumentTemplate
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -708,4 +710,71 @@ export async function getRequirementsByStageId(stageId: number) {
   
   return await db.select().from(stageRequirements)
     .where(eq(stageRequirements.stageId, stageId));
+}
+
+// Document Templates
+export async function getAllTemplates() {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return await db.select().from(documentTemplates)
+    .where(eq(documentTemplates.isActive, 1))
+    .orderBy(desc(documentTemplates.createdAt));
+}
+
+export async function getTemplateById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  
+  const [template] = await db.select().from(documentTemplates)
+    .where(eq(documentTemplates.id, id));
+  return template;
+}
+
+export async function getTemplatesByCategory(category: string) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return await db.select().from(documentTemplates)
+    .where(and(
+      eq(documentTemplates.category, category as any),
+      eq(documentTemplates.isActive, 1)
+    ))
+    .orderBy(desc(documentTemplates.downloadCount));
+}
+
+export async function createTemplate(template: InsertDocumentTemplate) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const [result] = await db.insert(documentTemplates).values(template);
+  return Number(result.insertId);
+}
+
+export async function updateTemplate(id: number, updates: Partial<InsertDocumentTemplate>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.update(documentTemplates)
+    .set(updates)
+    .where(eq(documentTemplates.id, id));
+}
+
+export async function incrementTemplateDownloadCount(id: number) {
+  const db = await getDb();
+  if (!db) return;
+  
+  await db.update(documentTemplates)
+    .set({ downloadCount: sql`${documentTemplates.downloadCount} + 1` })
+    .where(eq(documentTemplates.id, id));
+}
+
+export async function deleteTemplate(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  // Soft delete
+  await db.update(documentTemplates)
+    .set({ isActive: 0 })
+    .where(eq(documentTemplates.id, id));
 }

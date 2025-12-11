@@ -11,6 +11,7 @@
 
 import * as db from "../db";
 import { sendMissingDocumentReminder, sendPendingApprovalReminder } from "./emailNotifications";
+import { sendNotificationSMS, validatePhoneNumber } from "./smsNotifications";
 
 export interface ReminderSettings {
   enabled: boolean;
@@ -19,6 +20,7 @@ export interface ReminderSettings {
   pendingApprovalsEnabled: boolean;
   stageDeadlinesEnabled: boolean;
   reminderThresholdDays: number; // Send reminder if document missing for X days
+  smsEnabled?: boolean; // Send SMS alongside email
 }
 
 // Default settings
@@ -95,7 +97,7 @@ export async function sendMissingDocumentReminders(settings: ReminderSettings = 
           continue;
         }
 
-        // Send reminder
+        // Send email reminder
         const success = await sendMissingDocumentReminder({
           participantName: candidate.name,
           participantEmail: candidate.email,
@@ -110,6 +112,23 @@ export async function sendMissingDocumentReminders(settings: ReminderSettings = 
         if (success) {
           sent++;
           console.log(`[Reminders] Sent missing document reminder to ${candidate.email}`);
+          
+          // Send SMS if enabled and phone number available
+          if (settings.smsEnabled && candidate.phone && validatePhoneNumber(candidate.phone)) {
+            const docNames = missingDocuments.map((d: any) => d.name).join(", ");
+            const smsResult = await sendNotificationSMS(
+              candidate.phone,
+              "missingDocument",
+              candidate.name,
+              docNames,
+              program.name
+            );
+            if (smsResult.success) {
+              console.log(`[Reminders] Sent SMS to ${candidate.phone}`);
+            } else {
+              console.log(`[Reminders] Failed to send SMS to ${candidate.phone}: ${smsResult.error}`);
+            }
+          }
         } else {
           failed++;
           console.log(`[Reminders] Failed to send reminder to ${candidate.email}`);
