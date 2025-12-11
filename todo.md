@@ -514,3 +514,34 @@
 - [x] Added backup scheduling with cron job
 - [x] Created backup router with full API
 - [x] Implemented owner notifications for backup status
+
+## Admin Controls & Compliance
+
+### User Role Management UI
+- [ ] Create user management database schema
+- [ ] Build user role management API
+- [ ] Create admin interface for user list
+- [ ] Add role promotion/demotion functionality
+- [ ] Implement permission management
+- [ ] Add user activity log tracking
+- [ ] Create user activity log viewer
+
+### Email Template Editor
+- [ ] Create email templates database schema
+- [ ] Build template management API
+- [ ] Create visual template editor UI
+- [ ] Add template variable system
+- [ ] Implement template preview functionality
+- [ ] Add SMS template editor
+- [ ] Create reference check questionnaire editor
+- [ ] Add template versioning
+
+### Audit Log System
+- [ ] Create audit log database schema
+- [ ] Implement audit logging middleware
+- [ ] Track all CRUD operations
+- [ ] Add user attribution to audit logs
+- [ ] Implement before/after snapshots
+- [ ] Create audit log viewer UI
+- [ ] Add audit log filtering and search
+- [ ] Implement audit log export functionality
