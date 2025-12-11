@@ -21,11 +21,12 @@ import {
 } from "@/components/ui/sidebar";
 import { APP_LOGO, APP_TITLE, getLoginUrl } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { LayoutDashboard, LogOut, PanelLeft, Users, Briefcase, MessageSquare, Settings, FileText, TrendingUp, ClipboardCheck, FolderOpen, BarChart3, Shield } from "lucide-react";
+import { LayoutDashboard, LogOut, PanelLeft, Users, Briefcase, MessageSquare, Settings, FileText, TrendingUp, ClipboardCheck, FolderOpen, BarChart3, Shield, Edit3, HelpCircle, Book, LifeBuoy } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
 import { Button } from "./ui/button";
+import { restartOnboarding } from "./OnboardingTutorial";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
@@ -38,6 +39,7 @@ const menuItems = [
   { icon: FolderOpen, label: "Templates", path: "/templates" },
   { icon: BarChart3, label: "Analytics", path: "/analytics" },
   { icon: Shield, label: "Admin", path: "/admin" },
+  { icon: Edit3, label: "Template Editor", path: "/template-editor" },
   { icon: MessageSquare, label: "AI Assistant", path: "/assistant" },
 ];
 
@@ -308,6 +310,28 @@ function DashboardLayoutContent({
                 </div>
               </div>
             </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-9 w-9">
+                  <HelpCircle className="h-5 w-5" />
+                  <span className="sr-only">Help menu</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuItem onClick={() => restartOnboarding()}>
+                  <LifeBuoy className="mr-2 h-4 w-4" />
+                  Restart Tutorial
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => window.open("https://docs.manus.im", "_blank")}>
+                  <Book className="mr-2 h-4 w-4" />
+                  Documentation
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => window.open("https://help.manus.im", "_blank")}>
+                  <HelpCircle className="mr-2 h-4 w-4" />
+                  Support
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         )}
         <main id="main-content" className="flex-1 p-4" role="main" aria-label="Main content">

@@ -5,6 +5,7 @@ import { TRPCError } from "@trpc/server";
 import { ErrorMessages } from "../errors";
 import { requireAuthorization, requireModifyPermission, requireDeletePermission } from "../authorization";
 import { sanitizeJobData, validateId } from "../validation";
+import { auditCreate, auditUpdate, auditDelete } from "../_core/auditMiddleware";
 
 /**
  * Job management router
@@ -79,6 +80,12 @@ export const jobsRouter = router({
           createdBy: ctx.user.id,
           postedAt: input.status === "open" ? new Date() : null,
         });
+
+        // Audit log for job creation
+        const createdJob = await db.getJobById(jobId);
+        if (createdJob) {
+          auditCreate(ctx, "jobs", jobId, createdJob);
+        }
 
         return { id: jobId };
       } catch (error) {
@@ -206,6 +213,12 @@ export const jobsRouter = router({
           await db.updateJob(id, finalUpdates);
         }
 
+        // Audit log for job update
+        const updatedJob = await db.getJobById(id);
+        if (updatedJob) {
+          auditUpdate(ctx, "jobs", id, job, updatedJob);
+        }
+
         return { success: true };
       } catch (error) {
         if (error instanceof TRPCError) throw error;
@@ -236,6 +249,9 @@ export const jobsRouter = router({
         }
 
         requireDeletePermission(ctx.user, job.createdBy, "job");
+
+        // Audit log for job deletion
+        auditDelete(ctx, "jobs", input.id, job);
 
         await db.deleteJob(input.id);
         return { success: true };

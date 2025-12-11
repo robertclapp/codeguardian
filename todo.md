@@ -561,3 +561,14 @@
 - [ ] Implement tRPC audit middleware for automatic audit logging
 - [ ] Integrate audit middleware into all routers
 - [ ] Test audit middleware with sample operations
+
+# Final Polish Items
+
+- [x] Add Template Editor link to Admin section of sidebar navigation in DashboardLayout.tsx
+- [x] Integrate audit middleware into jobs router with auditCreate/auditUpdate/auditDelete helpers
+- [x] Integrate audit middleware into candidates router with auditCreate/auditUpdate/auditDelete helpers
+- [x] Integrate audit middleware into programs router with auditCreate/auditUpdate/auditDelete helpers
+- [x] Integrate audit middleware into documents router with auditCreate/auditUpdate/auditDelete helpers
+- [x] Create Help dropdown menu in dashboard header with tutorial restart option
+- [x] Add documentation links to Help menu
+- [x] Add support resources to Help menu

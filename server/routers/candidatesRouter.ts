@@ -13,6 +13,7 @@ import {
   MAX_FILE_SIZES,
   validateId 
 } from "../validation";
+import { auditCreate, auditUpdate } from "../_core/auditMiddleware";
 
 /**
  * Candidate management router
@@ -135,11 +136,8 @@ export const candidatesRouter = router({
           description: `${sanitized.name} applied for the position`,
         });
 
-        return { 
-          success: true, 
-          candidateId,
-          message: "Application submitted successfully!" 
-        };
+        // Note: No audit log for public application submission (no user context)
+        return { id: candidateId, message: "Application submitted successfully" };
       } catch (error) {
         if (error instanceof TRPCError) throw error;
         console.error("Application submission error:", error);
@@ -278,6 +276,12 @@ export const candidatesRouter = router({
           pipelineStage: input.stage,
           lastActivityAt: new Date(),
         });
+
+        // Audit log for candidate update
+        const updatedCandidate = await db.getCandidateById(input.id);
+        if (updatedCandidate) {
+          auditUpdate(ctx, "candidates", input.id, candidate, updatedCandidate);
+        }
 
         // Create activity log
         await db.createActivity({

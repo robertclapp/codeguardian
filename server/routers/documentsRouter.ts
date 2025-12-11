@@ -6,6 +6,7 @@ import { storagePut } from "../storage";
 import { validateId, validateFileUpload, sanitizeHtml } from "../validation";
 import { ErrorMessages, ErrorCodes } from "../errors";
 import { canAccessResource } from "../authorization";
+import { auditCreate, auditUpdate } from "../_core/auditMiddleware";
 
 /**
  * Documents Router
@@ -99,6 +100,9 @@ export const documentsRouter = router({
         });
         
         const documentId = document.id;
+
+        // Audit log for document creation
+        auditCreate(ctx, "documents", documentId, document);
 
         return {
           success: true,
@@ -199,7 +203,16 @@ export const documentsRouter = router({
         });
       }
 
+      // Get before snapshot
+      const beforeDoc = await db.getDocumentById(input.documentId);
+      
       await db.updateDocumentStatus(input.documentId, "approved", ctx.user.id, input.notes);
+      
+      // Audit log for document approval
+      const afterDoc = await db.getDocumentById(input.documentId);
+      if (beforeDoc && afterDoc) {
+        auditUpdate(ctx, "documents", input.documentId, beforeDoc, afterDoc);
+      }
 
       // If document is linked to a requirement, mark requirement as complete
       if (document.requirementId) {
@@ -258,7 +271,16 @@ export const documentsRouter = router({
       }
 
       const sanitizedReason = sanitizeHtml(input.reason);
+      // Get before snapshot
+      const beforeDoc = await db.getDocumentById(input.documentId);
+      
       await db.updateDocumentStatus(input.documentId, "rejected", ctx.user.id, sanitizedReason);
+      
+      // Audit log for document rejection
+      const afterDoc = await db.getDocumentById(input.documentId);
+      if (beforeDoc && afterDoc) {
+        auditUpdate(ctx, "documents", input.documentId, beforeDoc, afterDoc);
+      }
 
       return { success: true };
     }),

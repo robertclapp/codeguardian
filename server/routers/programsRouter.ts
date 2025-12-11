@@ -21,6 +21,7 @@ import {
 import { ErrorMessages } from "../errors";
 import { requireAuthorization, requireModifyPermission, requireDeletePermission } from "../authorization";
 import { sanitizeProgramData, validateId } from "../validation";
+import { auditCreate, auditUpdate, auditDelete } from "../_core/auditMiddleware";
 
 /**
  * Programs router - Manage organizational programs and their onboarding pipelines
@@ -98,10 +99,15 @@ export const programsRouter = router({
           description: input.description,
         });
 
-        return await createProgram({
+        const program = await createProgram({
           ...sanitized,
           createdBy: ctx.user.id,
         });
+
+        // Audit log for program creation
+        auditCreate(ctx, "programs", program.id, program);
+
+        return program;
       } catch (error) {
         console.error("Program creation error:", error);
         throw new TRPCError({
@@ -153,7 +159,18 @@ export const programsRouter = router({
           updates.isActive = isActive ? 1 : 0;
         }
 
-        return await updateProgram(id, updates);
+        // Get before snapshot
+        const beforeProgram = await getProgramById(id);
+        
+        const result = await updateProgram(id, updates);
+        
+        // Audit log for program update
+        const afterProgram = await getProgramById(id);
+        if (beforeProgram && afterProgram) {
+          auditUpdate(ctx, "programs", id, beforeProgram, afterProgram);
+        }
+        
+        return result;
       } catch (error) {
         if (error instanceof TRPCError) throw error;
         console.error("Program update error:", error);
@@ -186,6 +203,9 @@ export const programsRouter = router({
         }
 
         requireDeletePermission(ctx.user, program.createdBy, "program");
+
+        // Audit log for program deletion
+        auditDelete(ctx, "programs", input.id, program);
 
         await deleteProgram(input.id);
         return { success: true };
