@@ -479,3 +479,38 @@
 - [x] Create unified search API combining all entities
 - [x] Add relevance scoring (0-100) for search results
 - [x] Created search router with separate endpoints for each entity
+
+## Admin Tools & Operations
+
+### Admin Dashboard UI
+- [x] Create comprehensive admin dashboard page
+- [x] Display job scheduler status and recent logs
+- [x] Integrate unified search functionality with relevance scoring
+- [x] Add quick stats and metrics overview
+- [x] Create system health indicators (Database, WebSocket, Job Scheduler)
+- [x] Add navigation to all admin features
+- [x] Added tabbed interface for job status and logs
+
+### Performance Monitoring
+- [x] Implement API response time tracking with middleware
+- [x] Add database query performance monitoring
+- [x] Track job execution duration
+- [x] Monitor WebSocket connection health
+- [x] Create performance metrics API with statistics
+- [x] Add performance alerts and thresholds (API, DB, Job)
+- [x] Implemented percentile calculations (p50, p95, p99)
+- [x] Added slow query and slow API call tracking
+- [x] Created performance router with full metrics access
+
+### Data Export & Backup
+- [x] Implement automated daily database backups to S3 (2:00 AM daily)
+- [x] Add bulk CSV export for participants
+- [x] Add bulk CSV export for documents
+- [x] Add bulk CSV export for jobs
+- [x] Add bulk CSV export for programs
+- [x] Add bulk CSV export for candidates
+- [x] Add JSON export format support
+- [x] Create backup restoration workflow
+- [x] Added backup scheduling with cron job
+- [x] Created backup router with full API
+- [x] Implemented owner notifications for backup status

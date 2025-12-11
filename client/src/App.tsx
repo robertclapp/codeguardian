@@ -21,6 +21,7 @@ import ParticipantPortal from "./pages/ParticipantPortal";
 import SMSSettings from "./pages/SMSSettings";
 import Templates from "./pages/Templates";
 import Analytics from "./pages/Analytics";
+import AdminDashboard from "./pages/AdminDashboard";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -42,8 +43,8 @@ function Router() {
       <Route path={"/participant-portal"} component={ParticipantPortal} />
       <Route path={"/settings/sms"} component={SMSSettings} />
       <Route path={"/templates"} component={Templates} />
-      <Route path={"/analytics"} component={Analytics} />
-      <Route path={"/404"} component={NotFound} />
+          <Route path="/analytics" component={Analytics} />
+          <Route path="/admin" component={AdminDashboard} />     <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
     </Switch>

@@ -2,6 +2,7 @@ import cron from "node-cron";
 import { sendDailyReminders } from "./automatedReminders";
 import * as db from "../db";
 import { sendEmail } from "./productionEmail";
+import { createDatabaseBackup } from "./backupAndExport";
 
 interface JobLog {
   jobName: string;
@@ -229,6 +230,38 @@ export function startReferenceCheckRemindersJob() {
 }
 
 /**
+ * Daily database backup job
+ * Runs every day at 2:00 AM
+ */
+export function startDailyBackupJob() {
+  cron.schedule("0 2 * * *", async () => {
+    try {
+      console.log("[Job Scheduler] Starting daily database backup...");
+      
+      const result = await createDatabaseBackup();
+      
+      if (result.success) {
+        logJob(
+          "Daily Database Backup",
+          "success",
+          `Database backup completed successfully. URL: ${result.backupUrl}`
+        );
+      } else {
+        logJob(
+          "Daily Database Backup",
+          "error",
+          `Backup failed: ${result.error}`
+        );
+      }
+    } catch (error: any) {
+      logJob("Daily Database Backup", "error", error.message);
+    }
+  });
+
+  console.log("[Job Scheduler] Daily database backup job scheduled (2:00 AM daily)");
+}
+
+/**
  * Initialize all scheduled jobs
  */
 export function initializeJobScheduler() {
@@ -238,6 +271,9 @@ export function initializeJobScheduler() {
   startExpiredReferenceChecksJob();
   startWeeklyComplianceReportJob();
   startReferenceCheckRemindersJob();
+  
+  // Daily database backup job (2:00 AM)
+  startDailyBackupJob();
   
   console.log("[Job Scheduler] All jobs initialized successfully");
 }
