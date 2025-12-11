@@ -16,6 +16,7 @@ import { smsRouter } from "./routers/smsRouter";
 import { templatesRouter } from "./routers/templatesRouter";
 import { analyticsRouter } from "./routers/analyticsRouter";
 import { calendarRouter } from "./routers/calendarRouter";
+import { ocrRouter } from "./routers/ocrRouter";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -46,6 +47,7 @@ export const appRouter = router({
   templates: templatesRouter,
   analytics: analyticsRouter,
   calendar: calendarRouter,
+  ocr: ocrRouter,
 });
 
 export type AppRouter = typeof appRouter;
