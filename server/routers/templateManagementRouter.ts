@@ -96,7 +96,13 @@ export const templateManagementRouter = router({
 
       const before = await db.getEmailTemplateById(input.id);
       
-      await db.updateEmailTemplate(input.id, input);
+      const { id, variables, ...rest } = input;
+      const updateData = {
+        ...rest,
+        ...(variables && { variables: JSON.stringify(variables) }),
+      };
+      
+      await db.updateEmailTemplate(id, updateData);
 
       // Log the update
       await db.createAuditLog({
@@ -216,7 +222,13 @@ export const templateManagementRouter = router({
         throw new TRPCError({ code: "FORBIDDEN", message: "Admin access required" });
       }
 
-      await db.updateSmsTemplate(input.id, input);
+      const { id, variables, ...rest } = input;
+      const updateData = {
+        ...rest,
+        ...(variables && { variables: JSON.stringify(variables) }),
+      };
+      
+      await db.updateSmsTemplate(id, updateData);
 
       return { success: true };
     }),

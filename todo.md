@@ -549,8 +549,14 @@
 - [x] Add audit log export to CSV
 - [x] Created audit router for backend API
 - [x] Created template management router with full CRUD
-- [ ] Create TemplateEditor UI page
-- [ ] Implement tRPC middleware for automatic audit logging
+- [x] Fix TypeScript errors in db.ts (delete function)
+- [x] Fix async/await issues in template functions
+- [x] Fix variable serialization in template routers
+- [ ] Fix remaining referenceChecksRouter.ts error (false positive)
+- [ ] Create TemplateEditor UI page with rich text editor
+- [ ] Add live template preview pane
+- [ ] Add variable insertion dropdown
+- [ ] Implement tRPC audit middleware for automatic audit logging
 - [ ] Integrate audit middleware into all routers
 - [ ] Create default email/SMS templates
 - [ ] Migrate hardcoded notifications to template system

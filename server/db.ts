@@ -38,7 +38,15 @@ import {
   referenceChecks,
   InsertReferenceCheck,
   referenceQuestionnaires,
-  InsertReferenceQuestionnaire
+  InsertReferenceQuestionnaire,
+  emailTemplates,
+  InsertEmailTemplate,
+  smsTemplates,
+  InsertSmsTemplate,
+  userActivityLog,
+  InsertUserActivityLog,
+  auditLog,
+  InsertAuditLog
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -1129,10 +1137,10 @@ export async function logUserActivity(data: {
   userAgent?: string;
   metadata?: any;
 }) {
-  const db = getDb();
+  const db = await getDb();
   if (!db) throw new Error("Database not initialized");
 
-  const [result] = await db.insert(schema.userActivityLog).values({
+  const [result] = await db.insert(userActivityLog).values({
     userId: data.userId,
     action: data.action,
     resource: data.resource,
@@ -1146,25 +1154,25 @@ export async function logUserActivity(data: {
 }
 
 export async function getUserActivityLogs(userId: number, limit: number = 100) {
-  const db = getDb();
+  const db = await getDb();
   if (!db) throw new Error("Database not initialized");
 
   return db
     .select()
-    .from(schema.userActivityLog)
-    .where(eq(schema.userActivityLog.userId, userId))
-    .orderBy(desc(schema.userActivityLog.createdAt))
+    .from(userActivityLog)
+    .where(eq(userActivityLog.userId, userId))
+    .orderBy(desc(userActivityLog.createdAt))
     .limit(limit);
 }
 
 export async function getAllUserActivityLogs(limit: number = 500) {
-  const db = getDb();
+  const db = await getDb();
   if (!db) throw new Error("Database not initialized");
 
   return db
     .select()
-    .from(schema.userActivityLog)
-    .orderBy(desc(schema.userActivityLog.createdAt))
+    .from(userActivityLog)
+    .orderBy(desc(userActivityLog.createdAt))
     .limit(limit);
 }
 
@@ -1184,10 +1192,10 @@ export async function createAuditLog(data: {
   ipAddress?: string;
   userAgent?: string;
 }) {
-  const db = getDb();
+  const db = await getDb();
   if (!db) throw new Error("Database not initialized");
 
-  const [result] = await db.insert(schema.auditLog).values({
+  const [result] = await db.insert(auditLog).values({
     userId: data.userId,
     userName: data.userName,
     action: data.action,
@@ -1210,26 +1218,25 @@ export async function getAuditLogs(filters: {
   action?: "create" | "update" | "delete";
   limit?: number;
 }) {
-  const db = getDb();
+  const db = await getDb();
   if (!db) throw new Error("Database not initialized");
 
-  let query = db.select().from(schema.auditLog);
+  let query = db.select().from(auditLog);
 
   if (filters.userId) {
-    query = query.where(eq(schema.auditLog.userId, filters.userId)) as any;
+    query = query.where(eq(auditLog.userId, filters.userId)) as any;
   }
   if (filters.tableName) {
-    query = query.where(eq(schema.auditLog.tableName, filters.tableName)) as any;
+     query = query.where(eq(auditLog.tableName, filters.tableName)) as any;
   }
   if (filters.recordId) {
-    query = query.where(eq(schema.auditLog.recordId, filters.recordId)) as any;
+    query = query.where(eq(auditLog.recordId, filters.recordId)) as any;
   }
   if (filters.action) {
-    query = query.where(eq(schema.auditLog.action, filters.action)) as any;
+    query = query.where(eq(auditLog.action, filters.action)) as any;
   }
-
   return query
-    .orderBy(desc(schema.auditLog.createdAt))
+    .orderBy(desc(auditLog.createdAt))
     .limit(filters.limit || 500);
 }
 
@@ -1249,10 +1256,10 @@ export async function createEmailTemplate(data: {
   isDefault?: number;
   createdBy: number;
 }) {
-  const db = getDb();
+  const db = await getDb();
   if (!db) throw new Error("Database not initialized");
 
-  const [result] = await db.insert(schema.emailTemplates).values({
+  const [result] = await db.insert(emailTemplates).values({
     name: data.name,
     description: data.description,
     type: data.type,
@@ -1270,30 +1277,30 @@ export async function createEmailTemplate(data: {
 }
 
 export async function getEmailTemplates() {
-  const db = getDb();
+  const db = await getDb();
   if (!db) throw new Error("Database not initialized");
 
   return db
     .select()
-    .from(schema.emailTemplates)
-    .orderBy(desc(schema.emailTemplates.createdAt));
+    .from(emailTemplates)
+    .orderBy(desc(emailTemplates.createdAt));
 }
 
 export async function getEmailTemplateById(id: number) {
-  const db = getDb();
+  const db = await getDb();
   if (!db) throw new Error("Database not initialized");
 
   const [template] = await db
     .select()
-    .from(schema.emailTemplates)
-    .where(eq(schema.emailTemplates.id, id))
+    .from(emailTemplates)
+    .where(eq(emailTemplates.id, id))
     .limit(1);
 
   return template;
 }
 
-export async function updateEmailTemplate(id: number, data: Partial<schema.InsertEmailTemplate>) {
-  const db = getDb();
+export async function updateEmailTemplate(id: number, data: Partial<InsertEmailTemplate>) {
+  const db = await getDb();
   if (!db) throw new Error("Database not initialized");
 
   // Increment version on update
@@ -1301,20 +1308,20 @@ export async function updateEmailTemplate(id: number, data: Partial<schema.Inser
   const newVersion = (currentTemplate?.version || 0) + 1;
 
   const [result] = await db
-    .update(schema.emailTemplates)
+    .update(emailTemplates)
     .set({ ...data, version: newVersion })
-    .where(eq(schema.emailTemplates.id, id));
+    .where(eq(emailTemplates.id, id));
 
   return result;
 }
 
 export async function deleteEmailTemplate(id: number) {
-  const db = getDb();
+  const db = await getDb();
   if (!db) throw new Error("Database not initialized");
 
   const [result] = await db
-    .delete(schema.emailTemplates)
-    .where(eq(schema.emailTemplates.id, id));
+    .delete(emailTemplates)
+    .where(eq(emailTemplates.id, id));
 
   return result;
 }
@@ -1333,10 +1340,10 @@ export async function createSmsTemplate(data: {
   isDefault?: number;
   createdBy: number;
 }) {
-  const db = getDb();
+  const db = await getDb();
   if (!db) throw new Error("Database not initialized");
 
-  const [result] = await db.insert(schema.smsTemplates).values({
+  const [result] = await db.insert(smsTemplates).values({
     name: data.name,
     description: data.description,
     type: data.type,
@@ -1351,47 +1358,47 @@ export async function createSmsTemplate(data: {
 }
 
 export async function getSmsTemplates() {
-  const db = getDb();
+  const db = await getDb();
   if (!db) throw new Error("Database not initialized");
 
   return db
     .select()
-    .from(schema.smsTemplates)
-    .orderBy(desc(schema.smsTemplates.createdAt));
+    .from(smsTemplates)
+    .orderBy(desc(smsTemplates.createdAt));
 }
 
 export async function getSmsTemplateById(id: number) {
-  const db = getDb();
+  const db = await getDb();
   if (!db) throw new Error("Database not initialized");
 
   const [template] = await db
     .select()
-    .from(schema.smsTemplates)
-    .where(eq(schema.smsTemplates.id, id))
+    .from(smsTemplates)
+    .where(eq(smsTemplates.id, id))
     .limit(1);
 
   return template;
 }
 
-export async function updateSmsTemplate(id: number, data: Partial<schema.InsertSmsTemplate>) {
-  const db = getDb();
+export async function updateSmsTemplate(id: number, data: Partial<InsertSmsTemplate>) {
+  const db = await getDb();
   if (!db) throw new Error("Database not initialized");
 
   const [result] = await db
-    .update(schema.smsTemplates)
+    .update(smsTemplates)
     .set(data)
-    .where(eq(schema.smsTemplates.id, id));
+    .where(eq(smsTemplates.id, id));
 
   return result;
 }
 
 export async function deleteSmsTemplate(id: number) {
-  const db = getDb();
-  if (!db) throw new Error("Database not initialized");
+  const dbInstance = await getDb();
+  if (!dbInstance) throw new Error("Database not initialized");
 
-  const [result] = await db
-    .delete(schema.smsTemplates)
-    .where(eq(schema.smsTemplates.id, id));
+  const [result] = await dbInstance
+    .delete(smsTemplates)
+    .where(eq(smsTemplates.id, id));
 
   return result;
 }
