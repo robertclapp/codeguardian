@@ -25,6 +25,9 @@ import AdminDashboard from "./pages/AdminDashboard";
 import UserManagement from "./pages/UserManagement";
 import AuditLogs from "./pages/AuditLogs";
 import TemplateEditor from "./pages/TemplateEditor";
+import CandidatePortal from "./pages/CandidatePortal";
+import DocumentAutoReview from "./pages/DocumentAutoReview";
+import EmployerPortal from "./pages/EmployerPortal";
 import CommunicationTesting from "./pages/CommunicationTesting";
 
 function Router() {
@@ -52,6 +55,9 @@ function Router() {
         <Route path="/users" component={UserManagement} />
         <Route path="/audit" component={AuditLogs} />
         <Route path="/template-editor" component={TemplateEditor} />
+      <Route path="/candidate-portal" component={CandidatePortal} />
+      <Route path="/document-auto-review" component={DocumentAutoReview} />
+      <Route path="/employer-portal" component={EmployerPortal} />
         <Route path="/communication-testing" component={CommunicationTesting} />
         <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}

@@ -48,7 +48,9 @@ import {
   auditLog,
   InsertAuditLog,
   dashboardLayouts,
-  InsertDashboardLayout
+  InsertDashboardLayout,
+  candidatePortalTokens,
+  InsertCandidatePortalToken
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -1469,4 +1471,89 @@ export async function saveDashboardLayout(data: {
       dateRangePreset: data.dateRangePreset,
     });
   }
+}
+
+
+/**
+ * Candidate Portal Token Functions
+ */
+
+export async function createCandidatePortalToken(candidateId: number): Promise<string> {
+  const db = await getDb();
+  if (!db) throw new Error("Database connection failed");
+  
+  // Generate random token
+  const token = Array.from({ length: 32 }, () => 
+    Math.random().toString(36).charAt(2)
+  ).join('');
+  
+  // Token expires in 7 days
+  const expiresAt = new Date();
+  expiresAt.setDate(expiresAt.getDate() + 7);
+  
+  await db.insert(candidatePortalTokens).values({
+    candidateId,
+    token,
+    expiresAt,
+  });
+  
+  return token;
+}
+
+export async function validateCandidatePortalToken(token: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database connection failed");
+  
+  const [tokenRecord] = await db
+    .select()
+    .from(candidatePortalTokens)
+    .where(eq(candidatePortalTokens.token, token))
+    .limit(1);
+  
+  if (!tokenRecord) return null;
+  
+  // Check if token is expired
+  if (new Date() > new Date(tokenRecord.expiresAt)) {
+    return null;
+  }
+  
+  // Check if token was already used
+  if (tokenRecord.usedAt) {
+    return null;
+  }
+  
+  // Mark token as used
+  await db
+    .update(candidatePortalTokens)
+    .set({ usedAt: new Date() })
+    .where(eq(candidatePortalTokens.id, tokenRecord.id));
+  
+  return tokenRecord.candidateId;
+}
+
+export async function getCandidatePortalInfo(candidateId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database connection failed");
+  
+  // Get candidate basic info
+  const candidate = await getCandidateById(candidateId);
+  if (!candidate) return null;
+  
+  // Get job info
+  const job = candidate.jobId ? await getJobById(candidate.jobId) : null;
+  
+  // Get documents
+  const documents = await getCandidateDocuments(candidateId);
+  
+  // Get progress if in a program
+  const progress = candidate.programId 
+    ? await getParticipantProgress(candidateId, candidate.programId)
+    : null;
+  
+  return {
+    candidate,
+    job,
+    documents,
+    progress,
+  };
 }

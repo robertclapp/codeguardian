@@ -16,7 +16,7 @@ export const users = mysqlTable("users", {
   name: text("name"),
   email: varchar("email", { length: 320 }),
   loginMethod: varchar("loginMethod", { length: 64 }),
-  role: mysqlEnum("role", ["user", "admin"]).default("user").notNull(),
+  role: mysqlEnum("role", ["user", "admin", "employer"]).default("user").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
@@ -27,8 +27,18 @@ export type InsertUser = typeof users.$inferInsert;
 
 /**
  * Dashboard layouts - Store user's custom dashboard widget arrangements
- */
-export const dashboardLayouts = mysqlTable("dashboardLayouts", {
+ */export const candidatePortalTokens = mysqlTable("candidate_portal_tokens", {
+  id: int("id").primaryKey().autoincrement(),
+  candidateId: int("candidate_id").notNull(),
+  token: varchar("token", { length: 255 }).notNull().unique(),
+  expiresAt: timestamp("expires_at").notNull(),
+  usedAt: timestamp("used_at"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export type InsertCandidatePortalToken = typeof candidatePortalTokens.$inferInsert;
+
+export const dashboardLayouts = mysqlTable("dashboard_layouts", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull(),
   layoutData: text("layoutData").notNull(), // JSON string of grid layout
