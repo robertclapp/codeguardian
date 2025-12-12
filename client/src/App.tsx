@@ -35,6 +35,9 @@ import ReportingDashboard from "./pages/ReportingDashboard";
 import SkillsAssessment from "./pages/SkillsAssessment";
 import BackgroundCheck from "./pages/BackgroundCheck";
 import DataMigration from "./pages/DataMigration";
+import { WebhookSettings } from "./pages/WebhookSettings";
+import VideoTutorials from "./pages/VideoTutorials";
+import AdvancedSearch from "./pages/AdvancedSearch";
 import CommunicationTesting from "./pages/CommunicationTesting";
 
 function Router() {
@@ -72,6 +75,9 @@ function Router() {
       <Route path="/skills-assessment" component={SkillsAssessment} />
       <Route path="/background-check" component={BackgroundCheck} />
       <Route path="/data-migration" component={DataMigration} />
+      <Route path="/webhook-settings" component={WebhookSettings} />
+      <Route path="/video-tutorials" component={VideoTutorials} />
+      <Route path="/advanced-search" component={AdvancedSearch} />
         <Route path="/communication-testing" component={CommunicationTesting} />
         <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}

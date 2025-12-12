@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/sidebar";
 import { APP_LOGO, APP_TITLE, getLoginUrl } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { LayoutDashboard, LogOut, PanelLeft, Users, Briefcase, MessageSquare, Settings, FileText, TrendingUp, ClipboardCheck, FolderOpen, BarChart3, Shield, Edit3, HelpCircle, Book, LifeBuoy, CheckCircle, LineChart } from "lucide-react";
+import { LayoutDashboard, LogOut, PanelLeft, Users, Briefcase, MessageSquare, Settings, FileText, TrendingUp, ClipboardCheck, FolderOpen, BarChart3, Shield, Edit3, HelpCircle, Book, LifeBuoy, CheckCircle, LineChart, Brain, Upload, Bell, Play, Search } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
@@ -49,6 +49,9 @@ const menuItems = [
   { icon: Brain, label: "Skills Assessment", path: "/skills-assessment" },
   { icon: Shield, label: "Background Checks", path: "/background-check" },
   { icon: Upload, label: "Data Migration", path: "/data-migration" },
+  { icon: Bell, label: "Webhook Settings", path: "/webhook-settings" },
+  { icon: Play, label: "Video Tutorials", path: "/video-tutorials" },
+  { icon: Search, label: "Advanced Search", path: "/advanced-search" },
   { icon: MessageSquare, label: "AI Assistant", path: "/assistant" },
 ];
 
