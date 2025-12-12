@@ -38,6 +38,15 @@ export type InsertUser = typeof users.$inferInsert;
 
 export type InsertCandidatePortalToken = typeof candidatePortalTokens.$inferInsert;
 
+export const savedSearches = mysqlTable('saved_searches', {
+  id: int('id').primaryKey().autoincrement(),
+  userId: int('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  name: varchar('name', { length: 255 }).notNull(),
+  searchType: varchar('search_type', { length: 50 }).notNull(), // 'candidates', 'jobs', 'documents'
+  filters: text('filters').notNull(), // JSON string
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
 export const importHistory = mysqlTable('import_history', {
   id: int('id').autoincrement().primaryKey(),
   importType: mysqlEnum('import_type', ['candidates', 'jobs']).notNull(),

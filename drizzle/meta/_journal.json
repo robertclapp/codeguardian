@@ -120,6 +120,13 @@
       "when": 1765514371667,
       "tag": "0016_huge_black_tarantula",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "5",
+      "when": 1765515641703,
+      "tag": "0017_woozy_pretty_boy",
+      "breakpoints": true
     }
   ]
 }
