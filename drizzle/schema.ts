@@ -26,6 +26,24 @@ export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
 /**
+ * Dashboard layouts - Store user's custom dashboard widget arrangements
+ */
+export const dashboardLayouts = mysqlTable("dashboardLayouts", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  layoutData: text("layoutData").notNull(), // JSON string of grid layout
+  widgetVisibility: text("widgetVisibility").notNull(), // JSON string of visible widgets
+  dateRangePreset: varchar("dateRangePreset", { length: 50 }).default("last30days").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  userIdIdx: index("dashboardLayouts_userId_idx").on(table.userId),
+}));
+
+export type DashboardLayout = typeof dashboardLayouts.$inferSelect;
+export type InsertDashboardLayout = typeof dashboardLayouts.$inferInsert;
+
+/**
  * Programs table - Represents different organizational programs
  * (e.g., Peer Support, Independent Living Skills Training, etc.)
  */
@@ -190,6 +208,10 @@ export const jobs = mysqlTable("jobs", {
   status: mysqlEnum("status", ["draft", "open", "closed", "archived"]).default("draft").notNull(),
   postedAt: timestamp("postedAt"),
   closedAt: timestamp("closedAt"),
+  // AI Scoring Custom Weights (0-100, default 33 for equal weighting)
+  skillsWeight: int("skillsWeight").default(33).notNull(),
+  experienceWeight: int("experienceWeight").default(33).notNull(),
+  educationWeight: int("educationWeight").default(34).notNull(),
   createdBy: int("createdBy").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),

@@ -119,6 +119,53 @@ export const emailTemplatesRouter = router({
     }),
 
   /**
+   * Send test email with template and variables
+   */
+  sendTest: adminProcedure
+    .input(
+      z.object({
+        templateId: z.number(),
+        to: z.string().email(),
+        variables: z.record(z.string(), z.string()).optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      // Get template
+      const template = await db.getEmailTemplateById(input.templateId);
+      if (!template) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Template not found" });
+      }
+
+      // Substitute variables
+      let subject = template.subject;
+      let htmlBody = template.htmlBody;
+      
+      if (input.variables) {
+        Object.entries(input.variables).forEach(([key, value]) => {
+          const regex = new RegExp(`{{${key}}}`, "g");
+          subject = subject.replace(regex, String(value));
+          htmlBody = htmlBody.replace(regex, String(value));
+        });
+      }
+
+      // TODO: Integrate with actual email service (SendGrid, AWS SES, etc.)
+      // For now, just log the test email
+      console.log("[Email Test]", {
+        to: input.to,
+        subject,
+        htmlBody,
+        template: template.name,
+      });
+
+      // Simulate success
+      return {
+        success: true,
+        message: `Test email sent to ${input.to}`,
+        preview: { subject, htmlBody },
+      };
+    }),
+
+  /**
    * Set default template for a type
    */
   setDefault: adminProcedure

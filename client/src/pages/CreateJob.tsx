@@ -26,6 +26,10 @@ type JobFormData = {
   salaryMax: string;
   accessibilityFeatures: string[];
   programId?: number;
+  // AI Scoring Custom Weights
+  skillsWeight: number;
+  experienceWeight: number;
+  educationWeight: number;
 };
 
 const STEPS = [
@@ -60,6 +64,10 @@ export default function CreateJob() {
     salaryMin: "",
     salaryMax: "",
     accessibilityFeatures: [],
+    // Default to equal weighting
+    skillsWeight: 33,
+    experienceWeight: 33,
+    educationWeight: 34,
   });
   const [isGeneratingDescription, setIsGeneratingDescription] = useState(false);
 
@@ -144,6 +152,10 @@ export default function CreateJob() {
       salaryMin: formData.salaryMin ? parseInt(formData.salaryMin) : undefined,
       salaryMax: formData.salaryMax ? parseInt(formData.salaryMax) : undefined,
       status: "open",
+      // AI Scoring Custom Weights
+      skillsWeight: formData.skillsWeight,
+      experienceWeight: formData.experienceWeight,
+      educationWeight: formData.educationWeight,
     });
   };
 
@@ -357,6 +369,98 @@ export default function CreateJob() {
               <p className="text-sm text-muted-foreground">
                 Providing salary information increases transparency and attracts qualified candidates.
               </p>
+
+              {/* AI Scoring Custom Weights */}
+              <div className="space-y-4 mt-8 pt-8 border-t">
+                <div>
+                  <h3 className="font-semibold text-lg mb-2">AI Candidate Scoring Weights</h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Customize how the AI evaluates candidates by adjusting the importance of each category.
+                    Total must equal 100%.
+                  </p>
+                </div>
+
+                <div className="space-y-6">
+                  {/* Skills Weight */}
+                  <div>
+                    <div className="flex justify-between items-center mb-2">
+                      <Label htmlFor="skillsWeight">Skills Relevance</Label>
+                      <span className="text-sm font-medium">{formData.skillsWeight}%</span>
+                    </div>
+                    <input
+                      id="skillsWeight"
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={formData.skillsWeight}
+                      onChange={(e) => {
+                        const newSkills = parseInt(e.target.value);
+                        const remaining = 100 - newSkills;
+                        const expRatio = formData.experienceWeight / (formData.experienceWeight + formData.educationWeight);
+                        updateFormData("skillsWeight", newSkills);
+                        updateFormData("experienceWeight", Math.round(remaining * expRatio));
+                        updateFormData("educationWeight", remaining - Math.round(remaining * expRatio));
+                      }}
+                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                    />
+                  </div>
+
+                  {/* Experience Weight */}
+                  <div>
+                    <div className="flex justify-between items-center mb-2">
+                      <Label htmlFor="experienceWeight">Experience Level</Label>
+                      <span className="text-sm font-medium">{formData.experienceWeight}%</span>
+                    </div>
+                    <input
+                      id="experienceWeight"
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={formData.experienceWeight}
+                      onChange={(e) => {
+                        const newExp = parseInt(e.target.value);
+                        const remaining = 100 - newExp;
+                        const skillsRatio = formData.skillsWeight / (formData.skillsWeight + formData.educationWeight);
+                        updateFormData("experienceWeight", newExp);
+                        updateFormData("skillsWeight", Math.round(remaining * skillsRatio));
+                        updateFormData("educationWeight", remaining - Math.round(remaining * skillsRatio));
+                      }}
+                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                    />
+                  </div>
+
+                  {/* Education Weight */}
+                  <div>
+                    <div className="flex justify-between items-center mb-2">
+                      <Label htmlFor="educationWeight">Education & Certifications</Label>
+                      <span className="text-sm font-medium">{formData.educationWeight}%</span>
+                    </div>
+                    <input
+                      id="educationWeight"
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={formData.educationWeight}
+                      onChange={(e) => {
+                        const newEdu = parseInt(e.target.value);
+                        const remaining = 100 - newEdu;
+                        const skillsRatio = formData.skillsWeight / (formData.skillsWeight + formData.experienceWeight);
+                        updateFormData("educationWeight", newEdu);
+                        updateFormData("skillsWeight", Math.round(remaining * skillsRatio));
+                        updateFormData("experienceWeight", remaining - Math.round(remaining * skillsRatio));
+                      }}
+                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="font-medium">Total:</span>
+                    <span className={formData.skillsWeight + formData.experienceWeight + formData.educationWeight === 100 ? "text-green-600" : "text-red-600"}>
+                      {formData.skillsWeight + formData.experienceWeight + formData.educationWeight}%
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
 

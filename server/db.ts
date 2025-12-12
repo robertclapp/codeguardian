@@ -46,7 +46,9 @@ import {
   userActivityLog,
   InsertUserActivityLog,
   auditLog,
-  InsertAuditLog
+  InsertAuditLog,
+  dashboardLayouts,
+  InsertDashboardLayout
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -1417,4 +1419,54 @@ export async function updateUser(userId: number, data: Partial<InsertUser>) {
     .where(eq(users.id, userId));
 
   return result;
+}
+
+
+/**
+ * Dashboard Layout Functions
+ */
+
+export async function getDashboardLayout(userId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database connection failed");
+  const [layout] = await db
+    .select()
+    .from(dashboardLayouts)
+    .where(eq(dashboardLayouts.userId, userId))
+    .limit(1);
+  return layout || null;
+}
+
+export async function saveDashboardLayout(data: {
+  userId: number;
+  layoutData: string;
+  widgetVisibility: string;
+  dateRangePreset: string;
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("Database connection failed");
+  
+  // Check if layout exists
+  const existing = await getDashboardLayout(data.userId);
+  
+  if (existing) {
+    // Update existing layout
+    await db
+      .update(dashboardLayouts)
+      .set({
+        layoutData: data.layoutData,
+        widgetVisibility: data.widgetVisibility,
+        dateRangePreset: data.dateRangePreset,
+        updatedAt: new Date(),
+      })
+      .where(eq(dashboardLayouts.userId, data.userId));
+  } else {
+    // Create new layout
+    await db.insert(dashboardLayouts).values({
+      userId: data.userId,
+      layoutData: data.layoutData,
+      widgetVisibility: data.widgetVisibility,
+      dateRangePreset: data.dateRangePreset,
+    });
+  }
 }

@@ -105,7 +105,9 @@ export const programsRouter = router({
         });
 
         // Audit log for program creation
-        auditCreate(ctx, "programs", program.id, program);
+        if (program) {
+          auditCreate(ctx, "programs", program.id, program);
+        }
 
         return program;
       } catch (error) {

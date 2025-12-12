@@ -125,7 +125,7 @@ export const referenceChecksRouter = router({
     .input(
       z.object({
         checkId: z.number(),
-        responses: z.record(z.any()),
+        responses: z.record(z.string(), z.any()),
         overallRating: z.number().min(1).max(5),
         comments: z.string().optional(),
       })

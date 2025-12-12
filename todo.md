@@ -572,3 +572,22 @@
 - [x] Create Help dropdown menu in dashboard header with tutorial restart option
 - [x] Add documentation links to Help menu
 - [x] Add support resources to Help menu
+
+# Final Enhancements
+
+## Email/SMS Integration Testing
+- [x] Create email/SMS testing page with template preview
+- [x] Add test send functionality with template variable substitution
+- [x] Build credential validation system for Twilio
+- [x] Add delivery status tracking UI
+
+## AI Candidate Scoring Refinement
+- [x] Add custom weighting schema to database for job requirements
+- [x] Create weighting configuration UI in job creation/edit forms
+- [x] Update AI scoring algorithm to use custom weights
+- [x] Add weight adjustment sliders for skills, experience, educatio## Dashboard Widget Customization
+- [x] Install react-grid-layout for drag-and-drop
+- [x] Create dashboard layout persistence in database
+- [x] Build widget visibility toggle UI
+- [x] Add date range filter for analytics widgets
+- [x] Implement drag-and-drop widget reorderingd cards

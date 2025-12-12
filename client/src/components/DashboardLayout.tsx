@@ -40,6 +40,7 @@ const menuItems = [
   { icon: BarChart3, label: "Analytics", path: "/analytics" },
   { icon: Shield, label: "Admin", path: "/admin" },
   { icon: Edit3, label: "Template Editor", path: "/template-editor" },
+  { icon: MessageSquare, label: "Communication Testing", path: "/communication-testing" },
   { icon: MessageSquare, label: "AI Assistant", path: "/assistant" },
 ];
 

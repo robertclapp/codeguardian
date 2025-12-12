@@ -26,6 +26,10 @@ export const jobsRouter = router({
         salaryMin: z.number().nonnegative().optional(),
         salaryMax: z.number().nonnegative().optional(),
         status: z.enum(["draft", "open", "closed", "archived"]).default("draft"),
+        // AI Scoring Custom Weights
+        skillsWeight: z.number().min(0).max(100).default(33),
+        experienceWeight: z.number().min(0).max(100).default(33),
+        educationWeight: z.number().min(0).max(100).default(34),
       })
     )
     .mutation(async ({ ctx, input }) => {

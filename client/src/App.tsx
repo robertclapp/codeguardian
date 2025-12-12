@@ -25,6 +25,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import UserManagement from "./pages/UserManagement";
 import AuditLogs from "./pages/AuditLogs";
 import TemplateEditor from "./pages/TemplateEditor";
+import CommunicationTesting from "./pages/CommunicationTesting";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -51,6 +52,7 @@ function Router() {
         <Route path="/users" component={UserManagement} />
         <Route path="/audit" component={AuditLogs} />
         <Route path="/template-editor" component={TemplateEditor} />
+        <Route path="/communication-testing" component={CommunicationTesting} />
         <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

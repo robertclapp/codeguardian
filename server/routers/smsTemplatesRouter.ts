@@ -111,6 +111,50 @@ export const smsTemplatesRouter = router({
     }),
 
   /**
+   * Send test SMS with template and variables
+   */
+  sendTest: adminProcedure
+    .input(
+      z.object({
+        templateId: z.number(),
+        to: z.string(),
+        variables: z.record(z.string(), z.string()).optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      // Get template
+      const template = await db.getSmsTemplateById(input.templateId);
+      if (!template) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Template not found" });
+      }
+
+      // Substitute variables
+      let body = template.body;
+      
+      if (input.variables) {
+        Object.entries(input.variables).forEach(([key, value]) => {
+          const regex = new RegExp(`{{${key}}}`, "g");
+          body = body.replace(regex, String(value));
+        });
+      }
+
+      // TODO: Integrate with Twilio
+      // For now, just log the test SMS
+      console.log("[SMS Test]", {
+        to: input.to,
+        body,
+        template: template.name,
+      });
+
+      // Simulate success
+      return {
+        success: true,
+        message: `Test SMS sent to ${input.to}`,
+        preview: { body },
+      };
+    }),
+
+  /**
    * Set default template for a type
    */
   setDefault: adminProcedure

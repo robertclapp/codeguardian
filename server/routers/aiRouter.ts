@@ -126,18 +126,28 @@ Format the output in markdown for easy reading.`;
           return { matchScore: 30, reasoning: "No resume or cover letter provided" };
         }
 
+        // Get custom weights from job (default to equal weighting if not set)
+        const skillsWeight = job.skillsWeight || 33;
+        const experienceWeight = job.experienceWeight || 33;
+        const educationWeight = job.educationWeight || 34;
+
         const systemPrompt = `You are an expert recruiter analyzing candidate fit for job positions. Analyze the candidate's qualifications against the job requirements and provide:
 1. A match score from 0-100 (where 100 is a perfect match)
 2. Brief reasoning for the score
 
+Use these custom weights when calculating the overall score:
+- Skills relevance: ${skillsWeight}%
+- Experience level: ${experienceWeight}%
+- Education/certifications: ${educationWeight}%
+
 Consider:
-- Relevant skills and experience
-- Education and certifications
-- Career progression
+- Relevant skills and technical competencies
+- Years of experience and career progression
+- Education level and relevant certifications
 - Cultural fit indicators
 - Gaps or red flags
 
-Be objective and fair in your assessment.`;
+Be objective and fair in your assessment, applying the specified weights to each category.`;
 
         const userPrompt = `Job Title: ${job.title}
 
