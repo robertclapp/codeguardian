@@ -50,6 +50,7 @@ import {
   dashboardLayouts,
   InsertDashboardLayout,
   candidatePortalTokens,
+  assessmentInvitations,
   InsertCandidatePortalToken
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
@@ -1556,4 +1557,43 @@ export async function getCandidatePortalInfo(candidateId: number) {
     documents,
     progress,
   };
+}
+
+
+// Assessment invitations
+export async function createAssessmentInvitation(data: {
+  candidateId: number;
+  assessmentId: string;
+  assessmentTitle: string;
+  provider: string;
+  invitationLink: string;
+  status: 'pending' | 'completed' | 'expired';
+  expiresAt: Date;
+}) {
+  const [result] = await db.insert(assessmentInvitations).values(data);
+  return { id: result.insertId };
+}
+
+export async function getCandidateAssessments(candidateId: number) {
+  return db.select().from(assessmentInvitations).where(eq(assessmentInvitations.candidateId, candidateId));
+}
+
+export async function getAllAssessmentInvitations() {
+  return db.select().from(assessmentInvitations);
+}
+
+export async function updateAssessmentResults(
+  invitationId: number,
+  score: number,
+  percentile?: number
+) {
+  await db
+    .update(assessmentInvitations)
+    .set({
+      status: 'completed',
+      score,
+      percentile,
+      completedAt: new Date(),
+    })
+    .where(eq(assessmentInvitations.id, invitationId));
 }

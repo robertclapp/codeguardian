@@ -31,6 +31,8 @@ import EmployerPortal from "./pages/EmployerPortal";
 import AdvancedAnalytics from "./pages/AdvancedAnalytics";
 import SMSNotifications from "./pages/SMSNotifications";
 import BulkOperations from "./pages/BulkOperations";
+import ReportingDashboard from "./pages/ReportingDashboard";
+import SkillsAssessment from "./pages/SkillsAssessment";
 import CommunicationTesting from "./pages/CommunicationTesting";
 
 function Router() {
@@ -64,6 +66,8 @@ function Router() {
       <Route path="/advanced-analytics" component={AdvancedAnalytics} />
       <Route path="/sms-notifications" component={SMSNotifications} />
       <Route path="/bulk-operations" component={BulkOperations} />
+      <Route path="/reporting" component={ReportingDashboard} />
+      <Route path="/skills-assessment" component={SkillsAssessment} />
         <Route path="/communication-testing" component={CommunicationTesting} />
         <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}

@@ -38,7 +38,22 @@ export type InsertUser = typeof users.$inferInsert;
 
 export type InsertCandidatePortalToken = typeof candidatePortalTokens.$inferInsert;
 
-export const dashboardLayouts = mysqlTable("dashboard_layouts", {
+export const assessmentInvitations = mysqlTable('assessment_invitations', {
+  id: int('id').autoincrement().primaryKey(),
+  candidateId: int('candidate_id').notNull(),
+  assessmentId: text('assessment_id').notNull(),
+  assessmentTitle: text('assessment_title').notNull(),
+  provider: varchar('provider', { length: 50 }).notNull(),
+  invitationLink: text('invitation_link').notNull(),
+  status: mysqlEnum('status', ['pending', 'completed', 'expired']).notNull().default('pending'),
+  score: int('score'),
+  percentile: int('percentile'),
+  completedAt: timestamp('completed_at'),
+  expiresAt: timestamp('expires_at').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export const dashboardLayouts = mysqlTable('dashboard_layouts', {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull(),
   layoutData: text("layoutData").notNull(), // JSON string of grid layout
