@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/sidebar";
 import { APP_LOGO, APP_TITLE, getLoginUrl } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { LayoutDashboard, LogOut, PanelLeft, Users, Briefcase, MessageSquare, Settings, FileText, TrendingUp, ClipboardCheck, FolderOpen, BarChart3, Shield, Edit3, HelpCircle, Book, LifeBuoy, CheckCircle } from "lucide-react";
+import { LayoutDashboard, LogOut, PanelLeft, Users, Briefcase, MessageSquare, Settings, FileText, TrendingUp, ClipboardCheck, FolderOpen, BarChart3, Shield, Edit3, HelpCircle, Book, LifeBuoy, CheckCircle, LineChart } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
@@ -38,6 +38,7 @@ const menuItems = [
   { icon: ClipboardCheck, label: "Compliance", path: "/compliance" },
   { icon: FolderOpen, label: "Templates", path: "/templates" },
   { icon: BarChart3, label: "Analytics", path: "/analytics" },
+  { icon: LineChart, label: "Advanced Analytics", path: "/advanced-analytics" },
   { icon: Shield, label: "Admin", path: "/admin" },
   { icon: Edit3, label: "Template Editor", path: "/template-editor" },
   { icon: CheckCircle, label: "Auto-Review", path: "/document-auto-review" },

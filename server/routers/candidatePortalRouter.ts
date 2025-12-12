@@ -3,6 +3,7 @@ import { publicProcedure, router } from "../_core/trpc";
 import * as db from "../db";
 import { TRPCError } from "@trpc/server";
 import { storagePut } from "../storage";
+import { sendMagicLinkEmail } from "../_core/emailService";
 
 /**
  * Candidate Self-Service Portal Router
@@ -34,9 +35,16 @@ export const candidatePortalRouter = router({
       // Generate access token
       const token = await db.createCandidatePortalToken(candidate.id);
       
-      // TODO: Send email with magic link
-      // For now, return the token (in production, only send via email)
-      console.log(`[Candidate Portal] Access token for ${input.email}: ${token}`);
+      // Send magic link email
+      const emailResult = await sendMagicLinkEmail(
+        input.email,
+        token,
+        candidate.name
+      );
+      
+      if (!emailResult.success) {
+        console.error(`[Candidate Portal] Failed to send email: ${emailResult.error}`);
+      }
       
       return {
         success: true,

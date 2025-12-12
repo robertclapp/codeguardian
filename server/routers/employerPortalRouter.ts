@@ -3,6 +3,7 @@ import { protectedProcedure, router } from "../_core/trpc";
 import * as db from "../db";
 import { TRPCError } from "@trpc/server";
 import { auditCreate } from "../_core/auditMiddleware";
+import { sendInterviewRequestEmail } from "../_core/emailService";
 
 /**
  * Employer Portal Router
@@ -171,8 +172,18 @@ export const employerPortalRouter = router({
         });
       }
       
-      // TODO: Send interview request notification
-      console.log(`[Employer Portal] Interview request for candidate ${input.candidateId}`);
+      // Send interview request email
+      const emailResult = await sendInterviewRequestEmail(
+        candidate.email,
+        candidate.name,
+        ctx.user.name || "Employer",
+        job.title,
+        input.message
+      );
+      
+      if (!emailResult.success) {
+        console.error(`[Employer Portal] Failed to send interview email: ${emailResult.error}`);
+      }
       
       auditCreate(ctx, "candidates", input.candidateId, {
         action: "interview_requested",

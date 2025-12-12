@@ -28,6 +28,7 @@ import TemplateEditor from "./pages/TemplateEditor";
 import CandidatePortal from "./pages/CandidatePortal";
 import DocumentAutoReview from "./pages/DocumentAutoReview";
 import EmployerPortal from "./pages/EmployerPortal";
+import AdvancedAnalytics from "./pages/AdvancedAnalytics";
 import CommunicationTesting from "./pages/CommunicationTesting";
 
 function Router() {
@@ -58,6 +59,7 @@ function Router() {
       <Route path="/candidate-portal" component={CandidatePortal} />
       <Route path="/document-auto-review" component={DocumentAutoReview} />
       <Route path="/employer-portal" component={EmployerPortal} />
+      <Route path="/advanced-analytics" component={AdvancedAnalytics} />
         <Route path="/communication-testing" component={CommunicationTesting} />
         <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
