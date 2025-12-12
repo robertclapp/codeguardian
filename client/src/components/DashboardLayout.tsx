@@ -48,6 +48,7 @@ const menuItems = [
   { icon: FileText, label: "Reporting", path: "/reporting" },
   { icon: Brain, label: "Skills Assessment", path: "/skills-assessment" },
   { icon: Shield, label: "Background Checks", path: "/background-check" },
+  { icon: Upload, label: "Data Migration", path: "/data-migration" },
   { icon: MessageSquare, label: "AI Assistant", path: "/assistant" },
 ];
 

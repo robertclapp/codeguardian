@@ -113,6 +113,13 @@
       "when": 1765508051859,
       "tag": "0015_strong_wolf_cub",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "5",
+      "when": 1765514371667,
+      "tag": "0016_huge_black_tarantula",
+      "breakpoints": true
     }
   ]
 }

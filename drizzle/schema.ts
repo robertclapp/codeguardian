@@ -38,6 +38,20 @@ export type InsertUser = typeof users.$inferInsert;
 
 export type InsertCandidatePortalToken = typeof candidatePortalTokens.$inferInsert;
 
+export const importHistory = mysqlTable('import_history', {
+  id: int('id').autoincrement().primaryKey(),
+  importType: mysqlEnum('import_type', ['candidates', 'jobs']).notNull(),
+  fileName: varchar('file_name', { length: 255 }).notNull(),
+  totalRows: int('total_rows').notNull(),
+  successfulRows: int('successful_rows').notNull(),
+  failedRows: int('failed_rows').notNull(),
+  errors: text('errors'), // JSON string
+  rollbackId: varchar('rollback_id', { length: 100 }).unique(),
+  importedBy: int('imported_by').notNull(),
+  importedAt: timestamp('imported_at').defaultNow().notNull(),
+  rolledBackAt: timestamp('rolled_back_at'),
+});
+
 export const jobSyndications = mysqlTable('job_syndications', {
   id: int('id').autoincrement().primaryKey(),
   jobId: int('job_id').notNull(),

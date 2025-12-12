@@ -52,6 +52,7 @@ import {
   candidatePortalTokens,
   assessmentInvitations,
   backgroundChecks,
+  importHistory,
   InsertCandidatePortalToken
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
@@ -1560,6 +1561,24 @@ export async function getCandidatePortalInfo(candidateId: number) {
   };
 }
 
+
+// Import history
+export async function createImportHistory(data: {
+  importType: 'candidates' | 'jobs';
+  fileName: string;
+  totalRows: number;
+  successfulRows: number;
+  failedRows: number;
+  errors: string;
+  rollbackId: string;
+  importedBy: number;
+}) {
+  await db.insert(importHistory).values(data);
+}
+
+export async function getImportHistory() {
+  return db.select().from(importHistory).orderBy(desc(importHistory.importedAt));
+}
 
 // Background checks
 export async function createBackgroundCheck(data: {

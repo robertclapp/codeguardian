@@ -16,6 +16,7 @@ import {
   Mail,
   Phone,
   MapPin,
+  Camera,
 } from "lucide-react";
 
 export default function CandidatePortal() {
@@ -310,6 +311,74 @@ export default function CandidatePortal() {
                   No documents uploaded yet
                 </p>
               )}
+
+              {/* Camera capture button */}
+              <Button
+                variant="outline"
+                className="w-full mb-4"
+                onClick={async () => {
+                  try {
+                    const stream = await navigator.mediaDevices.getUserMedia({
+                      video: { facingMode: 'environment' },
+                    });
+                    const video = document.createElement('video');
+                    video.srcObject = stream;
+                    video.play();
+                    
+                    // Show video preview
+                    const modal = document.createElement('div');
+                    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;';
+                    modal.appendChild(video);
+                    
+                    const captureBtn = document.createElement('button');
+                    captureBtn.textContent = 'Capture Photo';
+                    captureBtn.style.cssText = 'margin-top:20px;padding:10px 20px;background:#3b82f6;color:white;border:none;border-radius:8px;cursor:pointer;';
+                    captureBtn.onclick = () => {
+                      const canvas = document.createElement('canvas');
+                      canvas.width = video.videoWidth;
+                      canvas.height = video.videoHeight;
+                      canvas.getContext('2d')?.drawImage(video, 0, 0);
+                      
+                      canvas.toBlob((blob) => {
+                        if (blob) {
+                          const file = new File([blob], 'camera-capture.jpg', { type: 'image/jpeg' });
+                          const reader = new FileReader();
+                          reader.onload = () => {
+                            const base64 = (reader.result as string).split(',')[1];
+                            uploadDocumentMutation.mutate({
+                              candidateId: candidate.id,
+                              documentType: 'id',
+                              fileName: file.name,
+                              fileData: base64,
+                              mimeType: file.type,
+                            });
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                        stream.getTracks().forEach(track => track.stop());
+                        document.body.removeChild(modal);
+                      }, 'image/jpeg', 0.9);
+                    };
+                    modal.appendChild(captureBtn);
+                    
+                    const closeBtn = document.createElement('button');
+                    closeBtn.textContent = 'Cancel';
+                    closeBtn.style.cssText = 'margin-top:10px;padding:10px 20px;background:#6b7280;color:white;border:none;border-radius:8px;cursor:pointer;';
+                    closeBtn.onclick = () => {
+                      stream.getTracks().forEach(track => track.stop());
+                      document.body.removeChild(modal);
+                    };
+                    modal.appendChild(closeBtn);
+                    
+                    document.body.appendChild(modal);
+                  } catch (err) {
+                    alert('Camera access denied or not available on this device');
+                  }
+                }}
+              >
+                <Camera className="w-4 h-4 mr-2" />
+                Take Photo with Camera
+              </Button>
 
               {/* Upload buttons */}
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3 pt-4 border-t">

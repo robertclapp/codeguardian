@@ -34,6 +34,7 @@ import BulkOperations from "./pages/BulkOperations";
 import ReportingDashboard from "./pages/ReportingDashboard";
 import SkillsAssessment from "./pages/SkillsAssessment";
 import BackgroundCheck from "./pages/BackgroundCheck";
+import DataMigration from "./pages/DataMigration";
 import CommunicationTesting from "./pages/CommunicationTesting";
 
 function Router() {
@@ -70,6 +71,7 @@ function Router() {
       <Route path="/reporting" component={ReportingDashboard} />
       <Route path="/skills-assessment" component={SkillsAssessment} />
       <Route path="/background-check" component={BackgroundCheck} />
+      <Route path="/data-migration" component={DataMigration} />
         <Route path="/communication-testing" component={CommunicationTesting} />
         <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}

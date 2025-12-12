@@ -90,24 +90,47 @@ async function syncData() {
   console.log('[SW] Background sync triggered');
 }
 
-// Push notifications
+// Push notifications with rich data
 self.addEventListener('push', (event) => {
+  const data = event.data ? event.data.json() : {};
+  const title = data.title || 'HR Platform';
   const options = {
-    body: event.data ? event.data.text() : 'New notification',
+    body: data.body || 'New notification',
     icon: '/icon-192.png',
     badge: '/icon-192.png',
     vibrate: [200, 100, 200],
+    data: data.url || '/',
+    tag: data.tag || 'default',
+    requireInteraction: data.requireInteraction || false,
+    actions: [
+      { action: 'open', title: 'View', icon: '/icon-192.png' },
+      { action: 'close', title: 'Dismiss' },
+    ],
   };
 
   event.waitUntil(
-    self.registration.showNotification('HR Platform', options)
+    self.registration.showNotification(title, options)
   );
 });
 
-// Notification click
+// Notification click with action handling
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-  event.waitUntil(
-    clients.openWindow('/')
-  );
+
+  if (event.action === 'open' || !event.action) {
+    event.waitUntil(
+      clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+        // Check if there's already a window open
+        for (const client of clientList) {
+          if (client.url === event.notification.data && 'focus' in client) {
+            return client.focus();
+          }
+        }
+        // Open new window
+        if (clients.openWindow) {
+          return clients.openWindow(event.notification.data);
+        }
+      })
+    );
+  }
 });
