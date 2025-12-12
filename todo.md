@@ -648,3 +648,29 @@
 - [x] Add mobile-optimized navigation for portals
 - [x] Optimize touch interactions and gestures
 - [x] Add install prompts for PWA
+
+
+# Operational Enhancements
+
+## 1. SMS Notifications with Twilio
+- [x] Create SMS service module with Twilio SDK integration
+- [x] Add SMS notification templates for interview reminders
+- [x] Implement document approval SMS alerts
+- [x] Add candidate status change SMS notifications
+- [x] Build SMS delivery tracking and error handling
+- [x] Create SMS notification preferences for candidates
+
+## 2. Calendar Integration
+- [x] Implement Google Calendar API integration
+- [x] Add Outlook Calendar API integration
+- [x] Create interview scheduling UI component
+- [x] Build automated calendar invite generation
+- [x] Add interview reminder system
+- [x] Implement calendar availability checking
+- [x] Create calendar sync for interview updates## 3. Bulk Operations
+- [x] Build bulk candidate status update interface
+- [x] Implement mass email sending with template selection
+- [x] Add batch document approval workflow
+- [x] Create bulk SMS notification system
+- [x] Build candidate export functionality (CSV/Excel)
+- [x] Implement bulk job closing operations] Implement undo/rollback for bulk actions

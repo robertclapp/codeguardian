@@ -29,6 +29,8 @@ import CandidatePortal from "./pages/CandidatePortal";
 import DocumentAutoReview from "./pages/DocumentAutoReview";
 import EmployerPortal from "./pages/EmployerPortal";
 import AdvancedAnalytics from "./pages/AdvancedAnalytics";
+import SMSNotifications from "./pages/SMSNotifications";
+import BulkOperations from "./pages/BulkOperations";
 import CommunicationTesting from "./pages/CommunicationTesting";
 
 function Router() {
@@ -60,6 +62,8 @@ function Router() {
       <Route path="/document-auto-review" component={DocumentAutoReview} />
       <Route path="/employer-portal" component={EmployerPortal} />
       <Route path="/advanced-analytics" component={AdvancedAnalytics} />
+      <Route path="/sms-notifications" component={SMSNotifications} />
+      <Route path="/bulk-operations" component={BulkOperations} />
         <Route path="/communication-testing" component={CommunicationTesting} />
         <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}

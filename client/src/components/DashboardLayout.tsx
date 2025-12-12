@@ -43,6 +43,8 @@ const menuItems = [
   { icon: Edit3, label: "Template Editor", path: "/template-editor" },
   { icon: CheckCircle, label: "Auto-Review", path: "/document-auto-review" },
   { icon: MessageSquare, label: "Communication Testing", path: "/communication-testing" },
+  { icon: MessageSquare, label: "SMS Notifications", path: "/sms-notifications" },
+  { icon: Users, label: "Bulk Operations", path: "/bulk-operations" },
   { icon: MessageSquare, label: "AI Assistant", path: "/assistant" },
 ];
 

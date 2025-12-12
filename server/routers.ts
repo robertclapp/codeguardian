@@ -33,6 +33,8 @@ import { candidatePortalRouter } from "./routers/candidatePortalRouter";
 import { documentAutoReviewRouter } from "./routers/documentAutoReviewRouter";
 import { employerPortalRouter } from "./routers/employerPortalRouter";
 import { advancedAnalyticsRouter } from "./routers/advancedAnalyticsRouter";
+import { smsNotificationsRouter } from "./routers/smsNotificationsRouter";
+import { bulkOperationsRouter } from "./routers/bulkOperationsRouter";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -80,6 +82,8 @@ export const appRouter = router({
   documentAutoReview: documentAutoReviewRouter,
   employerPortal: employerPortalRouter,
   advancedAnalytics: advancedAnalyticsRouter,
+  smsNotifications: smsNotificationsRouter,
+  bulkOperations: bulkOperationsRouter,
 });
 
 export type AppRouter = typeof appRouter;
