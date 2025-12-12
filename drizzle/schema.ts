@@ -38,6 +38,36 @@ export type InsertUser = typeof users.$inferInsert;
 
 export type InsertCandidatePortalToken = typeof candidatePortalTokens.$inferInsert;
 
+export const jobSyndications = mysqlTable('job_syndications', {
+  id: int('id').autoincrement().primaryKey(),
+  jobId: int('job_id').notNull(),
+  provider: varchar('provider', { length: 50 }).notNull(),
+  externalJobId: varchar('external_job_id', { length: 255 }).notNull(),
+  postUrl: text('post_url'),
+  status: mysqlEnum('status', ['active', 'closed', 'expired', 'error']).notNull().default('active'),
+  postedAt: timestamp('posted_at').defaultNow().notNull(),
+  closedAt: timestamp('closed_at'),
+  lastSyncedAt: timestamp('last_synced_at'),
+});
+
+export const backgroundChecks = mysqlTable('background_checks', {
+  id: int('id').autoincrement().primaryKey(),
+  candidateId: int('candidate_id').notNull(),
+  checkId: varchar('check_id', { length: 100 }).notNull().unique(),
+  packageId: varchar('package_id', { length: 100 }).notNull(),
+  packageName: varchar('package_name', { length: 255 }).notNull(),
+  provider: varchar('provider', { length: 50 }).notNull(),
+  status: mysqlEnum('status', ['pending', 'in_progress', 'completed', 'disputed', 'cancelled']).notNull().default('pending'),
+  result: mysqlEnum('result', ['clear', 'consider', 'suspended']),
+  price: int('price').notNull(),
+  consentGiven: int('consent_given', { mode: 'boolean' }).notNull(),
+  consentDate: timestamp('consent_date').notNull(),
+  initiatedAt: timestamp('initiated_at').defaultNow().notNull(),
+  completedAt: timestamp('completed_at'),
+  reportUrl: text('report_url'),
+  details: text('details'), // JSON string
+});
+
 export const assessmentInvitations = mysqlTable('assessment_invitations', {
   id: int('id').autoincrement().primaryKey(),
   candidateId: int('candidate_id').notNull(),

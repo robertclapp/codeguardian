@@ -51,6 +51,7 @@ import {
   InsertDashboardLayout,
   candidatePortalTokens,
   assessmentInvitations,
+  backgroundChecks,
   InsertCandidatePortalToken
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
@@ -1559,6 +1560,46 @@ export async function getCandidatePortalInfo(candidateId: number) {
   };
 }
 
+
+// Background checks
+export async function createBackgroundCheck(data: {
+  candidateId: number;
+  checkId: string;
+  packageId: string;
+  packageName: string;
+  provider: string;
+  status: 'pending' | 'in_progress' | 'completed' | 'disputed' | 'cancelled';
+  price: number;
+  consentGiven: boolean;
+  consentDate: Date;
+}) {
+  await db.insert(backgroundChecks).values(data);
+}
+
+export async function getCandidateBackgroundChecks(candidateId: number) {
+  return db.select().from(backgroundChecks).where(eq(backgroundChecks.candidateId, candidateId));
+}
+
+export async function getAllBackgroundChecks() {
+  return db.select().from(backgroundChecks);
+}
+
+export async function updateBackgroundCheckStatus(
+  checkId: string,
+  status: 'pending' | 'in_progress' | 'completed' | 'disputed' | 'cancelled',
+  result?: 'clear' | 'consider' | 'suspended',
+  reportUrl?: string
+) {
+  const updateData: any = { status };
+  if (result) updateData.result = result;
+  if (reportUrl) updateData.reportUrl = reportUrl;
+  if (status === 'completed') updateData.completedAt = new Date();
+
+  await db
+    .update(backgroundChecks)
+    .set(updateData)
+    .where(eq(backgroundChecks.checkId, checkId));
+}
 
 // Assessment invitations
 export async function createAssessmentInvitation(data: {

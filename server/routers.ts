@@ -37,6 +37,7 @@ import { smsNotificationsRouter } from "./routers/smsNotificationsRouter";
 import { bulkOperationsRouter } from "./routers/bulkOperationsRouter";
 import { reportingRouter } from "./routers/reportingRouter";
 import { skillsAssessmentRouter } from "./routers/skillsAssessmentRouter";
+import { backgroundCheckRouter } from "./routers/backgroundCheckRouter";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -88,6 +89,7 @@ export const appRouter = router({
   bulkOperations: bulkOperationsRouter,
   reporting: reportingRouter,
   skillsAssessment: skillsAssessmentRouter,
+  backgroundCheck: backgroundCheckRouter,
 });
 
 export type AppRouter = typeof appRouter;
