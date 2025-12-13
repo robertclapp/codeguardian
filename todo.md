@@ -839,3 +839,19 @@
 - [x] Create SwipeableNotification component for swipe-to-dismiss
 - [x] Create SwipeDemo page demonstrating touch gestures
 - [x] Disable drag-and-drop on mobile for better UX
+
+
+## Progressive Web App (PWA) Features
+- [x] Install pull-to-refresh library (react-simple-pull-to-refresh)
+- [x] Add pull-to-refresh to Jobs page
+- [x] Add pull-to-refresh to Documents page
+- [x] Add pull-to-refresh to Progress page
+- [x] Create mobile-optimized dashboard widget variants
+- [x] Add larger touch targets for mobile (4xl text, h-6 icons)
+- [x] Simplify information density on mobile widgets
+- [x] PWA manifest.json already exists
+- [x] Add service worker with vite-plugin-pwa
+- [x] Implement caching strategy (fonts, API, assets)
+- [x] Add home screen installation prompt component
+- [x] Add offline status indicator
+- [x] Configure workbox for runtime caching

@@ -273,12 +273,12 @@ export default function Dashboard() {
             <div key="totalJobs" className="dashboard-widget">
               <Card className="h-full">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Jobs</CardTitle>
-                  <Briefcase className="h-4 w-4 text-muted-foreground" />
+                  <CardTitle className={isMobile ? "text-base font-medium" : "text-sm font-medium"}>Total Jobs</CardTitle>
+                  <Briefcase className={isMobile ? "h-6 w-6 text-muted-foreground" : "h-4 w-4 text-muted-foreground"} />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{totalJobs}</div>
-                  <p className="text-xs text-muted-foreground">
+                  <div className={isMobile ? "text-4xl font-bold" : "text-2xl font-bold"}>{totalJobs}</div>
+                  <p className={isMobile ? "text-sm text-muted-foreground mt-1" : "text-xs text-muted-foreground"}>
                     {openJobs} currently open
                   </p>
                 </CardContent>
@@ -291,12 +291,12 @@ export default function Dashboard() {
             <div key="activeCandidates" className="dashboard-widget">
               <Card className="h-full">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Active Candidates</CardTitle>
-                  <Users className="h-4 w-4 text-muted-foreground" />
+                  <CardTitle className={isMobile ? "text-base font-medium" : "text-sm font-medium"}>Active Candidates</CardTitle>
+                  <Users className={isMobile ? "h-6 w-6 text-muted-foreground" : "h-4 w-4 text-muted-foreground"} />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">0</div>
-                  <p className="text-xs text-muted-foreground">
+                  <div className={isMobile ? "text-4xl font-bold" : "text-2xl font-bold"}>0</div>
+                  <p className={isMobile ? "text-sm text-muted-foreground mt-1" : "text-xs text-muted-foreground"}>
                     Across all positions
                   </p>
                 </CardContent>
@@ -309,12 +309,12 @@ export default function Dashboard() {
             <div key="matchScore" className="dashboard-widget">
               <Card className="h-full">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Avg. Match Score</CardTitle>
-                  <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                  <CardTitle className={isMobile ? "text-base font-medium" : "text-sm font-medium"}>Avg. Match Score</CardTitle>
+                  <TrendingUp className={isMobile ? "h-6 w-6 text-muted-foreground" : "h-4 w-4 text-muted-foreground"} />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">--</div>
-                  <p className="text-xs text-muted-foreground">
+                  <div className={isMobile ? "text-4xl font-bold" : "text-2xl font-bold"}>--</div>
+                  <p className={isMobile ? "text-sm text-muted-foreground mt-1" : "text-xs text-muted-foreground"}>
                     AI-powered matching
                   </p>
                 </CardContent>

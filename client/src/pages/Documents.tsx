@@ -1,5 +1,6 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import DashboardLayout from "@/components/DashboardLayout";
+import { PullToRefresh } from "@/components/PullToRefresh";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { trpc } from "@/lib/trpc";
@@ -130,6 +131,7 @@ export default function Documents() {
 
   return (
     <DashboardLayout>
+      <PullToRefresh onRefresh={async () => { await refetch(); }}>
       <div className="container py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold">My Documents</h1>
@@ -237,6 +239,7 @@ export default function Documents() {
           </CardContent>
         </Card>
       </div>
+      </PullToRefresh>
     </DashboardLayout>
   );
 }

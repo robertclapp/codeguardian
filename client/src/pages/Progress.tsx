@@ -1,5 +1,6 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import DashboardLayout from "@/components/DashboardLayout";
+import { PullToRefresh } from "@/components/PullToRefresh";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -29,7 +30,7 @@ export default function Progress() {
   });
 
   // Fetch progress data (we'll need to create this endpoint)
-  const { data: progressData, isLoading } = trpc.programs.getProgressStats.useQuery(
+  const { data: progressData, isLoading, refetch } = trpc.programs.getProgressStats.useQuery(
     {
       programId: selectedProgram === "all" ? undefined : parseInt(selectedProgram),
       status: statusFilter === "all" ? undefined : statusFilter,
@@ -83,6 +84,7 @@ export default function Progress() {
 
   return (
     <DashboardLayout>
+      <PullToRefresh onRefresh={async () => { await refetch(); }}>
       <div className="container py-8">
         {/* Header */}
         <div className="mb-8 flex items-center justify-between">
@@ -307,6 +309,7 @@ export default function Progress() {
           </Card>
         )}
       </div>
+      </PullToRefresh>
     </DashboardLayout>
   );
 }

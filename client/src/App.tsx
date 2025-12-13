@@ -40,6 +40,8 @@ import VideoTutorials from "./pages/VideoTutorials";
 import AdvancedSearch from "./pages/AdvancedSearch";
 import CommunicationTesting from "./pages/CommunicationTesting";
 import SwipeDemo from "./pages/SwipeDemo";
+import { PWAInstallPrompt } from "./components/PWAInstallPrompt";
+import { OfflineIndicator } from "./components/OfflineIndicator";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -93,8 +95,9 @@ function App() {
     <ErrorBoundary>
       <ThemeProvider defaultTheme="light">
         <TooltipProvider>
-          <Toaster />
+          <OfflineIndicator />
           <Router />
+          <PWAInstallPrompt />
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>
