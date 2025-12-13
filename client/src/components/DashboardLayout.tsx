@@ -47,6 +47,8 @@ const menuItems = [
   { icon: LayoutDashboard, label: "Candidate Pipeline", path: "/candidate-pipeline" },
   { icon: Zap, label: "Automated Workflows", path: "/automated-workflows" },
   { icon: TrendingUp, label: "Analytics Dashboard", path: "/analytics-dashboard" },
+  { icon: Users, label: "Collaboration Demo", path: "/collaboration-demo" },
+  { icon: Video, label: "AI Interview Assistant", path: "/ai-interview" },
   { icon: CheckCircle, label: "Auto-Review", path: "/document-auto-review" },
   { icon: MessageSquare, label: "Communication Testing", path: "/communication-testing" },
   { icon: MessageSquare, label: "SMS Notifications", path: "/sms-notifications" },

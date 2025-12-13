@@ -45,6 +45,8 @@ import InterviewScheduler from "./pages/InterviewScheduler";
 import CandidatePipeline from "./pages/CandidatePipeline";
 import AutomatedWorkflows from "./pages/AutomatedWorkflows";
 import AnalyticsDashboard from "./pages/AnalyticsDashboard";
+import CollaborationDemo from "./pages/CollaborationDemo";
+import AIInterviewAssistant from "./pages/AIInterviewAssistant";
 import { PWAInstallPrompt } from "./components/PWAInstallPrompt";
 import { OfflineIndicator } from "./components/OfflineIndicator";
 import { PushNotificationPrompt } from "./components/PushNotificationPrompt";
@@ -93,6 +95,8 @@ function Router() {
         <Route path="/candidate-pipeline" component={CandidatePipeline} />
         <Route path="/automated-workflows" component={AutomatedWorkflows} />
         <Route path="/analytics-dashboard" component={AnalyticsDashboard} />
+        <Route path="/collaboration-demo" component={CollaborationDemo} />
+        <Route path="/ai-interview" component={AIInterviewAssistant} />
         <Route path="/communication-testing" component={CommunicationTesting} />
         <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}

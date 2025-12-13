@@ -976,3 +976,42 @@
 - [x] Add export functionality (PDF/Excel placeholders)
 - [x] Add key metrics cards (avg time to hire, conversion rate, total applicants, total hires)
 - [x] Add source performance details table
+
+
+## Real-time Collaboration
+- [x] Install WebSocket library (socket.io)
+- [x] Set up WebSocket server (server/websocket.ts)
+- [x] Create presence tracking system with Map-based storage
+- [x] Add "who's viewing" indicators (PresenceIndicator component)
+- [x] Implement live activity broadcasting (typing, field updates, status changes)
+- [x] Add conflict prevention with presence awareness
+- [x] Create real-time notifications via socket events
+- [x] Add usePresence React hook
+- [x] Create CollaborationDemo page
+
+## Native Mobile App (Capacitor)
+- [x] Install Capacitor CLI and dependencies (@capacitor/core, @capacitor/cli)
+- [x] Initialize Capacitor project (capacitor.config.ts created)
+- [x] Add camera plugin for document scanning (@capacitor/camera)
+- [x] Add push notifications plugin (@capacitor/push-notifications)
+- [x] Create comprehensive setup documentation (CAPACITOR_SETUP.md)
+- [ ] Configure iOS app settings (requires macOS + Xcode)
+- [ ] Configure Android app settings (requires Android Studio)
+- [ ] Create app icons and splash screens
+- [ ] Test on iOS simulator/device
+- [ ] Test on Android emulator/device
+
+## AI Interview Assistant
+- [x] Create video interview recording UI (AIInterviewAssistant page)
+- [x] Add webcam/microphone access with getUserMedia
+- [x] Implement video recording with MediaRecorder API
+- [x] Add pause/resume recording controls
+- [x] Build interview playback interface with video element
+- [x] Create mock AI analysis with transcription, sentiment, key moments
+- [x] Implement automated scoring system (0-100 scale)
+- [x] Add strengths and concerns analysis
+- [x] Create download recording functionality
+- [x] Add recording timer display
+- [ ] Upload recorded videos to S3
+- [ ] Integrate real speech-to-text API
+- [ ] Connect to real AI sentiment analysis API
