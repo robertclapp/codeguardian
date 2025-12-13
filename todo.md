@@ -814,3 +814,17 @@
 - [x] Implement saved query management
 - [x] Add fuzzy search with Levenshtein distance
 - [x] Create search results with match scores
+
+
+## Mobile Responsiveness Fix
+- [ ] Disable drag-and-drop on mobile devices for dashboard widgets
+- [ ] Ensure touch scrolling works properly on all pages
+- [ ] Test dashboard on mobile viewport sizes
+- [ ] Add mobile-specific layout adjustments if needed
+
+
+## Mobile Dashboard Fix
+- [x] Add "Edit Dashboard" toggle button to enable/disable drag-and-drop
+- [x] Default to drag disabled for better mobile scrolling
+- [x] Show visual indicator when in edit mode (banner with instructions)
+- [x] Update cursor styles to show move cursor only in edit mode

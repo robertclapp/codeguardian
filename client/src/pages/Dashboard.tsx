@@ -13,7 +13,9 @@ import {
   Settings,
   Eye,
   EyeOff,
-  Calendar
+  Calendar,
+  Edit3,
+  Save
 } from "lucide-react";
 import { Link } from "wouter";
 import DashboardLayout from "@/components/DashboardLayout";
@@ -77,6 +79,7 @@ export default function Dashboard() {
   });
   
   const [isCustomizing, setIsCustomizing] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   // Load saved layout from server
   const { data: savedLayout } = trpc.dashboard.getLayout.useQuery();
@@ -136,28 +139,46 @@ export default function Dashboard() {
       <OnboardingTutorial />
       <div className="space-y-6">
         {/* Header with customization controls */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">
-              Welcome back, {user?.name || "there"}!
-            </h1>
-            <p className="text-gray-600 mt-2">
-              Here's what's happening with your recruitment today.
-            </p>
+            <h1 className="text-3xl font-bold tracking-tight">Welcome back, {user?.name || "there"}!</h1>
+            <p className="text-muted-foreground mt-1">Here's what's happening with your recruitment today.</p>
           </div>
-          
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="outline" className="gap-2">
-                <Settings className="h-4 w-4" />
-                Customize Dashboard
-              </Button>
-            </DialogTrigger>
+          <div className="flex gap-2">
+            <Button
+              variant={isEditMode ? "default" : "outline"}
+              className="gap-2"
+              onClick={() => {
+                if (isEditMode) {
+                  handleSaveLayout();
+                }
+                setIsEditMode(!isEditMode);
+              }}
+            >
+              {isEditMode ? (
+                <>
+                  <Save className="h-4 w-4" />
+                  Save Layout
+                </>
+              ) : (
+                <>
+                  <Edit3 className="h-4 w-4" />
+                  Edit Dashboard
+                </>
+              )}
+            </Button>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="gap-2">
+                  <Settings className="h-4 w-4" />
+                  Customize
+                </Button>
+              </DialogTrigger>
             <DialogContent className="max-w-2xl">
               <DialogHeader>
                 <DialogTitle>Customize Your Dashboard</DialogTitle>
                 <DialogDescription>
-                  Show/hide widgets and adjust date ranges. Drag widgets on the dashboard to rearrange them.
+                  Show/hide widgets and adjust date ranges. Click "Edit Dashboard" to rearrange widgets.
                 </DialogDescription>
               </DialogHeader>
               
@@ -213,7 +234,23 @@ export default function Dashboard() {
               </div>
             </DialogContent>
           </Dialog>
+          </div>
         </div>
+
+        {/* Edit mode banner */}
+        {isEditMode && (
+          <div className="mb-4 p-3 bg-primary/10 border border-primary/20 rounded-lg flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Edit3 className="h-4 w-4 text-primary" />
+              <span className="text-sm font-medium">Edit Mode Active</span>
+              <span className="text-xs text-muted-foreground">Drag widgets to rearrange, resize by dragging corners</span>
+            </div>
+            <Button size="sm" onClick={() => { handleSaveLayout(); setIsEditMode(false); }}>
+              <Save className="h-4 w-4 mr-2" />
+              Save & Exit
+            </Button>
+          </div>
+        )}
 
         {/* Drag-and-drop grid layout */}
         {/* @ts-ignore - GridLayout type definitions are incomplete */}
@@ -224,8 +261,8 @@ export default function Dashboard() {
           rowHeight={60}
           width={1200}
           onLayoutChange={handleLayoutChange}
-          isDraggable={true}
-          isResizable={true}
+          isDraggable={isEditMode}
+          isResizable={isEditMode}
           compactType="vertical" as any
           preventCollision={false}
         >
@@ -440,10 +477,10 @@ export default function Dashboard() {
 
       <style>{`
         .dashboard-widget {
-          cursor: move;
+          cursor: ${isEditMode ? 'move' : 'default'};
         }
         .dashboard-widget:hover {
-          opacity: 0.9;
+          opacity: ${isEditMode ? '0.9' : '1'};
         }
         .react-grid-item.react-grid-placeholder {
           background: hsl(var(--primary) / 0.2);
@@ -454,6 +491,10 @@ export default function Dashboard() {
         }
         .react-grid-item.resizing {
           opacity: 0.9;
+        }
+        .react-grid-item.react-draggable-dragging {
+          opacity: 0.8;
+          z-index: 100;
         }
       `}</style>
     </DashboardLayout>
