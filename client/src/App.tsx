@@ -39,6 +39,7 @@ import { WebhookSettings } from "./pages/WebhookSettings";
 import VideoTutorials from "./pages/VideoTutorials";
 import AdvancedSearch from "./pages/AdvancedSearch";
 import CommunicationTesting from "./pages/CommunicationTesting";
+import SwipeDemo from "./pages/SwipeDemo";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -78,6 +79,7 @@ function Router() {
       <Route path="/webhook-settings" component={WebhookSettings} />
       <Route path="/video-tutorials" component={VideoTutorials} />
       <Route path="/advanced-search" component={AdvancedSearch} />
+      <Route path="/swipe-demo" component={SwipeDemo} />
         <Route path="/communication-testing" component={CommunicationTesting} />
         <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}

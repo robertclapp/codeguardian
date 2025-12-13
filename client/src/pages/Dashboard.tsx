@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
+import { useIsMobile } from "@/hooks/useMobile";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { trpc } from "@/lib/trpc";
@@ -69,6 +70,7 @@ const DEFAULT_VISIBILITY: Record<WidgetId, boolean> = {
 
 export default function Dashboard() {
   const { user } = useAuth();
+  const isMobile = useIsMobile();
   const { data: jobs, isLoading: jobsLoading } = trpc.jobs.list.useQuery();
   
   // Dashboard configuration state
@@ -257,12 +259,12 @@ export default function Dashboard() {
         <GridLayout
           className="layout"
           layout={visibleLayout}
-          cols={12}
-          rowHeight={60}
-          width={1200}
+          cols={isMobile ? 1 : 12}
+          rowHeight={isMobile ? 80 : 60}
+          width={isMobile ? window.innerWidth - 32 : 1200}
           onLayoutChange={handleLayoutChange}
-          isDraggable={isEditMode}
-          isResizable={isEditMode}
+          isDraggable={isEditMode && !isMobile}
+          isResizable={isEditMode && !isMobile}
           compactType="vertical" as any
           preventCollision={false}
         >
