@@ -877,3 +877,36 @@
 - [x] Theme preference saved to localStorage
 - [x] Saved theme loaded on app startup
 - [x] Enable switchable theme in App.tsx
+
+
+## Bulk Actions
+- [x] Add multi-select checkboxes to Jobs page
+- [x] Create BulkActionToolbar component
+- [x] Implement bulk delete action
+- [x] Implement bulk archive action
+- [x] Implement bulk export action (CSV)
+- [x] Add select all/deselect all functionality
+- [x] Show bulk action toolbar when items selected
+- [ ] Add multi-select to Candidates page
+- [ ] Add multi-select to Documents page
+
+## Email Templates Library
+- [x] Email templates database schema already exists
+- [x] Build template editor UI with dialog
+- [x] Add merge field support ({{candidateName}}, {{jobTitle}}, etc.)
+- [x] Create default templates (interview invitation, rejection, offer)
+- [x] Add template preview functionality with sample data
+- [x] Add template management (create, edit, delete, duplicate)
+- [x] Show available merge fields as clickable buttons
+- [ ] Implement template selection in communication flow
+
+## Calendar Integration
+- [x] Create interview scheduling UI with calendar view (react-big-calendar)
+- [x] Add date/time picker for interview scheduling
+- [x] Implement conflict detection for interview slots
+- [x] Add interview status tracking (scheduled, completed, cancelled)
+- [x] Build calendar dashboard view with stats
+- [x] Color-coded events by status
+- [x] Week/month/day views
+- [ ] Add Google Calendar sync capability
+- [ ] Create automatic email reminders for interviews

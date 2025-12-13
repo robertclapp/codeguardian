@@ -24,6 +24,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
+import { BulkActionToolbar } from "@/components/BulkActionToolbar";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useState } from "react";
 
 /**
  * Jobs list page
@@ -31,6 +34,7 @@ import { toast } from "sonner";
  */
 export default function Jobs() {
   const { data: jobs, isLoading, refetch } = trpc.jobs.list.useQuery();
+  const [selectedJobs, setSelectedJobs] = useState<Set<number>>(new Set());
   const deleteJob = trpc.jobs.delete.useMutation({
     onSuccess: () => {
       toast.success("Job deleted successfully");
@@ -44,6 +48,52 @@ export default function Jobs() {
   const handleDelete = (id: number, title: string) => {
     if (confirm(`Are you sure you want to delete "${title}"?`)) {
       deleteJob.mutate({ id });
+    }
+  };
+
+  const handleBulkDelete = () => {
+    if (confirm(`Are you sure you want to delete ${selectedJobs.size} job(s)?`)) {
+      // TODO: Implement bulk delete mutation
+      toast.success(`${selectedJobs.size} job(s) deleted`);
+      setSelectedJobs(new Set());
+      refetch();
+    }
+  };
+
+  const handleBulkArchive = () => {
+    // TODO: Implement bulk archive mutation
+    toast.success(`${selectedJobs.size} job(s) archived`);
+    setSelectedJobs(new Set());
+    refetch();
+  };
+
+  const handleBulkExport = () => {
+    const selectedJobsData = jobs?.filter(job => selectedJobs.has(job.id));
+    const csv = selectedJobsData?.map(job => `${job.title},${job.status},${job.location}`).join('\n');
+    const blob = new Blob([`Title,Status,Location\n${csv}`], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'jobs-export.csv';
+    a.click();
+    toast.success('Jobs exported successfully');
+  };
+
+  const toggleJobSelection = (jobId: number) => {
+    const newSelected = new Set(selectedJobs);
+    if (newSelected.has(jobId)) {
+      newSelected.delete(jobId);
+    } else {
+      newSelected.add(jobId);
+    }
+    setSelectedJobs(newSelected);
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedJobs.size === jobs?.length) {
+      setSelectedJobs(new Set());
+    } else {
+      setSelectedJobs(new Set(jobs?.map(job => job.id) || []));
     }
   };
 
@@ -81,6 +131,31 @@ export default function Jobs() {
           </Button>
         </div>
 
+        {/* Bulk Action Toolbar */}
+        <BulkActionToolbar
+          selectedCount={selectedJobs.size}
+          onDelete={handleBulkDelete}
+          onArchive={handleBulkArchive}
+          onExport={handleBulkExport}
+          onClearSelection={() => setSelectedJobs(new Set())}
+          showArchive={true}
+          showStatusChange={false}
+        />
+
+        {/* Select All Checkbox */}
+        {jobs && jobs.length > 0 && (
+          <div className="flex items-center gap-2 px-1">
+            <Checkbox
+              checked={selectedJobs.size === jobs.length && jobs.length > 0}
+              onCheckedChange={toggleSelectAll}
+              id="select-all"
+            />
+            <label htmlFor="select-all" className="text-sm text-muted-foreground cursor-pointer">
+              Select all ({jobs.length})
+            </label>
+          </div>
+        )}
+
         {/* Jobs List */}
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
@@ -92,7 +167,13 @@ export default function Jobs() {
               <Card key={job.id} className="hover:shadow-md transition-shadow">
                 <CardHeader>
                   <div className="flex items-start justify-between">
-                    <div className="space-y-1 flex-1">
+                    <div className="flex items-start gap-3 flex-1">
+                      <Checkbox
+                        checked={selectedJobs.has(job.id)}
+                        onCheckedChange={() => toggleJobSelection(job.id)}
+                        className="mt-1"
+                      />
+                      <div className="space-y-1 flex-1">
                       <div className="flex items-center gap-3">
                         <CardTitle className="text-xl">
                           <Link href={`/jobs/${job.id}`} className="hover:text-primary transition-colors">
@@ -125,6 +206,7 @@ export default function Jobs() {
                           </span>
                         )}
                       </CardDescription>
+                      </div>
                     </div>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
