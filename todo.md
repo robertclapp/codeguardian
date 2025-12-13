@@ -855,3 +855,25 @@
 - [x] Add home screen installation prompt component
 - [x] Add offline status indicator
 - [x] Configure workbox for runtime caching
+
+
+## Push Notifications
+- [x] Request notification permission from users
+- [x] Create push notification subscription component (PushNotificationPrompt)
+- [x] Show test notification on permission grant
+- [x] Smart dismissal with 7-day reminder
+- [ ] Implement backend notification triggers (new applications, interviews, approvals)
+
+## Onboarding Flow
+- [x] Multi-step onboarding wizard already implemented (react-joyride)
+- [x] Onboarding steps cover jobs, programs, documents, progress
+- [x] Skip and progress indicators included
+- [x] Completion status stored in localStorage
+- [x] Restart option available in help menu
+
+## Dark Mode
+- [x] Add theme toggle to user profile menu
+- [x] Dark mode CSS variables already implemented in ThemeContext
+- [x] Theme preference saved to localStorage
+- [x] Saved theme loaded on app startup
+- [x] Enable switchable theme in App.tsx

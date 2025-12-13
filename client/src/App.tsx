@@ -42,6 +42,7 @@ import CommunicationTesting from "./pages/CommunicationTesting";
 import SwipeDemo from "./pages/SwipeDemo";
 import { PWAInstallPrompt } from "./components/PWAInstallPrompt";
 import { OfflineIndicator } from "./components/OfflineIndicator";
+import { PushNotificationPrompt } from "./components/PushNotificationPrompt";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -93,11 +94,12 @@ function Router() {
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider defaultTheme="light">
+      <ThemeProvider defaultTheme="light" switchable={true}>
         <TooltipProvider>
           <OfflineIndicator />
           <Router />
           <PWAInstallPrompt />
+          <PushNotificationPrompt />
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>
