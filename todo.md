@@ -910,3 +910,69 @@
 - [x] Week/month/day views
 - [ ] Add Google Calendar sync capability
 - [ ] Create automatic email reminders for interviews
+
+
+## Candidate Pipeline Kanban Board
+- [ ] Install drag-and-drop library (@dnd-kit or react-beautiful-dnd)
+- [ ] Create Kanban board component with columns
+- [ ] Add drag-and-drop functionality between stages
+- [ ] Implement candidate card component with key info
+- [ ] Add stage columns (Applied, Screening, Interview, Offer, Hired)
+- [ ] Update candidate status on drag
+- [ ] Add candidate count per stage
+- [ ] Add filters and search on Kanban view
+
+## Automated Workflows
+- [ ] Create workflows database schema
+- [ ] Build workflow rule editor UI
+- [ ] Add trigger conditions (status change, time-based, etc.)
+- [ ] Add action types (send email, schedule interview, notify team)
+- [ ] Implement workflow execution engine
+- [ ] Add workflow management (create, edit, enable/disable)
+- [ ] Create default workflow templates
+- [ ] Add workflow execution history/logs
+
+## Reporting Dashboard
+- [ ] Install charting library (recharts or chart.js)
+- [ ] Create reporting dashboard page
+- [ ] Add time-to-hire chart
+- [ ] Add source effectiveness chart
+- [ ] Add diversity metrics visualization
+- [ ] Add funnel conversion rates chart
+- [ ] Implement date range filtering
+- [ ] Add export to PDF functionality
+- [ ] Add export to Excel functionality
+- [ ] Create summary statistics cards
+
+
+## Candidate Pipeline Kanban Board
+- [x] Install drag-and-drop library (@dnd-kit)
+- [x] Create Kanban board component with columns
+- [x] Add drag-and-drop functionality between stages
+- [x] Implement candidate card component with avatar
+- [x] Add stage columns (Applied, Screening, Interview, Offer, Hired)
+- [x] Update candidate status on drag with toast notifications
+- [x] Add candidate count per stage with stats cards
+- [x] Add search functionality
+
+## Automated Workflows
+- [x] Build workflow rule editor UI with dialog
+- [x] Add trigger conditions (status_change, time_based, score_threshold, application_received)
+- [x] Add action types (send_email, schedule_interview, notify_team, update_status, assign_task)
+- [x] Add workflow management (create, edit, enable/disable, delete)
+- [x] Show execution count per workflow
+- [x] Display active/inactive status with badges
+- [ ] Create workflows database schema
+- [ ] Implement workflow execution engine
+
+## Analytics Dashboard
+- [x] Install charting library (recharts)
+- [x] Create analytics dashboard page
+- [x] Add time-to-hire trend chart (line chart)
+- [x] Add source effectiveness chart (bar chart)
+- [x] Add diversity metrics (pie chart)
+- [x] Add funnel conversion rates (funnel chart)
+- [x] Implement date range filtering
+- [x] Add export functionality (PDF/Excel placeholders)
+- [x] Add key metrics cards (avg time to hire, conversion rate, total applicants, total hires)
+- [x] Add source performance details table

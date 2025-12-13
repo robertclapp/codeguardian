@@ -42,6 +42,9 @@ import CommunicationTesting from "./pages/CommunicationTesting";
 import SwipeDemo from "./pages/SwipeDemo";
 import EmailTemplates from "./pages/EmailTemplates";
 import InterviewScheduler from "./pages/InterviewScheduler";
+import CandidatePipeline from "./pages/CandidatePipeline";
+import AutomatedWorkflows from "./pages/AutomatedWorkflows";
+import AnalyticsDashboard from "./pages/AnalyticsDashboard";
 import { PWAInstallPrompt } from "./components/PWAInstallPrompt";
 import { OfflineIndicator } from "./components/OfflineIndicator";
 import { PushNotificationPrompt } from "./components/PushNotificationPrompt";
@@ -87,6 +90,9 @@ function Router() {
         <Route path="/swipe-demo" component={SwipeDemo} />
         <Route path="/email-templates" component={EmailTemplates} />
         <Route path="/interview-scheduler" component={InterviewScheduler} />
+        <Route path="/candidate-pipeline" component={CandidatePipeline} />
+        <Route path="/automated-workflows" component={AutomatedWorkflows} />
+        <Route path="/analytics-dashboard" component={AnalyticsDashboard} />
         <Route path="/communication-testing" component={CommunicationTesting} />
         <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
