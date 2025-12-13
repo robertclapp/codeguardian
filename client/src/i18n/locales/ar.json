@@ -1,0 +1,96 @@
+{
+  "common": {
+    "welcome": "Welcome",
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "search": "Search",
+    "filter": "Filter",
+    "export": "Export",
+    "import": "Import",
+    "submit": "Submit",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "close": "Close",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "jobs": "Jobs",
+    "candidates": "Candidates",
+    "documents": "Documents",
+    "programs": "Programs",
+    "progress": "Progress",
+    "referrals": "Referrals",
+    "analytics": "Analytics",
+    "settings": "Settings"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome_message": "Welcome to your HR platform",
+    "recent_activity": "Recent Activity",
+    "quick_actions": "Quick Actions"
+  },
+  "jobs": {
+    "title": "Jobs",
+    "create_job": "Create Job",
+    "job_title": "Job Title",
+    "department": "Department",
+    "location": "Location",
+    "status": "Status",
+    "posted_date": "Posted Date",
+    "applications": "Applications"
+  },
+  "candidates": {
+    "title": "Candidates",
+    "add_candidate": "Add Candidate",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "status": "Status",
+    "applied_date": "Applied Date",
+    "view_profile": "View Profile"
+  },
+  "referrals": {
+    "title": "Employee Referral Program",
+    "subtitle": "Refer qualified candidates and earn bonuses when they're hired",
+    "new_referral": "New Referral",
+    "your_referrals": "Your Referrals",
+    "total_referrals": "Total Referrals",
+    "hired": "Hired",
+    "total_earned": "Total Earned",
+    "pending_bonus": "Pending Bonus",
+    "leaderboard": "Leaderboard",
+    "how_it_works": "How the Referral Program Works",
+    "step1_title": "Submit Referral",
+    "step1_desc": "Provide candidate details and get a unique referral code",
+    "step2_title": "Share Link",
+    "step2_desc": "Send the referral link to your candidate",
+    "step3_title": "Track Progress",
+    "step3_desc": "Monitor your referral through the hiring pipeline",
+    "step4_title": "Earn Bonus",
+    "step4_desc": "Receive $1,000 when your referral is hired"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "sign_in": "Sign In",
+    "sign_up": "Sign Up",
+    "forgot_password": "Forgot Password?",
+    "reset_password": "Reset Password"
+  },
+  "messages": {
+    "success": "Success!",
+    "error": "Error occurred",
+    "saved": "Saved successfully",
+    "deleted": "Deleted successfully",
+    "created": "Created successfully",
+    "updated": "Updated successfully"
+  }
+}

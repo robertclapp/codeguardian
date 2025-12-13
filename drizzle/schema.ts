@@ -683,3 +683,56 @@ export const smsTemplates = mysqlTable("smsTemplates", {
 
 export type SmsTemplate = typeof smsTemplates.$inferSelect;
 export type InsertSmsTemplate = typeof smsTemplates.$inferInsert;
+
+/**
+ * Interview Recordings table - Store AI-analyzed interview recordings
+ */
+export const interviewRecordings = mysqlTable("interviewRecordings", {
+  id: varchar("id", { length: 36 }).primaryKey(),
+  candidateId: varchar("candidateId", { length: 36 }).notNull(),
+  interviewId: varchar("interviewId", { length: 36 }).notNull(),
+  videoUrl: text("videoUrl").notNull(),
+  transcription: text("transcription").notNull(),
+  sentiment: mysqlEnum("sentiment", ["positive", "neutral", "negative"]).notNull(),
+  keyMoments: text("keyMoments").notNull(), // JSON array
+  score: int("score").notNull(),
+  strengths: text("strengths").notNull(), // JSON array
+  concerns: text("concerns").notNull(), // JSON array
+  processingTime: int("processingTime").notNull(), // milliseconds
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => ({
+  candidateIdx: index("interviewRecordings_candidateId_idx").on(table.candidateId),
+  interviewIdx: index("interviewRecordings_interviewId_idx").on(table.interviewId),
+}));
+
+export type InterviewRecording = typeof interviewRecordings.$inferSelect;
+export type InsertInterviewRecording = typeof interviewRecordings.$inferInsert;
+
+/**
+ * Referrals table - Employee referral program
+ */
+export const referrals = mysqlTable("referrals", {
+  id: int("id").autoincrement().primaryKey(),
+  referralCode: varchar("referralCode", { length: 20 }).notNull().unique(),
+  referrerId: int("referrerId").notNull().references(() => users.id),
+  candidateId: int("candidateId").references(() => candidates.id),
+  candidateName: varchar("candidateName", { length: 255 }).notNull(),
+  candidateEmail: varchar("candidateEmail", { length: 320 }).notNull(),
+  candidatePhone: varchar("candidatePhone", { length: 20 }),
+  jobId: int("jobId").references(() => jobs.id),
+  status: mysqlEnum("status", ["pending", "applied", "screening", "interview", "offer", "hired", "rejected"]).notNull().default("pending"),
+  bonusAmount: int("bonusAmount").default(0),
+  bonusPaid: int("bonusPaid").default(0),
+  bonusPaidAt: timestamp("bonusPaidAt"),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  referrerIdx: index("referrals_referrerId_idx").on(table.referrerId),
+  candidateIdx: index("referrals_candidateId_idx").on(table.candidateId),
+  statusIdx: index("referrals_status_idx").on(table.status),
+  codeIdx: index("referrals_code_idx").on(table.referralCode),
+}));
+
+export type Referral = typeof referrals.$inferSelect;
+export type InsertReferral = typeof referrals.$inferInsert;

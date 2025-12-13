@@ -1,0 +1,96 @@
+{
+  "common": {
+    "welcome": "Bienvenido",
+    "loading": "Cargando...",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "create": "Crear",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "export": "Exportar",
+    "import": "Importar",
+    "submit": "Enviar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "close": "Cerrar",
+    "confirm": "Confirmar",
+    "yes": "Sí",
+    "no": "No"
+  },
+  "nav": {
+    "dashboard": "Panel",
+    "jobs": "Trabajos",
+    "candidates": "Candidatos",
+    "documents": "Documentos",
+    "programs": "Programas",
+    "progress": "Progreso",
+    "referrals": "Referencias",
+    "analytics": "Analíticas",
+    "settings": "Configuración"
+  },
+  "dashboard": {
+    "title": "Panel de Control",
+    "welcome_message": "Bienvenido a tu plataforma de RRHH",
+    "recent_activity": "Actividad Reciente",
+    "quick_actions": "Acciones Rápidas"
+  },
+  "jobs": {
+    "title": "Trabajos",
+    "create_job": "Crear Trabajo",
+    "job_title": "Título del Trabajo",
+    "department": "Departamento",
+    "location": "Ubicación",
+    "status": "Estado",
+    "posted_date": "Fecha de Publicación",
+    "applications": "Aplicaciones"
+  },
+  "candidates": {
+    "title": "Candidatos",
+    "add_candidate": "Agregar Candidato",
+    "name": "Nombre",
+    "email": "Correo Electrónico",
+    "phone": "Teléfono",
+    "status": "Estado",
+    "applied_date": "Fecha de Aplicación",
+    "view_profile": "Ver Perfil"
+  },
+  "referrals": {
+    "title": "Programa de Referencias de Empleados",
+    "subtitle": "Refiere candidatos calificados y gana bonos cuando sean contratados",
+    "new_referral": "Nueva Referencia",
+    "your_referrals": "Tus Referencias",
+    "total_referrals": "Referencias Totales",
+    "hired": "Contratados",
+    "total_earned": "Total Ganado",
+    "pending_bonus": "Bono Pendiente",
+    "leaderboard": "Tabla de Líderes",
+    "how_it_works": "Cómo Funciona el Programa de Referencias",
+    "step1_title": "Enviar Referencia",
+    "step1_desc": "Proporciona los detalles del candidato y obtén un código único",
+    "step2_title": "Compartir Enlace",
+    "step2_desc": "Envía el enlace de referencia a tu candidato",
+    "step3_title": "Seguir Progreso",
+    "step3_desc": "Monitorea tu referencia a través del proceso de contratación",
+    "step4_title": "Ganar Bono",
+    "step4_desc": "Recibe $1,000 cuando tu referencia sea contratada"
+  },
+  "auth": {
+    "login": "Iniciar Sesión",
+    "logout": "Cerrar Sesión",
+    "sign_in": "Ingresar",
+    "sign_up": "Registrarse",
+    "forgot_password": "¿Olvidaste tu Contraseña?",
+    "reset_password": "Restablecer Contraseña"
+  },
+  "messages": {
+    "success": "¡Éxito!",
+    "error": "Ocurrió un error",
+    "saved": "Guardado exitosamente",
+    "deleted": "Eliminado exitosamente",
+    "created": "Creado exitosamente",
+    "updated": "Actualizado exitosamente"
+  }
+}

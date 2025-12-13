@@ -1,0 +1,96 @@
+{
+  "common": {
+    "welcome": "Bienvenue",
+    "loading": "Chargement...",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "create": "Créer",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "export": "Exporter",
+    "import": "Importer",
+    "submit": "Soumettre",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "close": "Fermer",
+    "confirm": "Confirmer",
+    "yes": "Oui",
+    "no": "Non"
+  },
+  "nav": {
+    "dashboard": "Tableau de Bord",
+    "jobs": "Emplois",
+    "candidates": "Candidats",
+    "documents": "Documents",
+    "programs": "Programmes",
+    "progress": "Progrès",
+    "referrals": "Références",
+    "analytics": "Analytique",
+    "settings": "Paramètres"
+  },
+  "dashboard": {
+    "title": "Tableau de Bord",
+    "welcome_message": "Bienvenue sur votre plateforme RH",
+    "recent_activity": "Activité Récente",
+    "quick_actions": "Actions Rapides"
+  },
+  "jobs": {
+    "title": "Emplois",
+    "create_job": "Créer un Emploi",
+    "job_title": "Titre du Poste",
+    "department": "Département",
+    "location": "Emplacement",
+    "status": "Statut",
+    "posted_date": "Date de Publication",
+    "applications": "Candidatures"
+  },
+  "candidates": {
+    "title": "Candidats",
+    "add_candidate": "Ajouter un Candidat",
+    "name": "Nom",
+    "email": "Email",
+    "phone": "Téléphone",
+    "status": "Statut",
+    "applied_date": "Date de Candidature",
+    "view_profile": "Voir le Profil"
+  },
+  "referrals": {
+    "title": "Programme de Parrainage des Employés",
+    "subtitle": "Référez des candidats qualifiés et gagnez des primes lorsqu'ils sont embauchés",
+    "new_referral": "Nouvelle Référence",
+    "your_referrals": "Vos Références",
+    "total_referrals": "Total des Références",
+    "hired": "Embauché",
+    "total_earned": "Total Gagné",
+    "pending_bonus": "Prime en Attente",
+    "leaderboard": "Classement",
+    "how_it_works": "Comment Fonctionne le Programme de Parrainage",
+    "step1_title": "Soumettre une Référence",
+    "step1_desc": "Fournissez les détails du candidat et obtenez un code unique",
+    "step2_title": "Partager le Lien",
+    "step2_desc": "Envoyez le lien de parrainage à votre candidat",
+    "step3_title": "Suivre les Progrès",
+    "step3_desc": "Surveillez votre référence tout au long du processus de recrutement",
+    "step4_title": "Gagner une Prime",
+    "step4_desc": "Recevez 1 000 $ lorsque votre référence est embauchée"
+  },
+  "auth": {
+    "login": "Connexion",
+    "logout": "Déconnexion",
+    "sign_in": "Se Connecter",
+    "sign_up": "S'inscrire",
+    "forgot_password": "Mot de Passe Oublié?",
+    "reset_password": "Réinitialiser le Mot de Passe"
+  },
+  "messages": {
+    "success": "Succès!",
+    "error": "Une erreur s'est produite",
+    "saved": "Enregistré avec succès",
+    "deleted": "Supprimé avec succès",
+    "created": "Créé avec succès",
+    "updated": "Mis à jour avec succès"
+  }
+}

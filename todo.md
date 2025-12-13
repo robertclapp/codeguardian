@@ -1015,3 +1015,37 @@
 - [ ] Upload recorded videos to S3
 - [ ] Integrate real speech-to-text API
 - [ ] Connect to real AI sentiment analysis API
+
+
+## Real AI Services Integration
+- [x] Create backend API for video upload to S3 (interviewAnalysis.ts)
+- [x] Integrate Whisper API for speech-to-text transcription
+- [x] Add sentiment analysis using LLM with structured JSON output
+- [x] Implement video processing pipeline (processInterview function)
+- [x] Store transcription results in database (interviewRecordings table)
+- [x] Create interviewAnalysisRouter with tRPC procedures
+- [x] Handle video buffer uploads with base64 encoding
+- [x] Add key moments detection with timestamps
+
+## Candidate Referral Program
+- [x] Create referrals database schema with bonus tracking
+- [x] Build referral submission form with dialog
+- [x] Generate unique 8-character referral codes
+- [x] Track referral status through pipeline (7 statuses)
+- [x] Implement referral bonus calculation ($1000 default)
+- [x] Create referral dashboard for employees (Referrals page)
+- [x] Add referral leaderboard with top 10
+- [x] Create referralsRouter with tRPC procedures
+- [x] Add stats cards (total, hired, earned, pending)
+- [x] Track referral conversion rates in stats
+
+## Multi-language Support (i18n)
+- [x] Install i18n library (react-i18next, i18next, i18next-browser-languagedetector)
+- [x] Create translation files for 5 languages (en, es, fr, de, ar)
+- [x] Add language selector component with flags
+- [x] Implement RTL support for Arabic (document.dir)
+- [x] Add language persistence to localStorage
+- [x] Create i18n configuration with language detection
+- [ ] Wrap all UI strings with translation function (t())
+- [ ] Translate email templates
+- [ ] Add date/time localization

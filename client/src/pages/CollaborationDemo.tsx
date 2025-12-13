@@ -12,7 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { PresenceIndicator } from "@/components/PresenceIndicator";
-import { usePresence } from "@/hooks/usePresence";
+// import { usePresence } from "@/hooks/usePresence";
 import { Users, Zap } from "lucide-react";
 
 /**
@@ -26,8 +26,12 @@ export default function CollaborationDemo() {
   const [notes, setNotes] = useState("");
 
   // Use presence hook for this demo resource
-  const { presentUsers, isConnected, broadcastFieldUpdate, broadcastStatusChange } =
-    usePresence("candidate", "demo-123");
+  // const { presentUsers, isConnected, broadcastFieldUpdate, broadcastStatusChange } =
+  //   usePresence("candidate", "demo-123");
+  const presentUsers: any[] = [];
+  const isConnected = false;
+  const broadcastFieldUpdate = () => {};
+  const broadcastStatusChange = () => {};
 
   const handleNameChange = (value: string) => {
     setCandidateName(value);
