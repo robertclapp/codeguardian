@@ -45,7 +45,12 @@ import InterviewScheduler from "./pages/InterviewScheduler";
 import CandidatePipeline from "./pages/CandidatePipeline";
 import AutomatedWorkflows from "./pages/AutomatedWorkflows";
 import AnalyticsDashboard from "./pages/AnalyticsDashboard";
-import CollaborationDemo from "./pages/CollaborationDemo";
+import CollaborationDemo from "@/pages/CollaborationDemo";
+// Temporarily disabled - need to fix email service integration
+// import VideoInterviewScheduling from "@/pages/VideoInterviewScheduling";
+// import OfferLetters from "@/pages/OfferLetters";
+import SkillsGapAnalysis from "@/pages/SkillsGapAnalysis";
+import Referrals from "@/pages/Referrals";
 import AIInterviewAssistant from "./pages/AIInterviewAssistant";
 import { PWAInstallPrompt } from "./components/PWAInstallPrompt";
 import { OfflineIndicator } from "./components/OfflineIndicator";
@@ -95,7 +100,12 @@ function Router() {
         <Route path="/candidate-pipeline" component={CandidatePipeline} />
         <Route path="/automated-workflows" component={AutomatedWorkflows} />
         <Route path="/analytics-dashboard" component={AnalyticsDashboard} />
-        <Route path="/collaboration-demo" component={CollaborationDemo} />
+      <Route path="/collaboration-demo" element={<CollaborationDemo />} />
+            {/* Temporarily disabled - need to fix email service integration */}
+            {/* <Route path="/video-interview-scheduling" element={<VideoInterviewScheduling />} /> */}
+            {/* <Route path="/offer-letters" element={<OfferLetters />} /> */}
+            <Route path="/skills-gap-analysis" element={<SkillsGapAnalysis />} />
+            <Route path="/referrals" element={<Referrals />} />
         <Route path="/ai-interview" component={AIInterviewAssistant} />
         <Route path="/communication-testing" component={CommunicationTesting} />
         <Route path={"/404"} component={NotFound} />

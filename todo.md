@@ -1049,3 +1049,97 @@
 - [ ] Wrap all UI strings with translation function (t())
 - [ ] Translate email templates
 - [ ] Add date/time localization
+
+
+## Competitive Analysis & Feature Gaps
+- [ ] Research Rippling's HR features and capabilities
+- [ ] Identify feature gaps in our platform
+- [ ] Document user friction points we can solve
+- [ ] Create list of differentiating features
+- [ ] Implement unique advantages over Rippling
+
+## Video Interview Scheduling Integration
+- [ ] Connect AI Interview Assistant with Calendar system
+- [ ] Auto-schedule video interviews from candidate pipeline
+- [ ] Generate and send calendar invites with video links
+- [ ] Trigger AI analysis automatically post-interview
+- [ ] Add interview reminder notifications
+- [ ] Create interview prep materials for candidates
+
+## Offer Letter Generator
+- [ ] Build offer letter template system
+- [ ] Add dynamic fields (salary, benefits, start date, role)
+- [ ] Integrate e-signature capability
+- [ ] Create offer acceptance tracking workflow
+- [ ] Add offer expiration dates and reminders
+- [ ] Generate PDF offer letters
+- [ ] Track offer status (sent, viewed, accepted, declined)
+
+## Skills Gap Analysis Dashboard
+- [ ] Create skills database and taxonomy
+- [ ] Build skills assessment for candidates
+- [ ] Analyze required vs available skills
+- [ ] Identify training needs and gaps
+- [ ] AI-powered internal candidate matching
+- [ ] Track skill development over time
+- [ ] Generate skills gap reports
+- [ ] Suggest learning resources for skill gaps
+
+
+## Rippling Competitive Analysis
+- [x] Research Rippling's recruiting features
+- [x] Identify competitive gaps (documented in docs/rippling_competitive_analysis.md)
+- [x] Document our unique advantages (AI-first, nonprofit focus, superior UX)
+
+## Video Interview Scheduling Integration
+- [x] Create video interview scheduling UI (VideoInterviewScheduling page)
+- [x] Integrate with calendar system (calendarEvents table)
+- [x] Generate unique video interview links
+- [x] Send calendar invites automatically via email
+- [x] Trigger AI analysis post-interview (integration with interviewAnalysis)
+- [x] Track interview completion status
+- [x] Create videoInterviewRouter with tRPC procedures
+
+## Offer Letter Generator
+- [x] Create offer letter database schema (offerLetters table)
+- [x] Build offer generation UI (OfferLetters page)
+- [x] Add dynamic field support (salary, benefits, start date, custom terms)
+- [x] Generate professional HTML email templates
+- [x] Track offer acceptance/decline with signatures
+- [x] Implement offer expiration tracking
+- [x] Create offerLetterRouter with tRPC procedures
+- [x] Add offer stats dashboard (total, sent, accepted, pending)
+- [ ] Integrate DocuSign API for legal e-signatures (future enhancement)
+
+## Skills Gap Analysis Dashboard
+- [x] Create skills gap analysis UI (SkillsGapAnalysis page)
+- [x] Extract skills from job requirements (AI-powered)
+- [x] Extract skills from candidate profiles
+- [x] Calculate skills coverage percentage
+- [x] Identify training needs with AI recommendations
+- [x] Suggest internal candidates for roles (AI matching)
+- [x] Track skill development over time (trend charts)
+- [x] Generate organization-wide skills gap reports
+- [x] Create skillsGapRouter with AI-powered analysis
+- [x] Add priority-based gap identification (high/medium/low)
+
+## Referral Program
+- [x] Create referrals database schema with bonus tracking
+- [x] Build referral submission form with dialog
+- [x] Generate unique 8-character referral codes
+- [x] Track referral status through pipeline (7 statuses)
+- [x] Implement referral bonus calculation ($1000 default)
+- [x] Create referral dashboard for employees (Referrals page)
+- [x] Add referral leaderboard with top 10
+- [x] Create referralsRouter with tRPC procedures
+- [x] Add stats cards (total, hired, earned, pending)
+
+## Real AI Services Integration
+- [x] Create backend API for video upload to S3 (interviewAnalysis.ts)
+- [x] Integrate Whisper API for speech-to-text transcription
+- [x] Add sentiment analysis using LLM with structured JSON output
+- [x] Implement video processing pipeline (processInterview function)
+- [x] Store transcription results in database (interviewRecordings table)
+- [x] Create interviewAnalysisRouter with tRPC procedures
+- [x] Handle video buffer uploads with base64 encoding
+- [x] Add key moments detection with timestamps

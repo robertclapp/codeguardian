@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/sidebar";
 import { APP_LOGO, APP_TITLE, getLoginUrl } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { LayoutDashboard, LogOut, PanelLeft, Users, Briefcase, MessageSquare, Settings, FileText, TrendingUp, ClipboardCheck, FolderOpen, BarChart3, Shield, Edit3, HelpCircle, Book, LifeBuoy, CheckCircle, LineChart, Brain, Upload, Bell, Play, Search, Moon, Sun, Mail, Calendar as CalendarIcon, Zap } from "lucide-react";
+import { LayoutDashboard, LogOut, PanelLeft, Users, Briefcase, MessageSquare, Settings, FileText, TrendingUp, ClipboardCheck, FolderOpen, BarChart3, Shield, Edit3, HelpCircle, Book, LifeBuoy, CheckCircle, LineChart, Brain, Upload, Bell, Play, Search, Moon, Sun, Mail, Calendar as CalendarIcon, Zap, Video, Target, UserPlus } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
@@ -60,6 +60,11 @@ const menuItems = [
   { icon: Bell, label: "Webhook Settings", path: "/webhook-settings" },
   { icon: Play, label: "Video Tutorials", path: "/video-tutorials" },
   { icon: Search, label: "Advanced Search", path: "/advanced-search" },
+  // Temporarily disabled - need to fix email service integration
+  // { icon: Video, label: "Video Interviews", path: "/video-interview-scheduling" },
+  // { icon: FileText, label: "Offer Letters", path: "/offer-letters" },
+  { icon: Target, label: "Skills Gap", path: "/skills-gap-analysis" },
+  { icon: UserPlus, label: "Referrals", path: "/referrals" },
   { icon: MessageSquare, label: "AI Assistant", path: "/assistant" },
 ];
 

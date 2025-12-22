@@ -39,6 +39,8 @@ import { reportingRouter } from "./routers/reportingRouter";
 import { skillsAssessmentRouter } from "./routers/skillsAssessmentRouter";
 import { backgroundCheckRouter } from "./routers/backgroundCheckRouter";
 import { csvMigrationRouter } from "./routers/csvMigrationRouter";
+import { skillsGapRouter } from "./routers/skillsGapRouter";
+import { referralsRouter } from "./routers/referralsRouter";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -92,6 +94,8 @@ export const appRouter = router({
   skillsAssessment: skillsAssessmentRouter,
   backgroundCheck: backgroundCheckRouter,
   csvMigration: csvMigrationRouter,
+  skillsGap: skillsGapRouter,
+  referrals: referralsRouter,
 });
 
 export type AppRouter = typeof appRouter;

@@ -736,3 +736,41 @@ export const referrals = mysqlTable("referrals", {
 
 export type Referral = typeof referrals.$inferSelect;
 export type InsertReferral = typeof referrals.$inferInsert;
+
+
+/**
+ * Offer Letters table - Job offer management with e-signature tracking
+ */
+export const offerLetters = mysqlTable("offerLetters", {
+  id: int("id").autoincrement().primaryKey(),
+  candidateId: int("candidateId").notNull().references(() => candidates.id),
+  jobTitle: varchar("jobTitle", { length: 255 }).notNull(),
+  department: varchar("department", { length: 255 }).notNull(),
+  salary: int("salary").notNull(),
+  currency: varchar("currency", { length: 3 }).notNull().default("USD"),
+  startDate: timestamp("startDate").notNull(),
+  benefits: text("benefits").notNull(), // JSON array
+  reportingTo: varchar("reportingTo", { length: 255 }).notNull(),
+  location: varchar("location", { length: 255 }).notNull(),
+  employmentType: mysqlEnum("employmentType", ["full-time", "part-time", "contract"]).notNull(),
+  status: mysqlEnum("status", ["draft", "sent", "viewed", "accepted", "declined", "expired"]).notNull().default("draft"),
+  offerCode: varchar("offerCode", { length: 50 }).notNull().unique(),
+  expirationDate: timestamp("expirationDate").notNull(),
+  customTerms: text("customTerms"),
+  sentAt: timestamp("sentAt"),
+  viewedAt: timestamp("viewedAt"),
+  signedAt: timestamp("signedAt"),
+  signatureName: varchar("signatureName", { length: 255 }),
+  declinedAt: timestamp("declinedAt"),
+  declineReason: text("declineReason"),
+  createdBy: int("createdBy").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => ({
+  candidateIdx: index("offerLetters_candidateId_idx").on(table.candidateId),
+  statusIdx: index("offerLetters_status_idx").on(table.status),
+  codeIdx: index("offerLetters_code_idx").on(table.offerCode),
+}));
+
+export type OfferLetter = typeof offerLetters.$inferSelect;
+export type InsertOfferLetter = typeof offerLetters.$inferInsert;
