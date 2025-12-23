@@ -141,6 +141,20 @@
       "when": 1766425873558,
       "tag": "0019_smooth_elektra",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "5",
+      "when": 1766486346312,
+      "tag": "0020_harsh_radioactive_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "5",
+      "when": 1766502888324,
+      "tag": "0021_simple_crusher_hogan",
+      "breakpoints": true
     }
   ]
 }

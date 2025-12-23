@@ -63,8 +63,10 @@ const menuItems = [
   // Temporarily disabled - need to fix email service integration
   // { icon: Video, label: "Video Interviews", path: "/video-interview-scheduling" },
   // { icon: FileText, label: "Offer Letters", path: "/offer-letters" },
-  { icon: Target, label: "Skills Gap", path: "/skills-gap-analysis" },
+  { icon: Target, label: "Skills Gap", path: "/skills-gap" },
   { icon: UserPlus, label: "Referrals", path: "/referrals" },
+  { icon: CheckCircle, label: "Performance Reviews", path: "/performance-reviews" },
+  { icon: Briefcase, label: "Public Job Board", path: "/job-board" },
   { icon: MessageSquare, label: "AI Assistant", path: "/assistant" },
 ];
 

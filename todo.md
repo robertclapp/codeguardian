@@ -1143,3 +1143,37 @@
 - [x] Create interviewAnalysisRouter with tRPC procedures
 - [x] Handle video buffer uploads with base64 encoding
 - [x] Add key moments detection with timestamps
+
+
+## Email Service Integration (SendGrid)
+- [ ] Install SendGrid npm package
+- [ ] Create email service wrapper in server/_core/email.ts
+- [ ] Add SENDGRID_API_KEY to environment variables
+- [ ] Restore video interview scheduling router
+- [ ] Restore offer letter generator router
+- [ ] Implement automated email campaigns for candidate nurturing
+- [ ] Add email templates for interviews, offers, and follow-ups
+- [ ] Test email delivery
+
+## Performance Reviews Module
+- [ ] Create performance reviews database schema
+- [ ] Build 360-degree feedback system
+- [ ] Add goal tracking and OKR management
+- [ ] Implement peer review requests and submissions
+- [ ] Create automated review cycle scheduling
+- [ ] Build performance review dashboard
+- [ ] Add review templates and rating scales
+- [ ] Implement manager and self-assessment forms
+- [ ] Add performance improvement plans (PIP) tracking
+
+## Public Job Board
+- [ ] Create public-facing job board page (no auth required)
+- [ ] Implement SEO optimization (meta tags, structured data, sitemap)
+- [ ] Build job listing cards with filters (location, type, department)
+- [ ] Create job detail page with apply button
+- [ ] Build public application form
+- [ ] Add candidate self-service portal
+- [ ] Implement application tracking for candidates
+- [ ] Add social sharing for job posts
+- [ ] Create embeddable job widget for company website
+- [ ] Add RSS feed for job listings

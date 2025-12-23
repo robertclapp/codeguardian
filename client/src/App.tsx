@@ -49,7 +49,9 @@ import CollaborationDemo from "@/pages/CollaborationDemo";
 // Temporarily disabled - need to fix email service integration
 // import VideoInterviewScheduling from "@/pages/VideoInterviewScheduling";
 // import OfferLetters from "@/pages/OfferLetters";
-import SkillsGapAnalysis from "@/pages/SkillsGapAnalysis";
+import SkillsGapAnalysis from "./pages/SkillsGapAnalysis";
+import PerformanceReviews from "./pages/PerformanceReviews";
+import PublicJobBoard from "./pages/PublicJobBoard";
 import Referrals from "@/pages/Referrals";
 import AIInterviewAssistant from "./pages/AIInterviewAssistant";
 import { PWAInstallPrompt } from "./components/PWAInstallPrompt";
@@ -104,7 +106,9 @@ function Router() {
             {/* Temporarily disabled - need to fix email service integration */}
             {/* <Route path="/video-interview-scheduling" element={<VideoInterviewScheduling />} /> */}
             {/* <Route path="/offer-letters" element={<OfferLetters />} /> */}
-            <Route path="/skills-gap-analysis" element={<SkillsGapAnalysis />} />
+             <Route path="/skills-gap" element={<SkillsGapAnalysis />} />
+        <Route path="/performance-reviews" element={<PerformanceReviews />} />
+        <Route path="/job-board" element={<PublicJobBoard />} />
             <Route path="/referrals" element={<Referrals />} />
         <Route path="/ai-interview" component={AIInterviewAssistant} />
         <Route path="/communication-testing" component={CommunicationTesting} />

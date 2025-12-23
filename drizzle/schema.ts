@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, index } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, index, json, date } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -774,3 +774,131 @@ export const offerLetters = mysqlTable("offerLetters", {
 
 export type OfferLetter = typeof offerLetters.$inferSelect;
 export type InsertOfferLetter = typeof offerLetters.$inferInsert;
+
+
+// Performance Reviews Module
+export const performanceReviews = mysqlTable("performance_reviews", {
+  id: int("id").primaryKey().autoincrement(),
+  employeeId: int("employee_id").notNull().references(() => users.id),
+  reviewerId: int("reviewer_id").notNull().references(() => users.id),
+  reviewCycleId: int("review_cycle_id").references(() => reviewCycles.id),
+  reviewType: mysqlEnum("review_type", ["self", "manager", "peer", "360"]).notNull(),
+  status: mysqlEnum("status", ["draft", "submitted", "completed"]).default("draft"),
+  overallRating: int("overall_rating"), // 1-5 scale
+  strengths: text("strengths"),
+  areasForImprovement: text("areas_for_improvement"),
+  goals: json("goals"), // Array of goal objects
+  comments: text("comments"),
+  submittedAt: timestamp("submitted_at"),
+  completedAt: timestamp("completed_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
+});
+
+export const reviewCycles = mysqlTable("review_cycles", {
+  id: int("id").primaryKey().autoincrement(),
+  name: varchar("name", { length: 255 }).notNull(),
+  startDate: date("start_date").notNull(),
+  endDate: date("end_date").notNull(),
+  status: mysqlEnum("status", ["planned", "active", "completed"]).default("planned"),
+  reviewType: mysqlEnum("review_type", ["annual", "quarterly", "probation", "custom"]).notNull(),
+  description: text("description"),
+  createdBy: int("created_by").notNull().references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
+});
+
+export const goals = mysqlTable("goals", {
+  id: int("id").primaryKey().autoincrement(),
+  employeeId: int("employee_id").notNull().references(() => users.id),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  category: mysqlEnum("category", ["performance", "development", "project", "okr"]).notNull(),
+  targetDate: date("target_date"),
+  status: mysqlEnum("status", ["not_started", "in_progress", "completed", "cancelled"]).default("not_started"),
+  progress: int("progress").default(0), // 0-100
+  priority: mysqlEnum("priority", ["low", "medium", "high"]).default("medium"),
+  createdBy: int("created_by").notNull().references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
+});
+
+export const peerReviewRequests = mysqlTable("peer_review_requests", {
+  id: int("id").primaryKey().autoincrement(),
+  reviewId: int("review_id").notNull().references(() => performanceReviews.id),
+  requesterId: int("requester_id").notNull().references(() => users.id),
+  reviewerId: int("reviewer_id").notNull().references(() => users.id),
+  status: mysqlEnum("status", ["pending", "accepted", "declined", "completed"]).default("pending"),
+  requestedAt: timestamp("requested_at").defaultNow(),
+  respondedAt: timestamp("responded_at"),
+  completedAt: timestamp("completed_at"),
+});
+
+export const performanceImprovementPlans = mysqlTable("performance_improvement_plans", {
+  id: int("id").primaryKey().autoincrement(),
+  employeeId: int("employee_id").notNull().references(() => users.id),
+  managerId: int("manager_id").notNull().references(() => users.id),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  startDate: date("start_date").notNull(),
+  endDate: date("end_date").notNull(),
+  status: mysqlEnum("status", ["active", "completed", "cancelled"]).default("active"),
+  goals: json("goals"), // Array of improvement goals
+  progress: text("progress"),
+  outcome: text("outcome"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
+});
+
+
+// Public Job Board
+export const publicJobListings = mysqlTable("public_job_listings", {
+  id: int("id").primaryKey().autoincrement(),
+  jobId: int("job_id").notNull().references(() => jobs.id),
+  slug: varchar("slug", { length: 255 }).notNull().unique(), // SEO-friendly URL
+  isPublished: int("is_published").default(0), // 0 or 1 for boolean
+  publishedAt: timestamp("published_at"),
+  expiresAt: timestamp("expires_at"),
+  views: int("views").default(0),
+  applications: int("applications").default(0),
+  metaTitle: varchar("meta_title", { length: 255 }),
+  metaDescription: text("meta_description"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
+});
+
+export const publicApplications = mysqlTable("public_applications", {
+  id: int("id").primaryKey().autoincrement(),
+  jobId: int("job_id").notNull().references(() => jobs.id),
+  firstName: varchar("first_name", { length: 255 }).notNull(),
+  lastName: varchar("last_name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 320 }).notNull(),
+  phone: varchar("phone", { length: 50 }),
+  resumeUrl: text("resume_url"),
+  coverLetter: text("cover_letter"),
+  linkedinUrl: text("linkedin_url"),
+  portfolioUrl: text("portfolio_url"),
+  answers: json("answers"), // Custom application questions
+  source: varchar("source", { length: 100 }), // Where they found the job
+  status: mysqlEnum("status", ["new", "reviewing", "shortlisted", "rejected", "hired"]).default("new"),
+  submittedAt: timestamp("submitted_at").defaultNow(),
+  reviewedAt: timestamp("reviewed_at"),
+  reviewedBy: int("reviewed_by").references(() => users.id),
+});
+
+export const jobBoardSettings = mysqlTable("job_board_settings", {
+  id: int("id").primaryKey().autoincrement(),
+  companyName: varchar("company_name", { length: 255 }).notNull(),
+  companyLogo: text("company_logo"),
+  companyDescription: text("company_description"),
+  primaryColor: varchar("primary_color", { length: 7 }).default("#667eea"),
+  customDomain: varchar("custom_domain", { length: 255 }),
+  enableApplications: int("enable_applications").default(1),
+  requireResume: int("require_resume").default(1),
+  requireCoverLetter: int("require_cover_letter").default(0),
+  customQuestions: json("custom_questions"),
+  footerText: text("footer_text"),
+  privacyPolicyUrl: text("privacy_policy_url"),
+  termsOfServiceUrl: text("terms_of_service_url"),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
+});

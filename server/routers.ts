@@ -40,6 +40,8 @@ import { skillsAssessmentRouter } from "./routers/skillsAssessmentRouter";
 import { backgroundCheckRouter } from "./routers/backgroundCheckRouter";
 import { csvMigrationRouter } from "./routers/csvMigrationRouter";
 import { skillsGapRouter } from "./routers/skillsGapRouter";
+import { performanceReviewsRouter } from "./routers/performanceReviewsRouter";
+import { jobBoardRouter } from "./routers/jobBoardRouter";
 import { referralsRouter } from "./routers/referralsRouter";
 
 export const appRouter = router({
@@ -95,6 +97,8 @@ export const appRouter = router({
   backgroundCheck: backgroundCheckRouter,
   csvMigration: csvMigrationRouter,
   skillsGap: skillsGapRouter,
+  performanceReviews: performanceReviewsRouter,
+  jobBoard: jobBoardRouter,
   referrals: referralsRouter,
 });
 
