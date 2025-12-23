@@ -1177,3 +1177,30 @@
 - [ ] Add social sharing for job posts
 - [ ] Create embeddable job widget for company website
 - [ ] Add RSS feed for job listings
+
+
+## Public Career Site Frontend
+- [ ] Create /careers route for public job listings
+- [ ] Build job listing cards with company branding
+- [ ] Create job detail page with full description
+- [ ] Build application form with file upload
+- [ ] Add company info section
+- [ ] Implement responsive mobile design
+- [ ] Add SEO meta tags
+
+## Automated Email Campaigns
+- [ ] Create email campaigns database schema
+- [ ] Build drip campaign service
+- [ ] Implement welcome series emails
+- [ ] Add interview prep email sequence
+- [ ] Create onboarding email sequence
+- [ ] Trigger campaigns on pipeline stage changes
+- [ ] Add campaign management UI
+
+## SignSmart E-Signature Integration
+- [ ] Create SignSmart API service
+- [ ] Build signature request workflow
+- [ ] Add signature tracking and status updates
+- [ ] Implement reminder emails for unsigned documents
+- [ ] Create signature UI component
+- [ ] Update offer letters with signature integration

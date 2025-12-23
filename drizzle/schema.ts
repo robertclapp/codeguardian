@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, index, json, date } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, index, json, date, boolean } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -901,4 +901,49 @@ export const jobBoardSettings = mysqlTable("job_board_settings", {
   privacyPolicyUrl: text("privacy_policy_url"),
   termsOfServiceUrl: text("terms_of_service_url"),
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
+});
+
+
+// Email Campaigns for candidate nurturing
+export const emailCampaigns = mysqlTable("email_campaigns", {
+  id: int("id").primaryKey().autoincrement(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  triggerType: varchar("trigger_type", { length: 50 }).notNull(), // pipeline_stage_change, time_based, manual
+  triggerStage: varchar("trigger_stage", { length: 100 }), // which pipeline stage triggers this
+  isActive: boolean("is_active").default(true),
+  createdBy: varchar("created_by", { length: 255 }).notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
+});
+
+export const emailCampaignSteps = mysqlTable("email_campaign_steps", {
+  id: int("id").primaryKey().autoincrement(),
+  campaignId: int("campaign_id").notNull().references(() => emailCampaigns.id),
+  stepOrder: int("step_order").notNull(),
+  subject: varchar("subject", { length: 255 }).notNull(),
+  body: text("body").notNull(),
+  delayDays: int("delay_days").default(0), // days after trigger to send
+  delayHours: int("delay_hours").default(0), // hours after trigger to send
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const emailCampaignEnrollments = mysqlTable("email_campaign_enrollments", {
+  id: int("id").primaryKey().autoincrement(),
+  campaignId: int("campaign_id").notNull().references(() => emailCampaigns.id),
+  candidateId: int("candidate_id").notNull().references(() => candidates.id),
+  currentStep: int("current_step").default(1),
+  status: varchar("status", { length: 50 }).default("active"), // active, completed, unsubscribed
+  enrolledAt: timestamp("enrolled_at").defaultNow(),
+  completedAt: timestamp("completed_at"),
+});
+
+export const emailCampaignLogs = mysqlTable("email_logs", {
+  id: int("id").primaryKey().autoincrement(),
+  enrollmentId: int("enrollment_id").notNull(),
+  stepId: int("step_id").notNull(),
+  sentAt: timestamp("sent_at").defaultNow(),
+  status: varchar("status", { length: 50 }).default("sent"), // sent, delivered, opened, clicked, bounced
+  openedAt: timestamp("opened_at"),
+  clickedAt: timestamp("clicked_at"),
 });

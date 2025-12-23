@@ -9,4 +9,6 @@ export const ENV = {
   forgeApiKey: process.env.BUILT_IN_FORGE_API_KEY ?? "",
   SENDGRID_API_KEY: process.env.SENDGRID_API_KEY,
   FROM_EMAIL: process.env.FROM_EMAIL ?? "noreply@hrplatform.com",
+  SIGNSMART_API_URL: process.env.SIGNSMART_API_URL ?? "",
+  SIGNSMART_API_KEY: process.env.SIGNSMART_API_KEY ?? "",
 };
