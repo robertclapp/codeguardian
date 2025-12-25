@@ -52,7 +52,8 @@ import CollaborationDemo from "@/pages/CollaborationDemo";
 import SkillsGapAnalysis from "./pages/SkillsGapAnalysis";
 import Careers from "./pages/Careers";
 import EmailCampaigns from "./pages/EmailCampaigns";
-import ESignatures from "./pages/ESignatures";
+import ESignatures from "@/pages/ESignatures";
+import BrandingSettings from "@/pages/BrandingSettings";
 import PerformanceReviews from "./pages/PerformanceReviews";
 import PublicJobBoard from "./pages/PublicJobBoard";
 import Referrals from "@/pages/Referrals";
@@ -112,7 +113,8 @@ function Router() {
              <Route path="/skills-gap" element={<SkillsGapAnalysis />} />
             <Route path="/careers" element={<Careers />} />
             <Route path="/email-campaigns" element={<EmailCampaigns />} />
-            <Route path="/e-signatures" element={<ESignatures />} />
+           <Route path="/e-signatures" component={ESignatures} />
+              <Route path="/branding" component={BrandingSettings} />
         <Route path="/performance-reviews" element={<PerformanceReviews />} />
         <Route path="/job-board" element={<PublicJobBoard />} />
             <Route path="/referrals" element={<Referrals />} />

@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/sidebar";
 import { APP_LOGO, APP_TITLE, getLoginUrl } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { LayoutDashboard, LogOut, PanelLeft, Users, Briefcase, MessageSquare, Settings, FileText, TrendingUp, ClipboardCheck, FolderOpen, BarChart3, Shield, Edit3, HelpCircle, Book, LifeBuoy, CheckCircle, LineChart, Brain, Upload, Bell, Play, Search, Moon, Sun, Mail, Calendar as CalendarIcon, Zap, Video, Target, UserPlus, FileSignature, Send } from "lucide-react";
+import { LayoutDashboard, LogOut, PanelLeft, Users, Briefcase, MessageSquare, Settings, FileText, TrendingUp, ClipboardCheck, FolderOpen, BarChart3, Shield, Edit3, HelpCircle, Book, LifeBuoy, CheckCircle, LineChart, Brain, Upload, Bell, Play, Search, Moon, Sun, Mail, Calendar as CalendarIcon, Zap, Video, Target, UserPlus, FileSignature, Send, Palette } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
@@ -69,6 +69,7 @@ const menuItems = [
   { icon: Briefcase, label: "Public Job Board", path: "/job-board" },
   { icon: Send, label: "Email Campaigns", path: "/email-campaigns" },
   { icon: FileSignature, label: "E-Signatures", path: "/e-signatures" },
+  { icon: Palette, label: "Branding", path: "/branding" },
   { icon: MessageSquare, label: "AI Assistant", path: "/assistant" },
 ];
 

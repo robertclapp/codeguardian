@@ -1,0 +1,9 @@
+{
+  "query": "SHOW TABLES LIKE 'branding_settings';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user fL61J84vCiBRUTT.f422640d03e2 --database EwCp6AvW8miivoUsnJ3pzj --execute SHOW TABLES LIKE 'branding_settings';",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 397
+}
